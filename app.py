@@ -1,7 +1,6 @@
 import re
 from dataclasses import dataclass
 from typing import List, Dict, Any
-
 import gradio as gr
 
 
@@ -45,7 +44,7 @@ def extract_soul_signal(code: str) -> SoulSignal:
 
     avg_line_length = sum(len(l) for l in non_empty) / line_count
 
-    naming_weirdness = 0.0  # placeholder for future ML / naming model
+    naming_weirdness = 0.0  # placeholder for future ML model
 
     return SoulSignal(
         comment_density=comment_density,
@@ -62,24 +61,23 @@ def score_soul(signal: SoulSignal) -> Dict[str, Any]:
     score = 0.0
     reasons: List[str] = []
 
-    # comments = intent / thinking traces
     score += min(signal.comment_density * 40, 20)
 
     if signal.todo_count > 0:
         score += 10
-        reasons.append("TODO markers detected (future-intent traces).")
+        reasons.append("TODO markers detected.")
 
     if signal.debug_artifacts > 0:
         score += 20
-        reasons.append("Debug prints detected (live debugging traces).")
+        reasons.append("Debug prints detected.")
 
     if signal.magic_numbers > 0:
         score += min(signal.magic_numbers * 5, 15)
-        reasons.append("Magic numbers detected (non-parameterized constants).")
+        reasons.append("Magic numbers detected.")
 
     if signal.line_count < 80:
         score += 10
-        reasons.append("Compact snippet (likely hand-written, not boilerplate).")
+        reasons.append("Compact snippet (likely hand-written).")
 
     score = max(0, min(100, score))
 
