@@ -163,3 +163,93 @@ demo = gr.Interface(
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860)
+    import streamlit as st
+import json
+import numpy as np
+import ezkl
+# your existing imports
+from features import extract_features  # adjust path if in src/
+from souldetector import get_soul_score  # adjust if needed
+# ... other imports like pickle, torch if used
+
+# Your existing soul scoring setup (keep this)
+# e.g., load model, feature_order list, etc.
+feature_order = ["line_count", "comment_ratio", "has_todo", "perplexity", ...]  # fill from your code
+
+MODEL_PATH = "models/soul_model_v1.pkl"  # or wherever yours is
+
+# NEW: ezkl setup (add this section)
+ONNX_MODEL_PATH = "soul_model.onnx"  # you'll add this file later
+
+@st.cache_resource
+def load_ezkl_resources():
+    # Compile circuit once (slow first time, cached after)
+    settings_path = "settings.json"
+    if not os.path.exists(settings_path):
+        ezkl.gen_settings(ONNX_MODEL_PATH, settings_path)
+    ezkl.compile_circuit(ONNX_MODEL_PATH, "network.ezkl", settings_path)
+    return settings_path
+
+# NEW: proof generation function (add here)
+def generate_zk_proof(code_snippet):
+    # Extract features as before
+    features_dict = extract_features(code_snippet)
+    input_vec = np.array([features_dict.get(k, 0.0) for k in feature_order], dtype=np.float32).reshape(1, -1).tolist()
+
+    # Prepare ezkl input
+    data = {
+        "input_data": input_vec,
+        "input_shapes": [[1, len(feature_order)]]
+    }
+    input_json = "input.json"
+    with open(input_json, "w") as f:
+        json.dump(data, f)
+
+    # Generate proof
+    proof_path = "proof.json"
+    settings_path = load_ezkl_resources()  # compile if needed
+    ezkl.gen_proof("network.ezkl", input_json, proof_path, settings_path)
+
+    # Read proof
+    with open(proof_path, "r") as f:
+        proof = json.load(f)
+
+    score = get_soul_score(code_snippet)
+    return proof, score
+
+# -------------------------------
+# Your Streamlit UI (main app block - extend this)
+st.title("Vata Soul Check – Soul Detector")
+
+code = st.text_area("Paste your code snippet here", height=300)
+
+if st.button("Score Soul"):
+    if code.strip():
+        score = get_soul_score(code)
+        st.metric("Soul Score", f"{score:.1f}/100")
+        if score > 70:
+            st.success("Strong human soul detected! 🔥")
+        else:
+            st.warning("Feels pretty clean/AI-like 😶")
+    else:
+        st.info("Enter some code first!")
+
+# NEW: Add this button right below or next to the score button
+if st.button("Generate ZK Proof (Verifiable Score)"):
+    if code.strip():
+        with st.spinner("Generating zk-proof... (may take a few seconds)"):
+            try:
+                proof, score = generate_zk_proof(code)
+                st.success(f"ZK Proof generated for score {score:.1f}/100")
+                st.json(proof)  # Show proof JSON
+                st.download_button(
+                    label="Download Proof JSON",
+                    data=json.dumps(proof, indent=2),
+                    file_name="vata_soul_proof.json",
+                    mime="application/json"
+                )
+                st.info("This proof lets anyone verify the soul score was computed correctly without seeing the code or model internals.")
+            except Exception as e:
+                st.error(f"Proof generation failed: {str(e)}")
+    else:
+        st.warning("Paste code first!")
