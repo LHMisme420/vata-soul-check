@@ -27,17 +27,31 @@ class SoulSignal:
     debug_artifacts: int
     magic_numbers: int
 
-    # pattern / regularity
+    # naming / repetition
     naming_entropy: float
     repetition_ratio: float
+
+    # token-level fingerprint
+    token_entropy: float
+    operator_density: float
+    operator_spacing_variance: float
 
 
 COMMENT_RE = re.compile(r'^\s*#')
 TODO_RE = re.compile(r'\bTODO\b', re.IGNORECASE)
 DEBUG_RE = re.compile(r'\bprint\(')
 MAGIC_NUMBER_RE = re.compile(r'\b\d+\b')
-FUNC_DEF_RE = re.compile(r'^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)')
 VAR_NAME_RE = re.compile(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\b')
+
+# crude tokenization: identifiers, numbers, operators, punctuation
+TOKEN_RE = re.compile(
+    r"[A-Za-z_][A-Za-z0-9_]*"  # identifiers
+    r"|\d+"                    # numbers
+    r"|==|!=|<=|>="            # multi-char operators
+    r"|[+\-*/%=<>():,\.]"      # single-char operators/punct
+)
+
+OPERATORS = set(["+", "-", "*", "/", "%", "=", "==", "!=", "<", ">", "<=", ">="])
 
 REASONING_HINTS = [
     "because",
@@ -62,6 +76,67 @@ def shannon_entropy(tokens: List[str]) -> float:
         p = c / total
         ent -= p * math.log2(p)
     return ent
+
+
+def extract_token_fingerprint(code: str) -> Dict[str, float]:
+    lines = code.splitlines()
+    non_empty = [l for l in lines if l.strip()]
+    if not non_empty:
+        return {
+            "token_entropy": 0.0,
+            "operator_density": 0.0,
+            "operator_spacing_variance": 0.0,
+        }
+
+    all_tokens: List[str] = []
+    operator_positions: List[int] = []
+    operator_spacing_samples: List[int] = []
+
+    for line in non_empty:
+        # collect tokens
+        tokens = TOKEN_RE.findall(line)
+        all_tokens.extend(tokens)
+
+        # operator positions and spacing
+        for match in TOKEN_RE.finditer(line):
+            tok = match.group(0)
+            if tok in OPERATORS:
+                start = match.start()
+                operator_positions.append(start)
+
+                # measure spaces around operator
+                left_space = 0
+                right_space = 0
+
+                # count spaces to the left
+                i = start - 1
+                while i >= 0 and line[i] == " ":
+                    left_space += 1
+                    i -= 1
+
+                # count spaces to the right
+                j = match.end()
+                while j < len(line) and line[j] == " ":
+                    right_space += 1
+                    j += 1
+
+                operator_spacing_samples.append(left_space + right_space)
+
+    token_entropy = shannon_entropy(all_tokens)
+
+    operator_density = 0.0
+    if all_tokens:
+        operator_density = sum(1 for t in all_tokens if t in OPERATORS) / len(all_tokens)
+
+    operator_spacing_variance = 0.0
+    if len(operator_spacing_samples) > 1:
+        operator_spacing_variance = statistics.pvariance(operator_spacing_samples)
+
+    return {
+        "token_entropy": token_entropy,
+        "operator_density": operator_density,
+        "operator_spacing_variance": operator_spacing_variance,
+    }
 
 
 def extract_soul_signal(code: str) -> SoulSignal:
@@ -104,11 +179,9 @@ def extract_soul_signal(code: str) -> SoulSignal:
     # naming entropy + repetition
     names: List[str] = []
     for l in non_empty:
-        # skip comments
         if COMMENT_RE.search(l):
             continue
         for name in VAR_NAME_RE.findall(l):
-            # filter out keywords-ish / builtins-ish by crude length/shape
             if len(name) <= 1:
                 continue
             names.append(name)
@@ -122,6 +195,9 @@ def extract_soul_signal(code: str) -> SoulSignal:
         most_common = counts.most_common(1)[0][1]
         repetition_ratio = most_common / len(names)
 
+    # token-level fingerprint
+    token_fp = extract_token_fingerprint(code)
+
     return SoulSignal(
         line_count=line_count,
         avg_line_length=avg_line_length,
@@ -133,6 +209,9 @@ def extract_soul_signal(code: str) -> SoulSignal:
         magic_numbers=magic_numbers,
         naming_entropy=naming_entropy,
         repetition_ratio=repetition_ratio,
+        token_entropy=token_fp["token_entropy"],
+        operator_density=token_fp["operator_density"],
+        operator_spacing_variance=token_fp["operator_spacing_variance"],
     )
 
 
@@ -142,8 +221,6 @@ def extract_soul_signal(code: str) -> SoulSignal:
 
 def score_soul(signal: SoulSignal) -> Dict[str, Any]:
     reasons: List[str] = []
-
-    # Start with a neutral base
     human_score = 0.0
 
     # 1) Comments + TODOs + reasoning
@@ -171,8 +248,6 @@ def score_soul(signal: SoulSignal) -> Dict[str, Any]:
         reasons.append("Non-uniform indentation (human-style structural variation).")
 
     # 5) Naming entropy + repetition
-    # Higher entropy = more varied naming (human-like)
-    # High repetition ratio = same names reused everywhere (more synthetic)
     if signal.naming_entropy > 2.0:
         human_score += 10
         reasons.append("High naming entropy (varied identifiers, human-like).")
@@ -184,16 +259,40 @@ def score_soul(signal: SoulSignal) -> Dict[str, Any]:
         human_score -= 8
         reasons.append("High identifier repetition (patterned, synthetic-like).")
 
-    # 6) Size bias: very short snippets are ambiguous
+    # 6) Token-level fingerprint
+    # Higher token entropy = more varied token usage (human-like)
+    if signal.token_entropy > 4.0:
+        human_score += 10
+        reasons.append("High token entropy (varied token usage, human-like).")
+    elif signal.token_entropy < 2.0 and signal.line_count > 10:
+        human_score -= 5
+        reasons.append("Low token entropy (overly regular token patterns).")
+
+    # Operator density: extremely high or extremely low can look synthetic
+    if 0.05 <= signal.operator_density <= 0.25:
+        human_score += 5
+        reasons.append("Balanced operator density (typical of human-written code).")
+    else:
+        human_score -= 3
+        reasons.append("Unusual operator density (may indicate templated or synthetic code).")
+
+    # Operator spacing variance: humans are inconsistent, AI is very consistent
+    if signal.operator_spacing_variance > 0.5:
+        human_score += 7
+        reasons.append("Inconsistent spacing around operators (human-style formatting drift).")
+    elif signal.operator_spacing_variance < 0.1 and signal.line_count > 10:
+        human_score -= 5
+        reasons.append("Highly consistent operator spacing (AI-style formatting consistency).")
+
+    # 7) Size bias
     if signal.line_count < 5:
         human_score *= 0.7
         reasons.append("Very short snippet (authorship harder to infer).")
 
-    # Clamp to [0, 100]
+    # Clamp
     human_score = max(0.0, min(100.0, human_score))
 
-    # Convert to probability-like value via a simple logistic
-    # (not trained, but shaped to feel like a probability)
+    # Logistic shaping into probability-like value
     prob_human = 1 / (1 + math.exp(-(human_score - 50) / 10))
     prob_human_pct = round(prob_human * 100, 1)
 
@@ -208,7 +307,7 @@ def score_soul(signal: SoulSignal) -> Dict[str, Any]:
         classification = "LIKELY AI-GENERATED"
         verdict = "VATA FLAGGED"
 
-    # Energy label (kept for your theme, but grounded in score)
+    # Signal label
     if human_score >= 80:
         energy_level = "High Human Signal"
     elif human_score >= 50:
@@ -273,9 +372,9 @@ def gradio_analyze(code: str):
     )
 
 
-with gr.Blocks(title="VATA Soul Check") as demo:
+with gr.Blocks(title="VATA Authorship Fingerprint") as demo:
     gr.Markdown(
-        "# VATA Soul Check\n"
+        "# VATA Authorship Fingerprint\n"
         "Behavior-based analysis of code for likely human vs AI authorship.\n"
         "_Scores are heuristic and explainable, not mystical._"
     )
@@ -299,7 +398,7 @@ with gr.Blocks(title="VATA Soul Check") as demo:
             energy_out = gr.Textbox(label="Signal Level", interactive=False)
             class_out = gr.Textbox(label="Classification", interactive=False)
             reasons_out = gr.Textbox(label="Why this result?", lines=8, interactive=False)
-            raw_out = gr.Textbox(label="Raw Metrics", lines=10, interactive=False)
+            raw_out = gr.Textbox(label="Raw Metrics", lines=12, interactive=False)
             code_echo = gr.Code(label="Input Echo", language="python", interactive=False)
 
     run_btn.click(
