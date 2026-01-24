@@ -1,14 +1,15 @@
 import re
 import math
 import statistics
+import pickle
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 import gradio as gr
 
 
 # =========================
-#   FEATURE + SIGNAL MODEL
+#   DATA MODEL
 # =========================
 
 @dataclass
@@ -28,11 +29,15 @@ class Fingerprint:
     operator_spacing_variance: float
 
 
+# =========================
+#   REGEX + CONSTANTS
+# =========================
+
 COMMENT_RE = re.compile(r'^\s*#')
 TODO_RE = re.compile(r'\bTODO\b', re.IGNORECASE)
 DEBUG_RE = re.compile(r'\bprint\(')
 MAGIC_NUMBER_RE = re.compile(r'\b\d+\b')
-VAR_NAME_RE = re.compile(r'\b([a-zA-Z_][A-Za-z0-9_]*)\b')
+VAR_NAME_RE = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\b')
 
 TOKEN_RE = re.compile(
     r"[A-Za-z_][A-Za-z0-9_]*"
@@ -48,6 +53,10 @@ REASONING_HINTS = [
     "hack", "temporary", "for now", "later"
 ]
 
+
+# =========================
+#   UTILS
+# =========================
 
 def entropy(tokens: List[str]) -> float:
     if not tokens:
@@ -161,71 +170,121 @@ def extract_fingerprint(code: str) -> Fingerprint:
 
 
 # =========================
-#   SCORING ENGINE
+#   ML HOOKS (OPTIONAL)
 # =========================
 
-def score(f: Fingerprint) -> Dict[str, Any]:
+MODEL_PATH = "model.pkl"
+
+FEATURE_ORDER = [
+    "line_count",
+    "avg_line_length",
+    "indent_variance",
+    "comment_density",
+    "todo_count",
+    "reasoning_comment_count",
+    "debug_artifacts",
+    "magic_numbers",
+    "naming_entropy",
+    "repetition_ratio",
+    "token_entropy",
+    "operator_density",
+    "operator_spacing_variance",
+]
+
+
+def fingerprint_to_vector(fp: Fingerprint) -> List[float]:
+    d = fp.__dict__
+    return [float(d[k]) for k in FEATURE_ORDER]
+
+
+def load_model() -> Optional[object]:
+    try:
+        with open(MODEL_PATH, "rb") as f:
+            return pickle.load(f)
+    except Exception:
+        return None
+
+
+MODEL = load_model()
+
+
+# =========================
+#   HEURISTIC SCORING
+# =========================
+
+def heuristic_score(fp: Fingerprint):
     reasons = []
     score = 0.0
 
-    # comment signals
-    score += min(f.comment_density * 50, 25)
-    if f.todo_count:
+    score += min(fp.comment_density * 50, 25)
+    if fp.todo_count:
         score += 10
         reasons.append("TODO markers detected.")
-    if f.reasoning_comment_count:
+    if fp.reasoning_comment_count:
         score += 15
         reasons.append("Reasoning-style comments detected.")
 
-    # artifacts
-    if f.debug_artifacts:
+    if fp.debug_artifacts:
         score += 20
         reasons.append("Debug prints detected.")
-    if f.magic_numbers:
-        score += min(f.magic_numbers * 4, 12)
+    if fp.magic_numbers:
+        score += min(fp.magic_numbers * 4, 12)
         reasons.append("Magic numbers detected.")
 
-    # structure
-    if f.indent_variance > 0:
-        score += min(f.indent_variance * 0.5, 10)
+    if fp.indent_variance > 0:
+        score += min(fp.indent_variance * 0.5, 10)
         reasons.append("Indentation irregularity detected.")
 
-    # naming
-    if f.naming_entropy > 2.0:
+    if fp.naming_entropy > 2.0:
         score += 10
-        reasons.append("High naming entropy.")
-    elif f.naming_entropy < 1.0 and f.line_count > 10:
+    elif fp.naming_entropy < 1.0 and fp.line_count > 10:
         score -= 5
-        reasons.append("Low naming entropy.")
 
-    if f.repetition_ratio > 0.5 and f.line_count > 10:
+    if fp.repetition_ratio > 0.5 and fp.line_count > 10:
         score -= 8
-        reasons.append("High identifier repetition.")
 
-    # token-level
-    if f.token_entropy > 4.0:
+    if fp.token_entropy > 4.0:
         score += 10
-        reasons.append("High token entropy.")
-    elif f.token_entropy < 2.0 and f.line_count > 10:
+    elif fp.token_entropy < 2.0 and fp.line_count > 10:
         score -= 5
-        reasons.append("Low token entropy.")
 
-    if 0.05 <= f.operator_density <= 0.25:
+    if 0.05 <= fp.operator_density <= 0.25:
         score += 5
     else:
         score -= 3
 
-    if f.operator_spacing_variance > 0.5:
+    if fp.operator_spacing_variance > 0.5:
         score += 7
-    elif f.operator_spacing_variance < 0.1 and f.line_count > 10:
+    elif fp.operator_spacing_variance < 0.1 and fp.line_count > 10:
         score -= 5
 
-    # short snippet penalty
-    if f.line_count < 5:
+    if fp.line_count < 5:
         score *= 0.7
 
     score = max(0, min(100, score))
     prob = round(1 / (1 + math.exp(-(score - 50) / 10)) * 100, 1)
+
+    return score, prob, reasons
+
+
+# =========================
+#   COMBINED SCORING
+# =========================
+
+def score(fp: Fingerprint) -> Dict[str, Any]:
+    if MODEL:
+        try:
+            vec = fingerprint_to_vector(fp)
+            proba = MODEL.predict_proba([vec])[0][1]
+            prob = round(float(proba) * 100, 1)
+            score_val = prob
+            reasons = ["Probability derived from trained ML model."]
+        except Exception:
+            score_val, prob, reasons = heuristic_score(fp)
+            reasons.insert(0, "Model error — using heuristic scoring.")
+    else:
+        score_val, prob, reasons = heuristic_score(fp)
+        reasons.insert(0, "No model found — using heuristic scoring.")
 
     if prob >= 75:
         classification = "LIKELY HUMAN"
@@ -235,11 +294,11 @@ def score(f: Fingerprint) -> Dict[str, Any]:
         classification = "LIKELY AI"
 
     return {
-        "score": score,
+        "score": score_val,
         "probability": prob,
         "classification": classification,
         "reasons": reasons,
-        "raw": f.__dict__,
+        "raw": fp.__dict__,
     }
 
 
