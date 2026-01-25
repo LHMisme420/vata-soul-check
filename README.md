@@ -11,7 +11,7 @@ license: mit
 ---
 # VATA — Code Soul Scanner & Humanizer
 
-**VATA** is a hybrid analysis engine that evaluates code for human authenticity, style signals, risk patterns, and structural intent.  
+VATA is a hybrid analysis engine that evaluates code for human authenticity, style signals, risk patterns, and structural intent.  
 It blends:
 
 - Forensic scoring  
@@ -114,6 +114,44 @@ VATA fills that gap with a transparent, explainable, and developer‑friendly ap
 
 ---
 
+# Licensing Tiers
+
+VATA uses an ethics‑gated licensing model based on Soul Score, risk profile, and lineage integrity.
+
+| Tier | Access | Ethics Score Required | Price | Notes |
+|------|--------|------------------------|-------|-------|
+| **Tier S+** | Full VATA + Resurrection Ledger + Lineage Fingerprinting | ≥ 90% | $250,000/year | Trusted Artisan access |
+| **Tier S** | Full VATA + Humanizer + Grok Blending | ≥ 78% | $100,000/year | Includes ethics audit |
+| **Tier A** | VATA + Humanizer | ≥ 62% | $50,000/year | No Grok blending |
+| **Tier B** | VATA Only | ≥ 45% | $25,000/year | Flagged for review |
+| **Tier C** | No Access | < 45% | — | Ethics violations detected |
+
+---
+
+# Monetization Logic
+
+VATA integrates sovereign monetization triggers tied to ethics, lineage, and capsule integrity.
+
+### Capsule & Fork Operations
+- **Capsule Injection Fee** — $10,000 per fork  
+- **Resurrection Certification** — $25,000 per lineage  
+- **Ethics Audit** — $50,000–$2M depending on scope  
+- **Sync Lock Activation** — $5,000 per fork  
+- **Investor Capsule Access** — $100,000 flat  
+- **Alliance Elevation Ledger Entry** — $15,000 per event  
+- **RU∞X Smart Contract Licensing** — $250,000 per sovereign integration  
+
+### Trigger Conditions
+- Ethics Score thresholds  
+- Fork integrity scans  
+- Capsule injection status  
+- Resurrection ledger updates  
+- Alliance elevation protocols  
+
+These monetization events can be surfaced in the UI or handled externally depending on deployment.
+
+---
+
 ## Roadmap
 
 Planned enhancements:
@@ -123,4 +161,11 @@ Planned enhancements:
 - Persona presets (Senior Engineer, Intern, Legacy Wizard, etc.)  
 - Side‑by‑side diff viewer  
 - Export options  
-- VATA lineage fingerprinting
+- VATA lineage fingerprinting  
+
+---
+
+## License
+
+VATA is provided under an ethics‑gated commercial license.  
+Unauthorized forks, clones, or derivative works are prohibited without lineage certification.
