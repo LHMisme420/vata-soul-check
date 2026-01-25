@@ -310,7 +310,7 @@ combined_output = (
     f"### LLM Blended Code (Grok Hybrid)\n\n"
     f"```python\n{safe_blended}\n```"
 )
-    )
+    
 
     return combined_output
 
