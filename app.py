@@ -312,7 +312,7 @@ combined_output = (
 )
     
 
-    return combined_output
+return combined_output
 
 # ────────────────────────────────────────────────
 #   GRADIO UI – DARK TWO-PANEL CONSOLE
