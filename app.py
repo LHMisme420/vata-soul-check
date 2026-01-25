@@ -420,9 +420,7 @@ return combined_output
 #   GRADIO UI – DARK TWO-PANEL CONSOLE
 # ────────────────────────────────────────────────
 
-with gr.Blocks(
-    theme="gradio/soft",
-    css="""
+with gr.Blocks(theme="gradio/soft") as demo:
 body { background-color: #05060a; }
 .gradio-container { background-color: #05060a !important; color: #f5f5f5; }
 css="""
