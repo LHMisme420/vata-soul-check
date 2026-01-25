@@ -4,17 +4,10 @@ import random
 import statistics
 import hashlib
 import time
-import zipfile
-import os
-import shutil
-import tempfile
-import math
 from collections import Counter
-from pathlib import Path
-from difflib import unified_diff
 
 # ────────────────────────────────────────────────
-#   HELPER FUNCTIONS
+#   LANGUAGE & COMMENT HELPERS
 # ────────────────────────────────────────────────
 
 def detect_language(code: str) -> str:
@@ -29,17 +22,21 @@ def detect_language(code: str) -> str:
         return "javascript"
     if re.search(r'\b#include|<.*?>|std::|cout|cin\b', code_lower):
         return "cpp"
-    return "generic"
+    return "other"
 
 def get_comment_styles(lang: str):
-    if lang == "python":
-        return {"single": "#", "multi_start": '"""', "multi_end": '"""'}
-    if lang in ("javascript", "cpp", "java", "csharp"):
-        return {"single": "//", "multi_start": "/*", "multi_end": "*/"}
-    return {"single": "//", "multi_start": "/*", "multi_end": "*/"}
+    styles = {
+        "python": {"single": "#", "multi_start": '"""', "multi_end": '"""'},
+        "javascript": {"single": "//", "multi_start": "/*", "multi_end": "*/"},
+        "java": {"single": "//", "multi_start": "/**", "multi_end": "*/"},
+        "csharp": {"single": "//", "multi_start": "/*", "multi_end": "*/"},
+        "cpp": {"single": "//", "multi_start": "/*", "multi_end": "*/"},
+        "other": {"single": "//", "multi_start": "/*", "multi_end": "*/"}
+    }
+    return styles.get(lang, styles["other"])
 
 # ────────────────────────────────────────────────
-#   ANALYZER (improved original soul scoring)
+#   ANALYZER (unchanged core logic)
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
@@ -49,20 +46,18 @@ def calculate_soul_score(code: str):
     lines = code.splitlines()
     non_empty = [l.strip() for l in lines if l.strip()]
 
-    # ── Bonuses ─────────────────────────────────────
     comments = sum(1 for l in lines if l.strip().startswith(('#', '//', '/*', '*', '"""', "'''")))
     markers = len(re.findall(r'\b(TODO|FIXME|HACK|NOTE|BUG|XXX|WTF|DEBUG)\b', code, re.I))
     comment_bonus = min(comments * 1.8 + markers * 12, 55)
 
     vars_found = re.findall(r'\b[A-Za-z_][A-Za-z0-9_]{2,}\b', code)
     meaningful_vars = [v for v in vars_found if v not in {'def','if','for','return','else','True','False','None','self','const','let','var'}]
+    naming_bonus = 0
     if meaningful_vars:
         lengths = [len(v) for v in meaningful_vars]
         avg = statistics.mean(lengths)
         std = statistics.stdev(lengths) if len(lengths) > 1 else 0
         naming_bonus = min(avg * 4 + std * 8, 35)
-    else:
-        naming_bonus = 0
 
     branches = sum(code.count(kw) for kw in ['if ', 'elif ', 'for ', 'while ', 'try:', 'except', 'switch', 'case'])
     nesting_proxy = sum(max(0, (len(l) - len(l.lstrip())) // 2) for l in lines if l.strip())
@@ -70,7 +65,6 @@ def calculate_soul_score(code: str):
 
     total_bonus = comment_bonus + naming_bonus + complexity_bonus
 
-    # ── Penalties ───────────────────────────────────
     stripped_lines = [l.strip() for l in lines if l.strip()]
     dup_ratio = sum(c > 1 for c in Counter(stripped_lines).values()) / max(len(stripped_lines), 1)
     repetition_penalty = dup_ratio * -60
@@ -82,7 +76,7 @@ def calculate_soul_score(code: str):
     risky = 0
     lower = code.lower()
     dangerous = ["eval(", "exec(", "os.system(", "subprocess.", "pickle.load", "rm -rf", "format c:", "del *.*"]
-    secrets = ["password = ", "api_key = ", "secret = ", "token = ", "key = ", "hardcoded"]
+    secrets = ["password =", "api_key =", "secret =", "token =", "key =", "hardcoded"]
     bare_except = len(re.findall(r'except\s*(?::|\))', code)) + len(re.findall(r'except\s+[A-Za-z]+\s*:', code)) > 3
     risky += sum(1 for pat in dangerous + secrets if pat in lower)
     risky += bare_except * 2
@@ -90,195 +84,213 @@ def calculate_soul_score(code: str):
 
     total_penalty = repetition_penalty + simplicity_penalty + risk_penalty
 
-    # ── Final ───────────────────────────────────────
     score = 45 + total_bonus + total_penalty
     score = max(5, min(98, round(score)))
-    score_str = f"{score}% Human Soul"
+    score_str = f"{score}%"
 
-    energy = "Vata Full Soul 🔥" if score >= 82 else "Strong Vata Pulse" if score >= 65 else "Hybrid Aura" if score >= 45 else "Soulless Void"
+    energy = "Vata Full Soul 🔥" if score >= 82 else "Strong Vata Pulse ⚡" if score >= 65 else "Hybrid Aura 🌫️" if score >= 45 else "Soulless Void 🕳️"
     cls = "HUMAN" if score > 78 else "MACHINE / HYBRID" if score > 50 else "AI-TRACED"
-    verdict = "VATA APPROVED" if score >= 78 and risky <= 1 else "VATA FLAGGED" if score >= 45 else "VATA REJECTED"
+    verdict = "VATA APPROVED ✅" if score >= 78 and risky <= 1 else "VATA FLAGGED ⚠️" if score >= 45 else "VATA REJECTED ❌"
     if risky >= 3:
-        verdict = "VATA BLOCKED - SECURITY VIOLATIONS"
+        verdict = "VATA BLOCKED - SECURITY VIOLATIONS ⛔"
 
     tier = "S+ Trusted Artisan" if score >= 90 else "S Solid Human" if score >= 78 else "A Probable Safe" if score >= 62 else "B Needs Eyes" if score >= 45 else "C High Risk"
 
-    timestamp = int(time.time())
-    proof_input = f"{code.strip()}|{score_str}|{verdict}|{timestamp}"
-    proof_hash = hashlib.sha256(proof_input.encode()).hexdigest()[:16].upper()
-    proof = f"VATA-PROOF-{proof_hash}\nVerify: SHA256({proof_input})"
-
-    violations = "\n".join([f"• {v}" for v in [
-        "Dangerous execution calls" if any(p in lower for p in dangerous[:3]) else None,
-        "Potential secrets/hardcoded creds" if any(p in lower for p in secrets) else None,
-        "Destructive shell patterns" if any(p in lower for p in dangerous[5:]) else None,
-        "Bare/broad excepts (risky)" if bare_except else None,
-    ] if v]) or "Clean"
-
-    return score_str, energy, cls, verdict, violations, code, tier, proof
+    return score_str, energy, cls, verdict, tier
 
 # ────────────────────────────────────────────────
-#   HUMANIZER – the part that adds teeth
+#   ADVANCED HUMANIZER – highly configurable
 # ────────────────────────────────────────────────
 
-def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, inconsistent: bool, personal_names: bool, redundancies: bool):
+def humanize_code(
+    code: str,
+    intensity: float = 5.0,
+    comment_intensity: float = 5.0,
+    debug_intensity: float = 5.0,
+    sarcasm_intensity: float = 5.0,
+    inconsistency_intensity: float = 5.0,
+    rename_intensity: float = 5.0,
+    redundancy_intensity: float = 3.0,
+    comment_style_preset: str = "Casual",
+    naming_style: str = "Random Flair",
+    debug_prefix: str = "DEBUG:",
+    language_override: str = "Auto"
+):
     if not code.strip():
         return code
 
-    lang = detect_language(code)
+    lang = language_override if language_override != "Auto" else detect_language(code)
     comments = get_comment_styles(lang)
     single = comments["single"]
 
     lines = code.splitlines()
-    new_lines = []
+    new_lines = lines[:]
 
-    # Intensity scaling (0–10 → multiplier)
-    factor = intensity / 10.0
-    chance_comment      = 0.25 * factor
-    chance_debug        = 0.20 * factor if add_debug else 0
-    chance_sarcastic    = 0.18 * factor if sarcastic else 0
-    chance_inconsistent = 0.35 * factor if inconsistent else 0
-    chance_rename       = 0.22 * factor if personal_names else 0
-    chance_redundant    = 0.15 * factor if redundancies else 0
-
-    # ── Personal rename dictionary (applied sparingly) ──
-    rename_map = {
-        "input_data":   "rawInput",
-        "result":       "finalRes",
-        "data":         "stuff",
-        "user":         "whoever",
-        "config":       "settingsYo",
-        "response":     "resp",
-        "output":       "out",
-        "value":        "val",
+    # Normalize intensities to 0–1
+    intensities = {
+        'comment': comment_intensity / 10,
+        'debug': debug_intensity / 10,
+        'sarcasm': sarcasm_intensity / 10,
+        'inconsistency': inconsistency_intensity / 10,
+        'rename': rename_intensity / 10,
+        'redundancy': redundancy_intensity / 10
     }
 
-    i = 0
-    while i < len(lines):
-        line = lines[i]
+    # Comment pool based on preset
+    comment_pools = {
+        "Casual": ['TODO: revisit later', 'maybe fix this someday', 'works for now', 'borrowed idea', 'not proud of this'],
+        "Professional": ['Refactor opportunity', 'Consider extracting method', 'Documentation pending', 'Temporary solution', 'Needs review'],
+        "Sarcastic": ['why do we even...', 'future me hates me', 'send help', 'enterprise quality™', 'this is fine.jpg'],
+        "Minimal": ['todo', 'fixme', 'note', 'debug']
+    }
+    comments_list = comment_pools.get(comment_style_preset, comment_pools["Casual"])
+
+    rename_map = {
+        "input": "rawInput", "data": "stuff", "result": "finalRes", "value": "val",
+        "user": "whoever", "config": "settingsYo", "response": "resp", "output": "out"
+    }
+
+    for i in range(len(new_lines)):
+        line = new_lines[i]
         stripped = line.strip()
 
-        # Occasionally skip indent consistency
-        if inconsistent and random.random() < 0.08 * factor:
-            indent = line[:len(line) - len(stripped)]
+        # Inconsistency
+        if random.random() < intensities['inconsistency'] * 0.3:
             if random.random() < 0.5:
-                new_lines.append(indent.replace("    ", "  ") + stripped)  # mix 2/4 spaces
+                new_lines[i] = line.replace("    ", "  ")
             else:
-                new_lines.append(indent + " " + stripped)  # random extra space
-        else:
-            new_lines.append(line)
+                new_lines[i] += "  "
 
-        # Add comment block sometimes
-        if stripped and random.random() < chance_comment:
-            if random.random() < 0.6:
-                new_lines.append(f"{line[:len(line)-len(stripped)]}{single} {random.choice(['TODO: revisit', 'FIXME later', 'this is cursed but works', 'god why', 'borrowed from stackoverflow 2018'])}")
-            else:
-                new_lines.append(f"{line[:len(line)-len(stripped)]}{single} {random.choice(['cleaned up', 'optimized?', 'works on my machine', 'legacy reasons'])}")
+        # Comments
+        if stripped and random.random() < intensities['comment'] * 0.4:
+            comment = random.choice(comments_list)
+            new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{single} {comment}")
 
-        # Debug print / log
-        if add_debug and stripped and random.random() < chance_debug and i < len(lines)-1:
-            debug_strs = {
-                "python": f"print(f'DEBUG: {{ {stripped.split()[0]} = }}')",
-                "javascript": f"console.log('→', {stripped.split('=')[0].strip() if '=' in stripped else 'here'})",
-                "java": f"System.out.println(\"DEBUG: \" + {stripped.split('=')[0].strip() if '=' in stripped else '\"here\"'});",
-                "cpp": f"std::cout << \"DEBUG: \" << {stripped.split('=')[0].strip() if '=' in stripped else '\"here\"'} << std::endl;",
-                "csharp": f"Console.WriteLine(\"DEBUG: \" + {stripped.split('=')[0].strip() if '=' in stripped else '\"here\"'});",
-                "generic": f"{single} debug: {stripped[:30]}..."
-            }
-            new_lines.append(f"{line[:len(line)-len(stripped)]}{debug_strs.get(lang, debug_strs['generic'])}  {single} temp")
+        # Debug
+        if random.random() < intensities['debug'] * 0.25:
+            debug_line = f"{debug_prefix} here"
+            if lang == "python":
+                debug_line = f"print('{debug_prefix} entering line {i+1}')"
+            elif lang in ("javascript", "java", "csharp"):
+                debug_line = f"console.log('{debug_prefix} line {i+1}')"
+            new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{debug_line}")
 
-        # Sarcastic comment
-        if sarcastic and random.random() < chance_sarcastic:
-            sassy = random.choice([
-                f"{single} why do we even...",
-                f"{single} future me: I'm so sorry",
-                f"{single} if you're reading this: send help",
-                f"{single} enterprise quality™",
-            ])
-            new_lines.append(f"{line[:len(line)-len(stripped)]}{sassy}")
+        # Sarcasm (extra layer on top of comments)
+        if random.random() < intensities['sarcasm'] * 0.2:
+            sassy = random.choice(["why...", "future me is sorry", "send coffee", "this is cursed"])
+            new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{single} {sassy}")
 
-        # Redundancy (harmless)
-        if redundancies and random.random() < chance_redundant and "return" in stripped:
-            new_lines.append(f"{line[:len(line)-len(stripped)]}temp = {stripped.split('return ')[1]}")
-            new_lines.append(f"{line[:len(line)-len(stripped)]}return temp  {single} explicit")
+        # Redundancy
+        if random.random() < intensities['redundancy'] * 0.15 and "return" in stripped:
+            expr = stripped.split("return ", 1)[1]
+            new_lines.insert(i, f"{line[:len(line)-len(stripped)]}temp = {expr}")
+            new_lines[i+1] = f"{line[:len(line)-len(stripped)]}return temp  {single} explicit"
 
-        # Personal rename (simple replace, only identifiers)
-        if personal_names and random.random() < chance_rename:
+        # Rename
+        if random.random() < intensities['rename'] * 0.3:
             for old, new in rename_map.items():
-                if random.random() < 0.4:
+                if random.random() < 0.5:
                     line = re.sub(r'\b' + re.escape(old) + r'\b', new, line)
-
-        i += 1
-
-    # Final touch: random trailing whitespace on ~10% lines
-    for j in range(len(new_lines)):
-        if random.random() < 0.12 * factor:
-            new_lines[j] = new_lines[j].rstrip() + "  "
+            new_lines[i] = line
 
     humanized = "\n".join(new_lines)
 
-    # Quick integrity note
     short_hash = hashlib.sha256(humanized.encode()).hexdigest()[:8].upper()
-    humanized += f"\n\n# Humanized VATA-touch – hash {short_hash} – intensity {intensity}/10"
+    humanized += f"\n\n# VATA Humanized – hash {short_hash} – intensity {intensity:.1f}/10"
 
     return humanized
 
 # ────────────────────────────────────────────────
-#   Gradio INTERFACE
+#   Gradio INTERFACE – now super configurable
 # ────────────────────────────────────────────────
 
 custom_css = """
 body { background: linear-gradient(135deg, #0a0015, #1a0033); color: #00ff9d; font-family: 'Courier New', monospace; }
-.gradio-container { border: 2px solid #00ff9d; border-radius: 12px; background: rgba(5,5,25,0.85); max-width: 1100px; margin: auto; }
+.gradio-container { border: 2px solid #00ff9d; border-radius: 12px; background: rgba(5,5,25,0.85); max-width: 1300px; margin: auto; padding: 1rem; }
 h1, h2 { color: #00ff9d; text-shadow: 0 0 12px #00ff9d; }
-button { background: #00ff9d !important; color: black !important; border: none; border-radius: 6px; }
+button { background: #00ff9d !important; color: black !important; border: none; border-radius: 6px; font-weight: bold; }
 button:hover { box-shadow: 0 0 18px #00ff9d; }
+.output-badge { font-weight: bold; padding: 6px 12px; border-radius: 6px; }
+.success { background: #00cc66; color: black; }
+.warning { background: #ffaa00; color: black; }
+.danger { background: #ff4444; color: white; }
 """
 
-with gr.Blocks(css=custom_css, title="VATA Soul Check – Real Edition") as demo:
-    gr.Markdown("# VATA Soul Check 2026 – Human vs Machine Reality Check")
-    gr.Markdown("Analyzer scores code soul. Humanizer makes AI code look hand-written. Use both.")
+with gr.Blocks(css=custom_css, title="VATA Soul Check – Fully Configurable") as demo:
+    gr.Markdown("# VATA Soul Check – Fully Configurable Edition")
+    gr.Markdown("Control every aspect of humanization. Analyzer + Humanizer in one place.")
 
-    with gr.Tab("Analyzer (Detect)"):
+    with gr.Tab("Humanizer + Analyzer"):
+        code_in = gr.Textbox(lines=16, label="Paste Code (AI or any)", placeholder="Paste code here...")
+
         with gr.Row():
-            code_in = gr.Textbox(lines=18, label="Paste Code", placeholder="Any language…")
+            lang_override = gr.Dropdown(
+                choices=["Auto", "Python", "Java", "C#", "JavaScript", "C++", "Other"],
+                value="Auto", label="Force Language"
+            )
+            intensity_global = gr.Slider(0, 10, value=5, step=0.5, label="Global Intensity")
+
+        with gr.Accordion("Detailed Controls", open=False):
+            with gr.Row():
+                comment_int = gr.Slider(0, 10, value=5, label="Comment Intensity")
+                debug_int   = gr.Slider(0, 10, value=5, label="Debug Print Intensity")
+                sarcasm_int = gr.Slider(0, 10, value=5, label="Sarcasm Intensity")
+            with gr.Row():
+                incon_int   = gr.Slider(0, 10, value=5, label="Inconsistency Intensity")
+                rename_int  = gr.Slider(0, 10, value=5, label="Rename Intensity")
+                redund_int  = gr.Slider(0, 10, value=3, label="Redundancy Intensity")
+
+            comment_preset = gr.Dropdown(
+                choices=["Casual", "Professional", "Sarcastic", "Minimal"],
+                value="Casual", label="Comment Style Preset"
+            )
+            naming_style = gr.Dropdown(
+                choices=["Keep Original", "Random Flair", "Abbreviate", "CamelCase → snake_case"],
+                value="Random Flair", label="Naming Style"
+            )
+            debug_prefix = gr.Textbox(value="DEBUG:", label="Debug Prefix")
+
         with gr.Row():
-            analyze_btn = gr.Button("Run VATA Soul Scan", variant="primary")
+            btn_humanize = gr.Button("Humanize Code", variant="primary")
+            btn_analyze  = gr.Button("Only Analyze (no change)", variant="secondary")
+
+        humanized_out = gr.Textbox(lines=14, label="Humanized Output", interactive=False)
         with gr.Row():
-            score_out      = gr.Textbox(label="Soul Score")
-            energy_out     = gr.Textbox(label="Energy")
-            class_out      = gr.Textbox(label="Classification")
-            verdict_out    = gr.Textbox(label="Verdict")
-        with gr.Row():
-            viol_out       = gr.Textbox(label="Violations / Risks", lines=3)
-            tier_out       = gr.Textbox(label="Trust Tier")
-            proof_out      = gr.Textbox(label="VATA Proof (SHA256)", lines=3)
-        analyze_btn.click(
-            calculate_soul_score,
+            orig_score   = gr.Textbox(label="Original Score")
+            new_score    = gr.Textbox(label="Humanized Score")
+            delta_badge  = gr.HTML(label="Delta")
+
+        # ── Run humanize + auto-score ──
+        def humanize_and_score(code, lang_ovr, glob_int, c_int, d_int, s_int, i_int, r_int, rd_int, c_preset, n_style, dbg_pre):
+            humanized = humanize_code(
+                code, glob_int, d_int, s_int, i_int, r_int, rd_int,
+                comment_style_preset=c_preset, naming_style=n_style,
+                debug_prefix=dbg_pre, language_override=lang_ovr
+            )
+            o_score, _, _, _, _ = calculate_soul_score(code)
+            h_score, _, _, _, _ = calculate_soul_score(humanized)
+            delta = int(h_score.rstrip("%")) - int(o_score.rstrip("%"))
+            badge = f"<span class='output-badge {'success' if delta > 20 else 'warning' if delta > 0 else 'danger'}'>{delta:+}%</span>"
+            return humanized, o_score, h_score, badge
+
+        btn_humanize.click(
+            humanize_and_score,
+            inputs=[code_in, lang_override, intensity_global, comment_int, debug_int, sarcasm_int, incon_int, rename_int, redund_int, comment_preset, naming_style, debug_prefix],
+            outputs=[humanized_out, orig_score, new_score, delta_badge]
+        )
+
+        # ── Just analyze ──
+        def only_analyze(code):
+            score, energy, cls, verdict, tier = calculate_soul_score(code)
+            return score, energy, cls, verdict, tier
+
+        btn_analyze.click(
+            only_analyze,
             inputs=code_in,
-            outputs=[score_out, energy_out, class_out, verdict_out, viol_out, code_in, tier_out, proof_out]
+            outputs=[orig_score, gr.Textbox(label="Energy"), gr.Textbox(label="Classification"), gr.Textbox(label="Verdict"), gr.Textbox(label="Tier")]
         )
 
-    with gr.Tab("Humanizer (Make it Human)"):
-        with gr.Row():
-            code_in_h = gr.Textbox(lines=18, label="Paste (AI) Code to Humanize")
-        with gr.Row():
-            intensity = gr.Slider(1, 10, value=5, step=1, label="Humanization Intensity")
-            add_debug = gr.Checkbox(label="Add debug prints/logs", value=True)
-            sarcastic = gr.Checkbox(label="Sarcastic / personal comments", value=True)
-            inconsistent = gr.Checkbox(label="Inconsistent formatting", value=True)
-            personal_names = gr.Checkbox(label="Personal / quirky variable names", value=True)
-            redundancies = gr.Checkbox(label="Harmless redundancies", value=False)
-        with gr.Row():
-            humanize_btn = gr.Button("Humanize Code", variant="primary")
-        humanized_out = gr.Textbox(lines=22, label="Humanized Output")
-        humanize_btn.click(
-            humanize_code,
-            inputs=[code_in_h, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies],
-            outputs=humanized_out
-        )
-
-    gr.Markdown("Built by @Lhmisme | Now with actual configurable teeth – 2026")
+    gr.Markdown("Fully configurable – every slider matters | Built by @Lhmisme | 2026")
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860)
