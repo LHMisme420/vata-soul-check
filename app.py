@@ -1,472 +1,187 @@
 import gradio as gr
-import re
-import random
-import statistics
-import hashlib
-import time
-import requests
-import json
-from collections import Counter
+import os
+import traceback
+import warnings
 
-# ────────────────────────────────────────────────
-# LANGUAGE & COMMENT HELPERS
-# ────────────────────────────────────────────────
+# Suppress some common warnings from old dependencies
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
-def detect_language(code: str) -> str:
-    code_lower = code.lower()
-    if re.search(r'\b(using\s+system|namespace|class|public|private|protected|static|void|async|await|var|interface|struct|enum|delegate|event)\b', code_lower):
-        return "csharp"
-    if re.search(r'\b(public|private|protected|class|interface|enum|extends|implements|import\s+java|package|static|void|final|synchronized)\b', code_lower):
-        return "java"
-    if re.search(r'\b(def|class|import|from\s+\w+\s+import)\b', code_lower):
-        return "python"
-    if re.search(r'\b(function|const|let|var|class|=>)\b', code_lower):
-        return "javascript"
-    if re.search(r'\b(#include|<.*?>|std::|cout|cin)\b', code_lower):
-        return "cpp"
-    return "other"
+try:
+    import numpy as np
+    import pandas as pd
+    import xgboost as xgb
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification
+    import torch
+except ImportError as e:
+    print(f"CRITICAL: Missing required packages - {e}")
+    print("Run: pip install numpy pandas xgboost transformers torch")
+    raise
 
-def get_comment_styles(lang: str):
-    styles = {
-        "python": {"single": "#"},
-        "javascript": {"single": "//"},
-        "java": {"single": "//"},
-        "csharp": {"single": "//"},
-        "cpp": {"single": "//"},
-        "other": {"single": "//"}
-    }
-    return styles.get(lang, styles["other"])
+# ======================
+#  CONFIG & PATHS
+# ======================
+MODEL_PATH = "models/xgboost_soul_model.json"          # adjust if needed
+PERPLEXITY_MODEL = "microsoft/codebert-base"           # or your preferred model
 
-# ────────────────────────────────────────────────
-# ANALYZER – SOUL SCORE + BREAKDOWN
-# ────────────────────────────────────────────────
+# Load tokenizer & model for perplexity (lazy load)
+_perplexity_tokenizer = None
+_perplexity_model = None
 
-def calculate_soul_score(code: str):
-    if not code.strip():
-        return "0%", "Empty", "NO CODE", "REJECTED", "Tier X - Invalid", {
-            "comments": 0, "naming": 0, "complexplexity": 0,
-            "repetition_penalty": 0, "simplicity_penalty": 0, "risk_penalty": 0,
+def load_perplexity_model():
+    global _perplexity_tokenizer, _perplexity_model
+    if _perplexity_tokenizer is None:
+        print("Loading CodeBERT for perplexity calculation...")
+        _perplexity_tokenizer = AutoTokenizer.from_pretrained(PERPLEXITY_MODEL)
+        _perplexity_model = AutoModelForSequenceClassification.from_pretrained(PERPLEXITY_MODEL)
+    return _perplexity_tokenizer, _perplexity_model
+
+# Dummy / placeholder functions → replace with your real logic
+def extract_features(code: str) -> dict:
+    """Your original feature extraction logic goes here"""
+    try:
+        length = len(code)
+        has_comment = "#" in code or "//" in code
+        has_todo = "TODO" in code.upper()
+        
+        # Very naive perplexity simulation (replace with real calculation)
+        tokenizer, model = load_perplexity_model()
+        inputs = tokenizer(code, return_tensors="pt", truncation=True, max_length=512)
+        with torch.no_grad():
+            outputs = model(**inputs)
+        perplexity = float(outputs.logits.abs().mean()) * 10  # dummy value
+        
+        return {
+            "length": length,
+            "comment_entropy": 3.14 if has_comment else 0.0,  # placeholder
+            "perplexity": perplexity,
+            "has_todo": 1 if has_todo else 0,
+            "risky_commands": 0,  # placeholder
         }
+    except Exception as e:
+        print(f"Feature extraction failed: {e}")
+        return {"error": str(e)}
 
-    lang = detect_language(code)
-    lines = code.splitlines()
-    non_empty = [l.strip() for l in lines if l.strip()]
+def score_soul(features: dict) -> tuple[float, str]:
+    """Your XGBoost scoring logic"""
+    try:
+        if "error" in features:
+            return 0.0, "Feature extraction failed"
 
-    # Fixed: use raw string or double backslash to avoid invalid escape warning
-    comments = sum(1 for l in lines if l.strip().startswith(('#', '//', '/*', r'*/', '* ')))
-    markers = len(re.findall(r'\b(TODO|FIXME|HACK|NOTE|BUG|XXX|WTF|DEBUG)\b', code, re.I))
-    comment_bonus = min(comments * 1.8 + markers * 12, 55)
-
-    vars_found = re.findall(r'\b[A-Za-z_][A-Za-z0-9_]{2,}\b', code)
-    exclude = {
-        'def', 'if', 'for', 'return', 'else', 'True', 'False', 'None', 'self',
-        'const', 'let', 'var', 'public', 'private', 'protected', 'static',
-        'void', 'final', 'using', 'namespace', 'async', 'await', 'class',
-        'try', 'except', 'finally', 'catch', 'switch', 'case'
-    }
-    meaningful_vars = [v for v in vars_found if v not in exclude]
-    naming_bonus = 0
-    if meaningful_vars:
-        lengths = [len(v) for v in meaningful_vars]
-        avg = statistics.mean(lengths) if lengths else 0
-        std = statistics.stdev(lengths) if len(lengths) > 1 else 0
-        naming_bonus = min(avg * 4 + std * 8, 35)
-
-    branch_kws_base = ['if ', 'elif ', 'for ', 'while ', 'try:', 'except', 'switch', 'case']
-    branch_kws_java = ['catch', 'final', 'synchronized'] if lang == "java" else []
-    branch_kws_csharp = ['catch', 'finally', 'foreach', 'lock', 'checked', 'unchecked'] if lang == "csharp" else []
-    branches = sum(code.count(kw) for kw in branch_kws_base + branch_kws_java + branch_kws_csharp)
-
-    indent_nesting = sum(max(0, (len(l) - len(l.lstrip())) // 2) for l in lines if l.strip())
-    brace_nesting = code.count('{') - code.count('}')
-    if lang in ("java", "javascript", "cpp", "csharp"):
-        nesting_proxy = indent_nesting + abs(brace_nesting) * 2
-    else:
-        nesting_proxy = indent_nesting
-    complexity_bonus = min((branches * 3 + nesting_proxy * 2), 40)
-
-    stripped_lines = [l.strip() for l in lines if l.strip()]
-    dup_ratio = (
-        sum(c > 1 for c in Counter(stripped_lines).values()) /
-        max(len(stripped_lines), 1)
-        if stripped_lines else 0
-    )
-    repetition_penalty = dup_ratio * -60
-
-    line_lengths = [len(l) for l in non_empty]
-    len_std = statistics.stdev(line_lengths) if len(line_lengths) > 1 else 0
-    simplicity_penalty = -max(0, 30 - len_std * 1.5)
-
-    risky = 0
-    lower = code.lower()
-    dangerous_base = [
-        "eval(", "exec(", "os.system(", "subprocess.", "pickle.load",
-        "rm -rf", "format c:", "del *.*"
-    ]
-    dangerous_java = [
-        "runtime.getruntime().exec(", "processbuilder(",
-        "system.setsecuritymanager(null)", "thread.sleep(", "reflection"
-    ] if lang == "java" else []
-    dangerous_csharp = [
-        "process.start(", "system.diagnostics.process(",
-        "file.delete(", "directory.delete(", "thread.sleep(", "reflection"
-    ] if lang == "csharp" else []
-    secrets = ["password =", "api_key =", "secret =", "token =", "key =", "hardcoded"]
-    bare_except_py = (
-        len(re.findall(r'except\s*(?::|\))', code)) +
-        len(re.findall(r'except\s+[A-Za-z]+\s*:', code))
-    ) > 3
-    bare_catch = (
-        len(re.findall(r'\}\s*catch\s*\(\s*Exception\s*\w*\)\s*\{', code)) > 1
-        if lang in ("java", "csharp") else 0
-    )
-    risky += sum(lower.count(pat) for pat in dangerous_base + dangerous_java + dangerous_csharp + secrets)
-    risky += (bare_except_py + bare_catch) * 2
-    risk_penalty = risky * -25
-
-    total_bonus = comment_bonus + naming_bonus + complexity_bonus
-    total_penalty = repetition_penalty + simplicity_penalty + risk_penalty
-
-    score = 45 + total_bonus + total_penalty
-    score = max(5, min(98, round(score)))
-    score_str = f"{score}%"
-
-    if score >= 82:
-        energy = "Vata Full Soul 🔥"
-    elif score >= 65:
-        energy = "Strong Vata Pulse ⚡"
-    elif score >= 45:
-        energy = "Hybrid Aura ⚖️"
-    else:
-        energy = "Soulless Void 👻"
-
-    if score > 78:
-        cls = "HUMAN"
-    elif score > 50:
-        cls = "MACHINE / HYBRID"
-    else:
-        cls = "AI-TRACED"
-
-    if score >= 78 and risky <= 1:
-        verdict = "VATA APPROVED"
-    elif score >= 45:
-        verdict = "VATA FLAGGED"
-    else:
-        verdict = "VATA REJECTED"
-
-    if risky >= 3:
-        verdict = "VATA BLOCKED - SECURITY VIOLATIONS"
-
-    if score >= 90:
-        tier = "S+ Trusted Artisan"
-    elif score >= 78:
-        tier = "S Solid Human"
-    elif score >= 62:
-        tier = "A Probable Safe"
-    elif score >= 45:
-        tier = "B Needs Eyes"
-    else:
-        tier = "C High Risk"
-
-    breakdown = {
-        "comments": round(comment_bonus, 2),
-        "naming": round(naming_bonus, 2),
-        "complexplexity": round(complexity_bonus, 2),
-        "repetition_penalty": round(repetition_penalty, 2),
-        "simplicity_penalty": round(simplicity_penalty, 2),
-        "risk_penalty": round(risk_penalty, 2),
-    }
-
-    return score_str, energy, cls, verdict, tier, breakdown, lang
-
-# ────────────────────────────────────────────────
-# RULE-BASED HUMANIZER
-# ────────────────────────────────────────────────
-
-def rule_based_humanize(
-    code,
-    intensity=5,
-    comment_intensity=5,
-    debug_intensity=3,
-    sarcasm_intensity=4,
-    inconsistency_intensity=2,
-    rename_intensity=3,
-    redundancy_intensity=2,
-    comment_style_preset="Casual",
-    naming_style="Mixed",
-    debug_prefix="DEBUG:",
-    language_override="Auto"
-):
-    if not code.strip():
-        return code
-
-    lang = language_override if language_override and language_override != "Auto" else detect_language(code)
-    styles = get_comment_styles(lang)
-    single = styles["single"]
-
-    lines = code.splitlines()
-    new_lines = []
-
-    casual_comments = [
-        "quick hack, works for now",
-        "TODO: clean this up later",
-        "not proud of this, but it works",
-        "leaving this as-is for now"
-    ]
-    professional_comments = [
-        "Validate input parameters.",
-        "Handle edge cases and error conditions.",
-        "Optimize this path if it becomes a bottleneck.",
-        "Refactor into smaller functions if this grows."
-    ]
-    sarcastic_comments = [
-        "if this breaks, future me will cry",
-        "magic happens here, don't touch",
-        "yes, this is intentional. probably.",
-        "here be dragons"
-    ]
-
-    if comment_style_preset == "Casual":
-        comment_pool = casual_comments
-    elif comment_style_preset == "Professional":
-        comment_pool = professional_comments
-    elif comment_style_preset == "Sarcastic":
-        comment_pool = sarcastic_comments
-    else:
-        comment_pool = casual_comments + professional_comments + sarcastic_comments
-
-    comment_prob = min(max(comment_intensity / 10.0, 0.0), 1.0)
-    debug_prob = min(max(debug_intensity / 10.0, 0.0), 1.0)
-    redundancy_prob = min(max(redundancy_intensity / 10.0, 0.0), 1.0)
-    inconsistency_prob = min(max(inconsistency_intensity / 10.0, 0.0), 1.0)
-
-    for idx, line in enumerate(lines):
-        stripped = line.strip()
-        new_line = line
-
-        if stripped and random.random() < inconsistency_prob * 0.3:
-            if " " not in new_line:
-                new_line = new_line.replace(" ", "  ", 1)  # small inconsistency
-
-        new_lines.append(new_line)
-
-        if stripped and not stripped.startswith(single) and random.random() < comment_prob * 0.4:
-            comment_text = random.choice(comment_pool)
-            if sarcasm_intensity > 5 and random.random() < 0.4:
-                comment_text = random.choice(sarcastic_comments)
-            new_lines.insert(len(new_lines) - 1, single + " " + comment_text)
-
-        if stripped and any(k in stripped for k in ["=", "return", "if ", "for ", "while "]) and random.random() < debug_prob * 0.3:
-            indent = len(line) - len(line.lstrip())
-            if lang == "python":
-                dbg = f"print('{debug_prefix} line {idx + 1}')"
-            else:
-                dbg = single + f" {debug_prefix} line {idx + 1}"
-            new_lines.append(" " * indent + dbg)
-
-        if stripped.startswith(single) and random.random() < redundancy_prob * 0.2:
-            new_lines.append(new_line)  # duplicate comment sometimes
-
-    return "\n".join(new_lines)
-
-# ────────────────────────────────────────────────
-# GROK API WRAPPER
-# ────────────────────────────────────────────────
-
-def call_grok_api(prompt, api_key, model="grok-beta", max_retries=2, timeout=30):
-    if not api_key or not api_key.strip():
-        return None, "No API key provided - skipping LLM enhancement"
-
-    url = "https://api.x.ai/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {api_key.strip()}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": "You are a senior software engineer who writes realistic, human-feeling code with natural imperfections, personal comments, and soul."},
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.7,
-        "max_tokens": 4096
-    }
-
-    last_error = None
-    for _ in range(max_retries):
-        try:
-            resp = requests.post(url, headers=headers, json=payload, timeout=timeout)
-            if resp.status_code != 200:
-                last_error = f"HTTP {resp.status_code}: {resp.text[:200]}"
-                time.sleep(1.5)
-                continue
-            data = resp.json()
-            return data["choices"][0]["message"]["content"], None
-        except Exception as e:
-            last_error = str(e)
-            time.sleep(1.5)
-
-    return None, f"Grok API failed after retries: {last_error}"
-
-# ────────────────────────────────────────────────
-# MAIN PROCESSING FUNCTION
-# ────────────────────────────────────────────────
-
-def process_code(
-    code,
-    api_key,
-    overall_intensity=5,
-    comment_intensity=5,
-    debug_intensity=3,
-    sarcasm_intensity=4,
-    inconsistency_intensity=2,
-    rename_intensity=3,
-    redundancy_intensity=2,
-    comment_style="Casual",
-    naming_style="Mixed",
-    debug_prefix="DEBUG:",
-    lang_override="Auto"
-):
-    if not code.strip():
-        return "**No code entered.** Paste some soulful chaos!", ""
-
-    score_str, energy, cls, verdict, tier, breakdown, detected_lang = calculate_soul_score(code)
-
-    humanized = rule_based_humanize(
-        code,
-        intensity=overall_intensity,
-        comment_intensity=comment_intensity,
-        debug_intensity=debug_intensity,
-        sarcasm_intensity=sarcasm_intensity,
-        inconsistency_intensity=inconsistency_intensity,
-        rename_intensity=rename_intensity,
-        redundancy_intensity=redundancy_intensity,
-        comment_style_preset=comment_style,
-        naming_style=naming_style,
-        debug_prefix=debug_prefix,
-        language_override=lang_override
-    )
-
-    # Optional LLM polish if key provided
-    llm_result = ""
-    if api_key and api_key.strip():
-        llm_prompt = (
-            f"Take this already lightly humanized code and make it feel even more authentically human-written:\n"
-            f"Add subtle imperfections, varied style, personal touches, maybe a funny or thoughtful comment.\n"
-            f"Keep the logic intact.\n\nCode:\n```\n{humanized}\n```"
-        )
-        enhanced, err = call_grok_api(llm_prompt, api_key)
-        if enhanced:
-            humanized = enhanced.strip()
-            llm_result = "\n**LLM Polish applied via Grok** (extra soul infusion) ✨"
+        # Very minimal dummy model simulation (replace with real loading)
+        if not os.path.exists(MODEL_PATH):
+            print(f"Warning: Model file not found at {MODEL_PATH} → using dummy score")
+            score = 42.0 + features.get("has_todo", 0) * 20
         else:
-            llm_result = f"\n**LLM skipped/error:** {err}"
+            # Real loading example (uncomment when you have the model)
+            # model = xgb.XGBClassifier()
+            # model.load_model(MODEL_PATH)
+            # X = pd.DataFrame([features])
+            # score = model.predict_proba(X)[0][1] * 100
+            score = 55.0  # dummy
 
-    # Fixed: properly closed multi-line f-string
-    md_output = f"""
-**Soul Score:** {score_str}  
-**Energy:** {energy}  
-**Classification:** {cls}  
-**Verdict:** {verdict}  
-**Tier:** {tier}  
+        status = "Soulless Void" if score < 30 else "Low Soul" if score < 60 else "Human-ish" if score < 85 else "Vata Full Soul"
+        return round(score, 1), status
+    except Exception as e:
+        traceback.print_exc()
+        return 0.0, f"Scoring error: {str(e)}"
 
-**Breakdown:**  
-- Comments bonus: +{breakdown['comments']}  
-- Naming chaos: +{breakdown['naming']}  
-- Complexity pulse: +{breakdown['complexplexity']}  
-- Repetition penalty: {breakdown['repetition_penalty']}  
-- Simplicity dock: {breakdown['simplicity_penalty']}  
-- Risk flags: {breakdown['risk_penalty']}  
+def analyze_soul(code: str, grok_api_key: str = ""):
+    """
+    Main function called by Gradio
+    Returns: (status_message, humanized_code, detailed_log)
+    """
+    if not code or not code.strip():
+        return "Please paste some actual code.", "", "Input is empty"
 
-**Humanized Version (Rule-based + optional LLM):**  
+    if len(code) > 30000:
+        return "Code too long (max ~30k characters)", "", "Input too large"
 
-{llm_result}
+    try:
+        features = extract_features(code)
+        score, status = score_soul(features)
+
+        humanized = ""
+        if grok_api_key.strip():
+            humanized = f"# Grok polishing requested (API key provided)\n# (real call not implemented yet)\n{code}\n# Add chaos + personality here"
+
+        detailed = f"""Soul Score: {score}/100
+Status: {status}
+Features extracted:
+{features}
 """
+        return f"{status} ({score}%)", humanized or code, detailed
 
-    return md_output, f"Detected lang: {detected_lang.upper()} | Intensity: {overall_intensity}"
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(tb)
+        return "Analysis crashed", "", f"ERROR:\n{str(e)}\n\n{tb}"
 
-# ────────────────────────────────────────────────
-# GRADIO UI
-# ────────────────────────────────────────────────
+# ======================
+#  GRADIO INTERFACE
+# ======================
+with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
 
-with gr.Blocks(title="VATA Soul Check – Detect & Humanize Code Soul") as demo:
     gr.Markdown("""
-    # VATA – Code Soul Scanner & Humanizer ⚡🌀
-    Paste code on the left → Click **Analyze Soul & Humanize** (or press Enter in code box) → See soul score + humanized version on right.
+    # VATA - Code Soul Scanner & Humanizer 🔥🪬
+
+    Paste code → **Analyze Soul & Humanize** → get soul score + (optional) polished version.
     """)
 
     with gr.Row():
-        with gr.Column(scale=6):
-            code_input = gr.Textbox(
-                label="Input Code (paste your script here)",
-                lines=25,
+        with gr.Column(scale=2):
+            input_code = gr.Textbox(
+                label="Input Code (paste your script)",
+                lines=12,
                 placeholder="def soul_check(code): ... # TODO: add more chaos",
-                elem_id="code-input"
+                value="""# Example PowerShell
+function Get-Soul {
+    param($code)
+    Write-Output "Analyzing soul level..."
+    # TODO: implement real chaos
+}
+Get-Soul -code $PSVersionTable
+""",
             )
 
-            api_key = gr.Textbox(
-                label="xAI Grok API Key (optional – for extra LLM soul polish)",
-                type="password",
-                placeholder="gsk_..."
-            )
+        with gr.Column(scale=1):
+            status_output = gr.Textbox(label="Status", lines=8, interactive=False)
 
-            with gr.Accordion("Humanizer Controls", open=False):
-                overall_intensity = gr.Slider(0, 10, value=5, step=1, label="Overall Intensity")
-                comment_intensity = gr.Slider(0, 10, value=5, step=1, label="Comment Intensity")
-                debug_intensity = gr.Slider(0, 10, value=3, step=1, label="Debug Print Intensity")
-                sarcasm_intensity = gr.Slider(0, 10, value=4, step=1, label="Sarcasm Level")
-                inconsistency_intensity = gr.Slider(0, 10, value=2, step=1, label="Inconsistency (tiny typos)")
-                rename_intensity = gr.Slider(0, 10, value=3, step=1, label="Variable Rename Chaos")
-                redundancy_intensity = gr.Slider(0, 10, value=2, step=1, label="Redundancy Spice")
+    humanized_output = gr.Textbox(label="Humanized / Polished Code", lines=10)
 
-                comment_style = gr.Dropdown(["Casual", "Professional", "Sarcastic", "Mixed"], value="Casual", label="Comment Style Preset")
-                naming_style = gr.Dropdown(["Mixed", "CamelCase", "snake_case", "Random"], value="Mixed", label="Naming Style")
-                debug_prefix = gr.Textbox(value="DEBUG:", label="Debug Prefix")
-                lang_override = gr.Dropdown(["Auto", "python", "javascript", "java", "csharp", "cpp"], value="Auto", label="Force Language")
-
-        with gr.Column(scale=4):
-            output = gr.Markdown(label="VATA Soul Analysis & Humanized Code")
-            status = gr.Textbox(label="Status", interactive=False)
-
-    analyze_btn = gr.Button("Analyze Soul & Humanize 🔥", variant="primary", scale=2, size="lg")
-
-    # Wire up the button
-    analyze_btn.click(
-        fn=process_code,
-        inputs=[
-            code_input, api_key, overall_intensity, comment_intensity,
-            debug_intensity, sarcasm_intensity, inconsistency_intensity,
-            rename_intensity, redundancy_intensity, comment_style,
-            naming_style, debug_prefix, lang_override
-        ],
-        outputs=[output, status]
-    )
-
-    # Also allow Enter in code box to trigger
-    code_input.submit(
-        fn=process_code,
-        inputs=[
-            code_input, api_key, overall_intensity, comment_intensity,
-            debug_intensity, sarcasm_intensity, inconsistency_intensity,
-            rename_intensity, redundancy_intensity, comment_style,
-            naming_style, debug_prefix, lang_override
-        ],
-        outputs=[output, status]
-    )
-
-    # Optional: live preview on major changes (but button is king)
-    for slider in [overall_intensity, comment_intensity, sarcasm_intensity]:
-        slider.change(
-            fn=process_code,
-            inputs=[
-                code_input, api_key, overall_intensity, comment_intensity,
-                debug_intensity, sarcasm_intensity, inconsistency_intensity,
-                rename_intensity, redundancy_intensity, comment_style,
-                naming_style, debug_prefix, lang_override
-            ],
-            outputs=output
+    with gr.Row():
+        api_key = gr.Textbox(
+            label="xAI Grok API Key (optional – for extra LLM soul polish)",
+            placeholder="gsk_...",
+            type="password",
+            scale=1
         )
 
-demo.launch()
-    
+    gr.Markdown("---")
+
+    analyze_btn = gr.Button("Analyze Soul & Humanize 🔥", variant="primary", scale=0)
+
+    # Wire everything
+    analyze_btn.click(
+        fn=analyze_soul,
+        inputs=[input_code, api_key],
+        outputs=[status_output, humanized_output, gr.State()]  # last one can be hidden log
+    )
+
+    # Also trigger on Shift+Enter
+    input_code.submit(
+        fn=analyze_soul,
+        inputs=[input_code, api_key],
+        outputs=[status_output, humanized_output, gr.State()]
+    )
+
+if __name__ == "__main__":
+    print("Starting VATA Soul Check ...")
+    print(f"Python: {sys.version}")
+    print(f"Torch: {torch.__version__ if 'torch' in globals() else 'not imported'}")
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False,          # change to True only for temporary public link
+        debug=False
+    )
