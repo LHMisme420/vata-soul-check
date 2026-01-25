@@ -14,7 +14,7 @@ from pathlib import Path
 from difflib import unified_diff
 
 # ────────────────────────────────────────────────
-#   HELPERS (unchanged)
+#   HELPERS
 # ────────────────────────────────────────────────
 
 def detect_language(code: str) -> str:
@@ -41,7 +41,7 @@ def get_comment_styles(lang: str):
 SUPPORTED_EXTS = {".py", ".java", ".cs", ".js", ".cpp", ".hpp", ".ts"}
 
 # ────────────────────────────────────────────────
-#   ANALYZER (with extra safety)
+#   ANALYZER
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
@@ -80,7 +80,7 @@ def calculate_soul_score(code: str):
     total_bonus = comment_bonus + naming_bonus + complexity_bonus
 
     stripped_lines = [l.strip() for l in lines if l.strip()]
-    dup_ratio = sum(c > 1 for c in Counter(stripped_lines).values()) / max(len(stripped_lines), 1) if stripped_lines else 0
+    dup_ratio = sum(c > 1 for c in Counter(stripped_lines).values()) / max(len(stripped_lines), 1)
     repetition_penalty = dup_ratio * -60
 
     line_lengths = [len(l) for l in non_empty]
@@ -116,7 +116,7 @@ def calculate_soul_score(code: str):
     return score_str, energy, cls, verdict, tier, risky
 
 # ────────────────────────────────────────────────
-#   STYLE FINGERPRINT (unchanged)
+#   STYLE FINGERPRINT
 # ────────────────────────────────────────────────
 
 def compute_style_fingerprint(code: str):
@@ -128,7 +128,7 @@ def compute_style_fingerprint(code: str):
         return {"comment_density": 0.15, "line_std": 15, "tab_ratio": 0.5, "var_entropy": 3.0}
 
     comment_lines = sum(1 for l in lines if l.strip().startswith(('#', '//', '/*', '*', '"""', "'''")))
-    comment_density = comment_lines / len(lines)
+    comment_density = comment_lines / len(lines) if len(lines) > 0 else 0.15
 
     line_lengths = [len(l) for l in lines]
     line_std = statistics.stdev(line_lengths) if len(line_lengths) > 1 else 15
@@ -142,7 +142,8 @@ def compute_style_fingerprint(code: str):
     if vars_found:
         lengths = [len(v) for v in vars_found]
         counts = Counter(lengths)
-        entropy = -sum((c / len(lengths)) * math.log2(c / len(lengths) + 1e-10) for c in counts.values())
+        p = [c / len(lengths) for c in counts.values()]
+        entropy = -sum(pi * math.log2(pi) for pi in p if pi > 0)
 
     return {
         "comment_density": comment_density,
@@ -152,7 +153,7 @@ def compute_style_fingerprint(code: str):
     }
 
 # ────────────────────────────────────────────────
-#   HUMANIZER (unchanged)
+#   HUMANIZER
 # ────────────────────────────────────────────────
 
 def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, inconsistent: bool, personal_names: bool, redundancies: bool, ref_fingerprint=None):
@@ -177,15 +178,21 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
     else:
         chance_comment = base_chance_comment * factor
 
-    chance_debug        = 0.20 * factor if add_debug else 0
-    chance_sarcastic    = 0.18 * factor if sarcastic else 0
+    chance_debug = 0.20 * factor if add_debug else 0
+    chance_sarcastic = 0.18 * factor if sarcastic else 0
     chance_inconsistent = 0.35 * factor if inconsistent else 0
-    chance_rename       = 0.22 * factor if personal_names else 0
-    chance_redundant    = 0.15 * factor if redundancies else 0
+    chance_rename = 0.22 * factor if personal_names else 0
+    chance_redundant = 0.15 * factor if redundancies else 0
 
     rename_map = {
-        "input_data": "rawInput", "result": "finalRes", "data": "stuff", "user": "whoever",
-        "config": "settingsYo", "response": "resp", "output": "out", "value": "val",
+        "input_data": "rawInput",
+        "result": "finalRes",
+        "data": "stuff",
+        "user": "whoever",
+        "config": "settingsYo",
+        "response": "resp",
+        "output": "out",
+        "value": "val",
     }
 
     i = 0
@@ -234,7 +241,7 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
         if redundancies and random.random() < chance_redundant:
             if "return " in stripped:
                 expr = stripped.split("return ", 1)[1]
-                new_lines.append(f"{line[:len(line)-len(stripped)]}var temp = {expr};")
+                new_lines.append(f"{line[:len(line)-len(stripped)]}temp = {expr};")
                 new_lines.append(f"{line[:len(line)-len(stripped)]}return temp;  {single} explicit")
             elif lang in ("java", "csharp") and random.random() < 0.4:
                 modifier = "final" if lang == "java" else "readonly"
@@ -261,8 +268,7 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
 
     human_score, _, _, _, _, risky = calculate_soul_score(humanized)
 
-    o_score_temp, _, _, _, _, _ = calculate_soul_score(code)
-    o_num = int(o_score_temp.rstrip("%")) if "%" in o_score_temp else 0
+    o_num = int(calculate_soul_score(code)[0].rstrip("%")) if code.strip() else 0
     h_num = int(human_score.rstrip("%"))
     delta = h_num - o_num
     evasion = min(95, max(30, 40 + delta * 1.8 - risky * 10))
@@ -277,8 +283,8 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
 # ────────────────────────────────────────────────
 
 def process_zip(zip_path: str, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies, ref_code):
-    if not os.path.isfile(zip_path):
-        raise ValueError("Provided path is not a valid zip file")
+    if not zip_path or not os.path.isfile(zip_path):
+        raise ValueError("Invalid zip path")
 
     ref_fingerprint = compute_style_fingerprint(ref_code) if ref_code else None
 
@@ -304,12 +310,12 @@ def process_zip(zip_path: str, intensity, add_debug, sarcastic, inconsistent, pe
                     with open(out_path, 'w', encoding='utf-8') as f:
                         f.write(humanized)
 
-        output_zip_path = os.path.join(tmp_dir, "humanized_output.zip")
+        output_zip_path = os.path.join(tmp_dir, "humanized.zip")
         shutil.make_archive(output_zip_path[:-4], 'zip', output_dir)
         return output_zip_path
 
 # ────────────────────────────────────────────────
-#   DIFF & EXPORT
+#   DIFF & EXPORT HELPERS
 # ────────────────────────────────────────────────
 
 def generate_html_diff(original, humanized):
@@ -337,7 +343,12 @@ def generate_patch(original, humanized, filename="code.py"):
     return "".join(patch_lines)
 
 def suggest_commit_message(delta, evasion):
-    change = "significantly humanized" if delta > 30 else "humanized" if delta > 10 else "lightly adjusted"
+    if delta > 30:
+        change = "significantly humanized"
+    elif delta > 10:
+        change = "humanized"
+    else:
+        change = "lightly adjusted"
     return f"chore: {change} AI-generated code (VATA evasion ~{evasion})"
 
 # ────────────────────────────────────────────────
@@ -359,7 +370,7 @@ def apply_preset(preset):
         return 5, True, True, True, True, False
 
 # ────────────────────────────────────────────────
-#   INTERFACE – FIXED VERSION
+#   Gradio INTERFACE
 # ────────────────────────────────────────────────
 
 custom_css = """
@@ -372,103 +383,38 @@ button:hover { box-shadow: 0 0 18px #00ff9d; }
 .success { background: #00cc66; color: black; }
 .warning { background: #ffaa00; color: black; }
 .danger { background: #ff4444; color: white; }
+.diff-container { background: #0d001a; border: 1px solid #00ff9d; border-radius: 8px; padding: 12px; }
 """
 
-with gr.Blocks(css=custom_css, title="VATA Soul Check – Fixed") as demo:
-    gr.Markdown("# VATA Soul Check – Fixed & Working (No File Caching Crash)")
-    gr.Markdown("Single mode now safe. Zip mode has strict checks. Factory Reboot after update.")
+with gr.Blocks(css=custom_css, title="VATA Soul Check – Phase 3") as demo:
+    gr.Markdown("# VATA Soul Check 2026 – Human vs Machine Reality Check")
+    gr.Markdown("Analyzer scores code soul. Humanizer makes AI code look hand-written. Use both.")
 
-    with gr.Tab("Humanizer"):
+    with gr.Tab("Analyzer (Detect)"):
+        code_in = gr.Textbox(lines=18, label="Paste Code", placeholder="Any language…")
+        analyze_btn = gr.Button("Run VATA Soul Scan", variant="primary")
         with gr.Row():
-            input_mode = gr.Radio(["Single Code", "Zip File"], value="Single Code", label="Input Mode")
+            score_out = gr.Textbox(label="Soul Score")
+            energy_out = gr.Textbox(label="Energy")
+            class_out = gr.Textbox(label="Classification")
+            verdict_out = gr.Textbox(label="Verdict")
+        tier_out = gr.Textbox(label="Trust Tier")
+        analyze_btn.click(calculate_soul_score, inputs=code_in, outputs=[score_out, energy_out, class_out, verdict_out, tier_out, gr.Textbox(visible=False)])
 
-        code_in_h = gr.Textbox(lines=10, label="Paste Code", visible=True)
-        zip_in = gr.File(label="Upload Zip (.zip only)", file_types=[".zip"], visible=False)
-
-        ref_code = gr.Textbox(lines=6, label="Reference Human Code (optional – paste to match style)")
-
+    with gr.Tab("Humanizer (Make it Human)"):
+        code_in_h = gr.Textbox(lines=18, label="Paste (AI) Code to Humanize")
         with gr.Row():
-            preset_dropdown = gr.Dropdown(
-                choices=["Custom", "Burned-out Senior", "Enterprise Corporate", "Junior Enthusiast", "Minimal Clean Human", "Aggressive Undetectable"],
-                value="Custom", label="Preset"
-            )
-            intensity = gr.Slider(1, 10, value=5, step=1, label="Intensity")
+            intensity = gr.Slider(1, 10, value=5, step=1, label="Humanization Intensity")
+            add_debug = gr.Checkbox(label="Add debug prints/logs", value=True)
+            sarcastic = gr.Checkbox(label="Sarcastic / personal comments", value=True)
+            inconsistent = gr.Checkbox(label="Inconsistent formatting", value=True)
+            personal_names = gr.Checkbox(label="Personal / quirky variable names", value=True)
+            redundancies = gr.Checkbox(label="Harmless redundancies", value=False)
+        humanize_btn = gr.Button("Humanize Code", variant="primary")
+        humanized_out = gr.Textbox(lines=22, label="Humanized Output")
+        humanize_btn.click(humanize_code, inputs=[code_in_h, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies], outputs=humanized_out)
 
-        with gr.Row():
-            add_debug = gr.Checkbox(label="Debug prints", value=True)
-            sarcastic = gr.Checkbox(label="Sarcastic comments", value=True)
-            inconsistent = gr.Checkbox(label="Inconsistent format", value=True)
-            personal_names = gr.Checkbox(label="Quirky names", value=True)
-            redundancies = gr.Checkbox(label="Redundancies", value=False)
-
-        humanize_btn = gr.Button("Run Humanize + Analyze", variant="primary")
-
-        # Outputs
-        humanized_out = gr.Textbox(lines=8, label="Humanized Code (single mode)")
-        original_score = gr.Textbox(label="Original Score")
-        humanized_score = gr.Textbox(label="Humanized Score")
-        evasion_conf = gr.Textbox(label="Est. Evasion %")
-        delta_badge = gr.HTML(label="Improvement")
-
-        zip_download = gr.File(label="Download Humanized Zip", visible=False)  # conditional
-
-        with gr.Accordion("Diff & Share", open=False):
-            diff_html = gr.HTML(label="Visual Diff")
-            patch_out = gr.Textbox(lines=8, label="Git Patch", interactive=False)
-            commit_suggest = gr.Textbox(label="Suggested Commit Message")
-            proof_md = gr.Textbox(lines=6, label="Proof Card (copy to share)", interactive=False)
-
-        def toggle_mode(mode):
-            return (
-                gr.update(visible=mode == "Single Code"),
-                gr.update(visible=mode == "Zip File"),
-                gr.update(visible=mode == "Zip File")  # show zip download only in zip mode
-            )
-
-        input_mode.change(toggle_mode, input_mode, [code_in_h, zip_in, zip_download])
-
-        preset_dropdown.change(
-            apply_preset,
-            preset_dropdown,
-            [intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies]
-        )
-
-        def run_process(mode, code, zip_file, ref, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val):
-            ref_fp = compute_style_fingerprint(ref) if ref else None
-
-            if mode == "Single Code":
-                if not code.strip():
-                    return "", "0%", "0%", "0%", "<span class='danger'>No code</span>", "<pre>No diff</pre>", "", "", ""
-                humanized, h_score, _, evasion = humanize_code(code, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref_fp)
-                o_score, _, _, _, _, risky = calculate_soul_score(code)
-                o_num = int(o_score.rstrip("%")) if "%" in o_score else 0
-                h_num = int(h_score.rstrip("%"))
-                delta = h_num - o_num
-                badge = f"<span class='output-badge {'success' if delta > 20 else 'warning' if delta > 5 else 'danger'}'>{delta:+}%</span>"
-                diff = generate_html_diff(code, humanized)
-                patch = generate_patch(code, humanized)
-                commit = suggest_commit_message(delta, evasion)
-                proof = f"VATA Proof: Original {o_score} → Humanized {h_score} (Δ {delta:+}%) | Evasion {evasion}% | Intensity {intensity_val}"
-
-                return humanized, o_score, h_score, evasion, badge, diff, patch, commit, proof
-
-            else:  # Zip mode
-                if not zip_file or not hasattr(zip_file, 'path') or not os.path.isfile(zip_file.path):
-                    return "Invalid or no zip uploaded", "Error", "Error", "Error", "<span class='danger'>Invalid zip</span>", "<pre>No diff</pre>", "", "", ""
-                try:
-                    zip_path = zip_file.path
-                    out_zip = process_zip(zip_path, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref)
-                    return "Zip processed – download below", "N/A", "N/A", "N/A", "<span class='success'>Success</span>", "<pre>Multi-file – no single diff</pre>", "", "chore: humanize zip files", "", out_zip
-                except Exception as e:
-                    return f"Zip error: {str(e)}", "Error", "Error", "Error", f"<span class='danger'>{str(e)}</span>", "<pre>No diff</pre>", "", "", ""
-
-        humanize_btn.click(
-            run_process,
-            [input_mode, code_in_h, zip_in, ref_code, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies],
-            [humanized_out, original_score, humanized_score, evasion_conf, delta_badge, diff_html, patch_out, commit_suggest, proof_md, zip_download]
-        )
-
-    gr.Markdown("Fixed – no more directory caching crash | Test single mode first | @Lhmisme 2026")
+    gr.Markdown("Built by @Lhmisme | Now with actual configurable teeth – 2026")
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860)
