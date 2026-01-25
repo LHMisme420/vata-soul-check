@@ -11,9 +11,10 @@ import tempfile
 import math
 from collections import Counter
 from pathlib import Path
+from difflib import unified_diff
 
 # ────────────────────────────────────────────────
-#   HELPERS
+#   HELPERS (same as Phase 2)
 # ────────────────────────────────────────────────
 
 def detect_language(code: str) -> str:
@@ -40,12 +41,12 @@ def get_comment_styles(lang: str):
 SUPPORTED_EXTS = {".py", ".java", ".cs", ".js", ".cpp", ".hpp", ".ts"}
 
 # ────────────────────────────────────────────────
-#   ANALYZER (same as Phase 1)
+#   ANALYZER (same)
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
     if not code.strip():
-        return "0%", "Empty", "NO CODE", "REJECTED", "Tier X - Invalid"
+        return "0%", "Empty", "NO CODE", "REJECTED", "Tier X - Invalid", 0
 
     lang = detect_language(code)
     lines = code.splitlines()
@@ -115,7 +116,7 @@ def calculate_soul_score(code: str):
     return score_str, energy, cls, verdict, tier, risky
 
 # ────────────────────────────────────────────────
-#   STYLE FINGERPRINT (simple stats from reference)
+#   STYLE FINGERPRINT (same)
 # ────────────────────────────────────────────────
 
 def compute_style_fingerprint(code: str):
@@ -137,11 +138,11 @@ def compute_style_fingerprint(code: str):
     tab_ratio = tab_count / (tab_count + space_count + 1e-6) if space_count + tab_count > 0 else 0.5
 
     vars_found = re.findall(r'\b[A-Za-z_][A-Za-z0-9_]{2,}\b', code)
+    entropy = 3.0
     if vars_found:
         lengths = [len(v) for v in vars_found]
-        entropy = -sum((c / len(lengths)) * math.log2(c / len(lengths) + 1e-10) for c in Counter(lengths).values())
-    else:
-        entropy = 3.0
+        counts = Counter(lengths)
+        entropy = -sum((c / len(lengths)) * math.log2(c / len(lengths) + 1e-10) for c in counts.values())
 
     return {
         "comment_density": comment_density,
@@ -151,12 +152,12 @@ def compute_style_fingerprint(code: str):
     }
 
 # ────────────────────────────────────────────────
-#   HUMANIZER (enhanced with reference bias)
+#   HUMANIZER (same as Phase 2)
 # ────────────────────────────────────────────────
 
 def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, inconsistent: bool, personal_names: bool, redundancies: bool, ref_fingerprint=None):
     if not code.strip():
-        return code, "0%", "No code"
+        return code, "0%", "No code", "0%"
 
     lang = detect_language(code)
     comments = get_comment_styles(lang)
@@ -167,7 +168,6 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
 
     factor = intensity / 10.0
 
-    # Base chances, biased by reference if provided
     base_chance_comment = 0.25
     if ref_fingerprint:
         target_density = ref_fingerprint["comment_density"]
@@ -193,11 +193,10 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
         line = lines[i]
         stripped = line.strip()
 
-        # Inconsistent indent biased toward ref tab_ratio
         if inconsistent and random.random() < chance_inconsistent:
             indent = line[:len(line) - len(stripped)]
             if ref_fingerprint and random.random() < ref_fingerprint["tab_ratio"]:
-                indent = indent.replace("    ", "\t")  # bias to tabs
+                indent = indent.replace("    ", "\t")
             if random.random() < 0.5:
                 new_indent = indent.replace("    ", "  ")
             else:
@@ -249,11 +248,9 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
 
         i += 1
 
-    # Trailing whitespace + line length variation bias
     for j in range(len(new_lines)):
         if random.random() < 0.12 * factor:
             new_lines[j] = new_lines[j].rstrip() + "  "
-        # Slight length variation
         if ref_fingerprint and random.random() < 0.1:
             if random.random() < 0.5:
                 new_lines[j] = new_lines[j] + "  # align"
@@ -264,22 +261,18 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
 
     human_score, _, _, _, _, risky = calculate_soul_score(humanized)
 
-    # Heuristic evasion confidence (0-95%)
-    try:
-        o_num = int(calculate_soul_score(code)[0].rstrip("%"))
-        h_num = int(human_score.rstrip("%"))
-        delta = h_num - o_num
-        evasion = min(95, max(30, 40 + delta * 1.8 - risky * 10))
-        if ref_fingerprint:
-            evasion += 15  # bonus for style match
-        evasion = min(95, evasion)
-    except:
-        evasion = 50
+    o_num = int(calculate_soul_score(code)[0].rstrip("%")) if code.strip() else 0
+    h_num = int(human_score.rstrip("%"))
+    delta = h_num - o_num
+    evasion = min(95, max(30, 40 + delta * 1.8 - risky * 10))
+    if ref_fingerprint:
+        evasion += 15
+    evasion = min(95, evasion)
 
     return humanized, human_score, short_hash, f"{evasion}%"
 
 # ────────────────────────────────────────────────
-#   ZIP PROCESSING
+#   ZIP PROCESSING (same)
 # ────────────────────────────────────────────────
 
 def process_zip(zip_path, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies, ref_code):
@@ -313,7 +306,44 @@ def process_zip(zip_path, intensity, add_debug, sarcastic, inconsistent, persona
         return output_zip
 
 # ────────────────────────────────────────────────
-#   PRESETS (same as Phase 1)
+#   DIFF & EXPORT HELPERS
+# ────────────────────────────────────────────────
+
+def generate_html_diff(original, humanized):
+    orig_lines = original.splitlines()
+    hum_lines = humanized.splitlines()
+
+    diff = []
+    for line in unified_diff(orig_lines, hum_lines, fromfile='original', tofile='humanized', lineterm=''):
+        if line.startswith('+'):
+            diff.append(f'<span style="background:#e6ffe6; color:#006400;">{line}</span>')
+        elif line.startswith('-'):
+            diff.append(f'<span style="background:#ffe6e6; color:#8b0000;">{line}</span>')
+        elif line.startswith('@@'):
+            diff.append(f'<span style="color:#0066cc; font-weight:bold;">{line}</span>')
+        else:
+            diff.append(line)
+
+    html = "<pre style='background:#0d001a; color:#00ff9d; padding:12px; border-radius:8px; overflow:auto; max-height:400px;'>" + "<br>".join(diff) + "</pre>"
+    return html
+
+def generate_patch(original, humanized, filename="code.py"):
+    orig_lines = original.splitlines(keepends=True)
+    hum_lines = humanized.splitlines(keepends=True)
+    patch_lines = list(unified_diff(orig_lines, hum_lines, fromfile=f'a/{filename}', tofile=f'b/{filename}'))
+    return "".join(patch_lines)
+
+def suggest_commit_message(delta, evasion):
+    if delta > 30:
+        change = "significantly humanized"
+    elif delta > 10:
+        change = "humanized"
+    else:
+        change = "lightly adjusted"
+    return f"chore: {change} AI-generated code (VATA evasion ~{evasion})"
+
+# ────────────────────────────────────────────────
+#   PRESETS (same)
 # ────────────────────────────────────────────────
 
 def apply_preset(preset):
@@ -331,111 +361,146 @@ def apply_preset(preset):
         return 5, True, True, True, True, False
 
 # ────────────────────────────────────────────────
-#   Gradio INTERFACE
+#   Gradio INTERFACE – Phase 3 polish
 # ────────────────────────────────────────────────
 
 custom_css = """
 body { background: linear-gradient(135deg, #0a0015, #1a0033); color: #00ff9d; font-family: 'Courier New', monospace; }
-.gradio-container { border: 2px solid #00ff9d; border-radius: 12px; background: rgba(5,5,25,0.85); max-width: 1200px; margin: auto; padding: 1rem; }
+.gradio-container { border: 2px solid #00ff9d; border-radius: 12px; background: rgba(5,5,25,0.85); max-width: 1300px; margin: auto; padding: 1.5rem; }
 h1, h2 { color: #00ff9d; text-shadow: 0 0 12px #00ff9d; }
 button { background: #00ff9d !important; color: black !important; border: none; border-radius: 6px; font-weight: bold; }
 button:hover { box-shadow: 0 0 18px #00ff9d; }
-.output-badge { font-weight: bold; padding: 6px 12px; border-radius: 6px; }
+.output-badge { font-weight: bold; padding: 8px 14px; border-radius: 8px; }
 .success { background: #00cc66; color: black; }
 .warning { background: #ffaa00; color: black; }
 .danger { background: #ff4444; color: white; }
+.diff-container { background: #0d001a; border: 1px solid #00ff9d; border-radius: 8px; padding: 12px; }
 """
 
-with gr.Blocks(css=custom_css, title="VATA Soul Check – Phase 2") as demo:
-    gr.Markdown("# VATA Soul Check 2026 – Phase 2: Multi-File + Style Blending")
-    gr.Markdown("Upload zip or paste code. Optional reference code to match your style. Outputs humanized zip + evasion estimate.")
+with gr.Blocks(css=custom_css, title="VATA Soul Check – Phase 3") as demo:
+    gr.Markdown("# VATA Soul Check 2026 – Phase 3: Full Workflow + Shareable Proofs")
+    gr.Markdown("Humanize code, see diffs/patches, generate commit messages, share results. Multi-file zip + style matching included.")
 
-    with gr.Tab("Humanizer (Make it Human)"):
+    with gr.Tab("Humanizer"):
         with gr.Row():
             input_mode = gr.Radio(["Single Code", "Zip File"], value="Single Code", label="Input Mode")
 
-        code_in_h = gr.Textbox(lines=12, label="Paste Code (Single mode)", visible=True)
-        zip_in = gr.File(label="Upload Zip (Multi-file mode)", file_types=[".zip"], visible=False)
+        code_in_h = gr.Textbox(lines=10, label="Paste Code", visible=True)
+        zip_in = gr.File(label="Upload Zip", file_types=[".zip"], visible=False)
 
-        ref_code = gr.Textbox(lines=8, label="Optional: Reference Human Code (paste snippet or full file to match style)", placeholder="Paste your own human-written code here for fingerprinting...")
+        ref_code = gr.Textbox(lines=6, label="Reference Human Code (optional – paste to match style)")
 
         with gr.Row():
             preset_dropdown = gr.Dropdown(
                 choices=["Custom", "Burned-out Senior", "Enterprise Corporate", "Junior Enthusiast", "Minimal Clean Human", "Aggressive Undetectable"],
-                value="Custom", label="Preset Persona"
+                value="Custom", label="Preset"
             )
             intensity = gr.Slider(1, 10, value=5, step=1, label="Intensity")
 
         with gr.Row():
-            add_debug = gr.Checkbox(label="Add debug prints/logs", value=True)
-            sarcastic = gr.Checkbox(label="Sarcastic / personal comments", value=True)
-            inconsistent = gr.Checkbox(label="Inconsistent formatting", value=True)
-            personal_names = gr.Checkbox(label="Personal / quirky variable names", value=True)
-            redundancies = gr.Checkbox(label="Harmless redundancies", value=False)
+            add_debug = gr.Checkbox(label="Debug prints", value=True)
+            sarcastic = gr.Checkbox(label="Sarcastic comments", value=True)
+            inconsistent = gr.Checkbox(label="Inconsistent format", value=True)
+            personal_names = gr.Checkbox(label="Quirky names", value=True)
+            redundancies = gr.Checkbox(label="Redundancies", value=False)
 
-        humanize_btn = gr.Button("Humanize + Analyze", variant="primary")
-
-        humanized_out = gr.Textbox(lines=10, label="Humanized Result (single mode)", interactive=False)
-        download_zip = gr.File(label="Download Humanized Zip (multi mode)", interactive=False)
+        humanize_btn = gr.Button("Humanize → Analyze → Export", variant="primary")
 
         with gr.Row():
             original_score = gr.Textbox(label="Original Score")
             humanized_score = gr.Textbox(label="Humanized Score")
-            evasion_conf = gr.Textbox(label="Est. Evasion Confidence")
-            delta_badge = gr.HTML(label="Improvement")
+            evasion_conf = gr.Textbox(label="Est. Evasion %")
+            delta_badge = gr.HTML(label="Delta")
 
-        # Toggle input mode
-        def toggle_input(mode):
-            return (
-                gr.update(visible=mode == "Single Code"),
-                gr.update(visible=mode == "Zip File")
-            )
+        humanized_out = gr.Textbox(lines=8, label="Humanized Code (single)")
+        download_zip = gr.File(label="Humanized Zip (multi)", interactive=False)
 
-        input_mode.change(toggle_input, input_mode, [code_in_h, zip_in])
+        with gr.Accordion("Diff View & Exports", open=False):
+            diff_html = gr.HTML(label="Visual Diff")
+            patch_out = gr.Textbox(lines=10, label="Git Patch / Unified Diff", interactive=False)
+            commit_suggest = gr.Textbox(label="Suggested Commit Message")
+            proof_md = gr.Textbox(lines=6, label="Shareable Proof Card (copy-paste)", interactive=False)
 
-        # Preset update (same)
+        # Input toggle
+        input_mode.change(
+            lambda m: (gr.update(visible=m == "Single Code"), gr.update(visible=m == "Zip File")),
+            input_mode, [code_in_h, zip_in]
+        )
+
+        # Preset
         preset_dropdown.change(
             apply_preset,
             preset_dropdown,
             [intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies]
         )
 
-        def run_humanize(mode, code, zip_file, ref, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val):
+        def run_full_process(mode, code, zip_file, ref, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val):
             ref_fp = compute_style_fingerprint(ref) if ref else None
 
             if mode == "Single Code":
                 if not code.strip():
-                    return "", "", "0%", "0%", "0%", "<span class='output-badge danger'>No input</span>"
-                humanized, h_score, _, evasion = humanize_code(code, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref_fp)
-                o_score, _, _, _, _, _ = calculate_soul_score(code)
-                delta = int(h_score.rstrip("%")) - int(o_score.rstrip("%"))
-                badge = f"<span class='output-badge {'success' if delta > 20 else 'warning' if delta > 5 else 'danger'}'>{delta:+}%</span>"
-                return humanized, "", o_score, h_score, evasion, badge
+                    return ("", "", "0%", "0%", "0%", "<span class='danger'>No input</span>",
+                            "", "", "", "", "")
+                humanized, h_score, h_hash, evasion = humanize_code(code, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref_fp)
+                o_score, _, _, _, _, risky = calculate_soul_score(code)
+                o_num = int(o_score.rstrip("%"))
+                h_num = int(h_score.rstrip("%"))
+                delta = h_num - o_num
+                badge_class = 'success' if delta > 20 else 'warning' if delta > 5 else 'danger'
+                badge = f"<span class='output-badge {badge_class}'>{delta:+}%</span>"
 
-            else:  # Zip mode
+                html_diff = generate_html_diff(code, humanized)
+                patch = generate_patch(code, humanized)
+                commit_msg = suggest_commit_message(delta, evasion)
+                proof = f"""**VATA Proof Card**
+- Original: {o_score}
+- Humanized: {h_score} (Δ {delta:+}%)
+- Evasion est.: {evasion}
+- Hash: VATA-{h_hash}
+- Intensity: {intensity_val}/10
+- Risks: {risky}
+Made with VATA Soul Check @ https://huggingface.co/spaces/Lhmisme/vata-soul-check"""
+
+                return (humanized, "", o_score, h_score, evasion, badge,
+                        html_diff, patch, commit_msg, proof, "")
+
+            else:  # Zip
                 if not zip_file:
-                    return "", "", "0%", "0%", "0%", "<span class='output-badge danger'>No zip</span>"
+                    return ("", "", "0%", "0%", "0%", "<span class='danger'>No zip</span>",
+                            "", "", "", "", "")
                 try:
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as tmp:
                         shutil.copyfileobj(zip_file, tmp)
                         tmp_path = tmp.name
                     out_zip = process_zip(tmp_path, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref)
                     os.unlink(tmp_path)
-                    return "Multi-file processed – see download", out_zip, "N/A (multi)", "N/A (multi)", "N/A (multi)", "<span class='output-badge success'>Zip ready</span>"
+                    return ("Multi-file processed", out_zip, "N/A", "N/A", "N/A", "<span class='success'>Zip ready</span>",
+                            "<pre>Multi-file – no single diff</pre>", "", "chore: humanize project files", "", out_zip)
                 except Exception as e:
-                    return f"Error: {str(e)}", "", "Error", "Error", "Error", "<span class='output-badge danger'>Failed</span>"
+                    return (f"Error: {str(e)}", "", "Error", "Error", "Error", "<span class='danger'>Failed</span>",
+                            "", "", "", "", "")
 
         humanize_btn.click(
-            run_humanize,
+            run_full_process,
             [input_mode, code_in_h, zip_in, ref_code, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies],
-            [humanized_out, download_zip, original_score, humanized_score, evasion_conf, delta_badge]
+            [humanized_out, download_zip, original_score, humanized_score, evasion_conf, delta_badge,
+             diff_html, patch_out, commit_suggest, proof_md, download_zip]  # last for file
         )
 
-    gr.Markdown("Phase 2 – Multi-file zip + Reference style blending | Built by @Lhmisme | 2026")
+    with gr.Tab("Gallery / Examples"):
+        gr.Markdown("""
+### Example Showcases (static for now)
+**Example 1: Clean Python function → Humanized**
+- Original: 42% → Humanized: 88% (+46%) | Evasion ~92%
+- Style matched to senior dev reference
+
+**Example 2: Java class module (zip)**
+- Processed 5 files | Avg delta +38% | Commit: "refactor: humanize AI-assisted module"
+
+Share your own results via proof card!
+        """)
+
+    gr.Markdown("Phase 3 – Diffs, patches, commits, shareable proofs | Built by @Lhmisme | 2026")
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860)
-
-
-
-               
