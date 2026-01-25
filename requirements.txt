@@ -1,11 +1,11 @@
+# existing lines ...
+numpy==1.26.4
+pandas==2.2.3
+xgboost==2.1.1
+transformers==4.45.2
+torch==2.4.1
+sentencepiece==0.2.0
+python-dotenv==1.0.1
+tqdm==4.66.5
 gradio>=5.0.0,<6.0
-xgboost>=2.1.0
-numpy>=1.26.4  # or >=2.0.0 if you can test it
-pandas>=2.2,<3.0
-scikit-learn>=1.5,<1.6
-transformers>=4.45,<5.0
-torch>=2.5.0    # ← key change: 2.5+ has better/more 3.13 support
-sentencepiece>=0.2.0
-python-dotenv>=1.0.0
-tqdm>=4.66
-# Remove or comment out any ezkl/onnx/skl2onnx if not actually used yet – they pull heavy deps
+xai-sdk>=1.0.0
