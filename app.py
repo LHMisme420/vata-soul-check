@@ -300,14 +300,16 @@ def full_pipeline(
     # LLM blend (hybrid)
     blended = llm_blend_code(humanized, api_key=api_key)
 
-    combined_output = (
-        f"{score_block}\n\n"
-        f"---\n\n"
-        f"### Rule-based Humanized Code\n\n"
-        f"```python\n{humanized}\n```\n\n"
-        f"---\n\n"
-        f"### LLM Blended Code (Grok Hybrid)\n\n"
-        f"```python\n{blended}\n```"
+    safe_blended = blended.replace("```", "`` `").replace('"""', "''\"")
+combined_output = (
+    f"{score_block}\n\n"
+    f"---\n\n"
+    f"### Rule-based Humanized Code\n\n"
+    f"```python\n{humanized}\n```\n\n"
+    f"---\n\n"
+    f"### LLM Blended Code (Grok Hybrid)\n\n"
+    f"```python\n{safe_blended}\n```"
+)
     )
 
     return combined_output
