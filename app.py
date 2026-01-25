@@ -440,4 +440,32 @@ with gr.Blocks() as demo:
             with gr.Accordion("Humanizer Controls", open=False):
 
                 intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Overall Intensity")
-                comment_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label
+                comment_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Comment Intensity")
+                debug_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Debug Intensity")
+                sarcasm_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Sarcasm Intensity")
+                inconsistency_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Inconsistency Intensity")
+                rename_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Rename Intensity")
+                redundancy_intensity_slider = gr.Slider(0, 10, value=3, step=0.5, label="Redundancy Intensity")
+
+                comment_style_dropdown = gr.Dropdown(
+                    choices=["Casual", "Professional", "Sarcastic", "Minimal"],
+                    value="Casual",
+                    label="Comment Style"
+                )
+
+                naming_style_dropdown = gr.Dropdown(
+                    choices=["Random Flair", "Conservative"],
+                    value="Random Flair",
+                    label="Naming Style"
+                )
+
+                debug_prefix_box = gr.Textbox(
+                    label="Debug Prefix",
+                    value="DEBUG:"
+                )
+
+                language_override_dropdown = gr.Dropdown(
+                    choices=["Auto", "python", "javascript", "java", "csharp", "cpp"],
+                    value="Auto",
+                    label="Language Override"
+                )
