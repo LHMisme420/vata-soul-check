@@ -9,7 +9,7 @@ import json
 from collections import Counter
 
 # ────────────────────────────────────────────────
-#   LANGUAGE & COMMENT HELPERS
+# LANGUAGE & COMMENT HELPERS
 # ────────────────────────────────────────────────
 
 def detect_language(code: str) -> str:
@@ -22,10 +22,9 @@ def detect_language(code: str) -> str:
         return "python"
     if re.search(r'\b(function|const|let|var|class|=>)\b', code_lower):
         return "javascript"
-    if re.search(r'\b#include|<.*?>|std::|cout|cin\b', code_lower):
+    if re.search(r'\b(#include|<.*?>|std::|cout|cin)\b', code_lower):
         return "cpp"
     return "other"
-
 
 def get_comment_styles(lang: str):
     styles = {
@@ -39,25 +38,21 @@ def get_comment_styles(lang: str):
     return styles.get(lang, styles["other"])
 
 # ────────────────────────────────────────────────
-#   ANALYZER – SOUL SCORE + BREAKDOWN
+# ANALYZER – SOUL SCORE + BREAKDOWN
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
     if not code.strip():
         return "0%", "Empty", "NO CODE", "REJECTED", "Tier X - Invalid", {
-            "comments": 0,
-            "naming": 0,
-            "complexplexity": 0,
-            "repetition_penalty": 0,
-            "simplicity_penalty": 0,
-            "risk_penalty": 0,
+            "comments": 0, "naming": 0, "complexplexity": 0,
+            "repetition_penalty": 0, "simplicity_penalty": 0, "risk_penalty": 0,
         }
 
     lang = detect_language(code)
     lines = code.splitlines()
     non_empty = [l.strip() for l in lines if l.strip()]
 
-    comments = sum(1 for l in lines if l.strip().startswith(('#', '//', '/*', '*')))
+    comments = sum(1 for l in lines if l.strip().startswith(('#', '//', '/\*', '\*')))
     markers = len(re.findall(r'\b(TODO|FIXME|HACK|NOTE|BUG|XXX|WTF|DEBUG)\b', code, re.I))
     comment_bonus = min(comments * 1.8 + markers * 12, 55)
 
@@ -98,7 +93,7 @@ def calculate_soul_score(code: str):
     repetition_penalty = dup_ratio * -60
 
     line_lengths = [len(l) for l in non_empty]
-    len_std = statistics.stdev(line_lengths) if len(line_lengths) > 1 else 0
+    len_std = statistics.stdev(line_lengths) if line_lengths > 1 else 0
     simplicity_penalty = -max(0, 30 - len_std * 1.5)
 
     risky = 0
@@ -136,13 +131,13 @@ def calculate_soul_score(code: str):
     score_str = f"{score}%"
 
     if score >= 82:
-        energy = "Vata Full Soul"
+        energy = "Vata Full Soul 🔥"
     elif score >= 65:
-        energy = "Strong Vata Pulse"
+        energy = "Strong Vata Pulse ⚡"
     elif score >= 45:
-        energy = "Hybrid Aura"
+        energy = "Hybrid Aura ⚖️"
     else:
-        energy = "Soulless Void"
+        energy = "Soulless Void 👻"
 
     if score > 78:
         cls = "HUMAN"
@@ -175,31 +170,31 @@ def calculate_soul_score(code: str):
     breakdown = {
         "comments": round(comment_bonus, 2),
         "naming": round(naming_bonus, 2),
-        "complexity": round(complexity_bonus, 2),
+        "complexplexity": round(complexity_bonus, 2),
         "repetition_penalty": round(repetition_penalty, 2),
         "simplicity_penalty": round(simplicity_penalty, 2),
         "risk_penalty": round(risk_penalty, 2),
     }
 
-    return score_str, energy, cls, verdict, tier, breakdown
+    return score_str, energy, cls, verdict, tier, breakdown, lang
 
 # ────────────────────────────────────────────────
-#   RULE-BASED HUMANIZER
+# RULE-BASED HUMANIZER
 # ────────────────────────────────────────────────
 
 def rule_based_humanize(
     code,
-    intensity,
-    comment_intensity,
-    debug_intensity,
-    sarcasm_intensity,
-    inconsistency_intensity,
-    rename_intensity,
-    redundancy_intensity,
-    comment_style_preset,
-    naming_style,
-    debug_prefix,
-    language_override
+    intensity=5,
+    comment_intensity=5,
+    debug_intensity=3,
+    sarcasm_intensity=4,
+    inconsistency_intensity=2,
+    rename_intensity=3,
+    redundancy_intensity=2,
+    comment_style_preset="Casual",
+    naming_style="Mixed",
+    debug_prefix="DEBUG:",
+    language_override="Auto"
 ):
     if not code.strip():
         return code
@@ -237,7 +232,7 @@ def rule_based_humanize(
     elif comment_style_preset == "Sarcastic":
         comment_pool = sarcastic_comments
     else:
-        comment_pool = casual_comments + professional_comments
+        comment_pool = casual_comments + professional_comments + sarcastic_comments
 
     comment_prob = min(max(comment_intensity / 10.0, 0.0), 1.0)
     debug_prob = min(max(debug_intensity / 10.0, 0.0), 1.0)
@@ -249,8 +244,8 @@ def rule_based_humanize(
         new_line = line
 
         if stripped and random.random() < inconsistency_prob * 0.3:
-            if "  " not in new_line:
-                new_line = new_line.replace(" ", "  ", 1)
+            if " " not in new_line:
+                new_line = new_line.replace(" ", "  ", 1)  # small inconsistency
 
         new_lines.append(new_line)
 
@@ -263,215 +258,123 @@ def rule_based_humanize(
         if stripped and any(k in stripped for k in ["=", "return", "if ", "for ", "while "]) and random.random() < debug_prob * 0.3:
             indent = len(line) - len(line.lstrip())
             if lang == "python":
-                dbg = "print('" + debug_prefix + " line " + str(idx + 1) + "')"
+                dbg = f"print('{debug_prefix} line {idx + 1}')"
             else:
-                dbg = single + " " + debug_prefix + " line " + str(idx + 1)
+                dbg = single + f" {debug_prefix} line {idx + 1}"
             new_lines.append(" " * indent + dbg)
 
         if stripped.startswith(single) and random.random() < redundancy_prob * 0.2:
-            new_lines.append(new_line)
+            new_lines.append(new_line)  # duplicate comment sometimes
 
     return "\n".join(new_lines)
 
 # ────────────────────────────────────────────────
-#   GROK API WRAPPER
+# GROK API WRAPPER
 # ────────────────────────────────────────────────
 
 def call_grok_api(prompt, api_key, model="grok-beta", max_retries=2, timeout=30):
     if not api_key or not api_key.strip():
-        return None, "No API key provided"
+        return None, "No API key provided - skipping LLM enhancement"
 
     url = "https://api.x.ai/v1/chat/completions"
     headers = {
-        "Authorization": "Bearer " + api_key.strip(),
+        "Authorization": f"Bearer {api_key.strip()}",
         "Content-Type": "application/json"
     }
 
     payload = {
         "model": model,
         "messages": [
-            {"role": "system", "content": "You are a senior software engineer who writes realistic, human-feeling code."},
+            {"role": "system", "content": "You are a senior software engineer who writes realistic, human-feeling code with natural imperfections, personal comments, and soul."},
             {"role": "user", "content": prompt}
         ],
-        "temperature": 0.6,
+        "temperature": 0.7,
         "max_tokens": 4096
     }
 
     last_error = None
-
     for _ in range(max_retries):
         try:
-            resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=timeout)
+            resp = requests.post(url, headers=headers, json=payload, timeout=timeout)
             if resp.status_code != 200:
-                last_error = "HTTP " + str(resp.status_code)
-                time.sleep(1.0)
+                last_error = f"HTTP {resp.status_code}: {resp.text[:200]}"
+                time.sleep(1.5)
                 continue
             data = resp.json()
             return data["choices"][0]["message"]["content"], None
         except Exception as e:
             last_error = str(e)
-            time.sleep(1.0)
+            time.sleep(1.5)
 
-    return None, "Grok API failed: " + str(last_error)
-
-# ────────────────────────────────────────────────
-#   LLM BLENDING PASS
-# ────────────────────────────────────────────────
-
-def llm_blend_code(code, api_key, model="grok-beta"):
-    if not code.strip():
-        return "No code provided for LLM blending."
-
-    if not api_key.strip():
-        return code + "\nLLM blending skipped: no API key provided"
-
-    prompt = (
-        "You are an expert senior developer with 12+ years of experience. "
-        "The input code has been lightly humanized. "
-        "Keep logic identical. Preserve structure. "
-        "Make comments natural. Keep some imperfections. "
-        "Return ONLY the final code.\n\n"
-        "INPUT CODE:\n" + code
-    )
-
-    blended, error = call_grok_api(prompt, api_key, model=model)
-    if error or blended is None:
-        return code + "\nLLM blending failed: " + str(error)
-
-    safe = blended.replace("```", "`` ").replace("\"\"\"", "''").replace("'''", "'")
-    return safe
+    return None, f"Grok API failed after retries: {last_error}"
 
 # ────────────────────────────────────────────────
-#   FULL PIPELINE
+# MAIN PROCESSING FUNCTION
 # ────────────────────────────────────────────────
 
-def full_pipeline(
+def process_code(
     code,
     api_key,
-    intensity,
-    comment_intensity,
-    debug_intensity,
-    sarcasm_intensity,
-    inconsistency_intensity,
-    rename_intensity,
-    redundancy_intensity,
-    comment_style_preset,
-    naming_style,
-    debug_prefix,
-    language_override
+    overall_intensity=5,
+    comment_intensity=5,
+    debug_intensity=3,
+    sarcasm_intensity=4,
+    inconsistency_intensity=2,
+    rename_intensity=3,
+    redundancy_intensity=2,
+    comment_style="Casual",
+    naming_style="Mixed",
+    debug_prefix="DEBUG:",
+    lang_override="Auto"
 ):
-    score_str, energy, cls, verdict, tier, breakdown = calculate_soul_score(code)
+    if not code.strip():
+        return "**No code entered.** Paste some soulful chaos!", ""
 
-    score_block = (
-        "VATA SOUL SCORE\n"
-        "Score: " + score_str + "\n"
-        "Energy: " + energy + "\n"
-        "Class: " + cls + "\n"
-        "Verdict: " + verdict + "\n"
-        "Tier: " + tier + "\n\n"
-        "BREAKDOWN\n"
-        "Comments: " + str(breakdown["comments"]) + "\n"
-        "Naming: " + str(breakdown["naming"]) + "\n"
-        "Complexity: " + str(breakdown["complexplexity"]) + "\n"
-        "Repetition penalty: " + str(breakdown["repetition_penalty"]) + "\n"
-        "Simplicity penalty: " + str(breakdown["simplicity_penalty"]) + "\n"
-        "Risk penalty: " + str(breakdown["risk_penalty"]) + "\n"
-    )
+    score_str, energy, cls, verdict, tier, breakdown, detected_lang = calculate_soul_score(code)
 
     humanized = rule_based_humanize(
-        code=code,
-        intensity=intensity,
+        code,
+        intensity=overall_intensity,
         comment_intensity=comment_intensity,
         debug_intensity=debug_intensity,
         sarcasm_intensity=sarcasm_intensity,
         inconsistency_intensity=inconsistency_intensity,
         rename_intensity=rename_intensity,
         redundancy_intensity=redundancy_intensity,
-        comment_style_preset=comment_style_preset,
+        comment_style_preset=comment_style,
         naming_style=naming_style,
         debug_prefix=debug_prefix,
-        language_override=language_override
+        language_override=lang_override
     )
 
-    blended = llm_blend_code(humanized, api_key=api_key)
+    # Optional LLM polish if key provided
+    llm_result = ""
+    if api_key and api_key.strip():
+        llm_prompt = (
+            f"Take this already lightly humanized code and make it feel even more authentically human-written:\n"
+            f"Add subtle imperfections, varied style, personal touches, maybe a funny or thoughtful comment.\n"
+            f"Keep the logic intact.\n\nCode:\n``` \n{humanized}\n```"
+        )
+        enhanced, err = call_grok_api(llm_prompt, api_key)
+        if enhanced:
+            humanized = enhanced.strip()
+            llm_result = "\n**LLM Polish applied via Grok** (extra soul infusion) ✨"
+        else:
+            llm_result = f"\n**LLM skipped/error:** {err}"
 
-    blended_safe = (
-        blended.replace("```", "`` ")
-        .replace("\"\"\"", "''")
-        .replace("'''", "'")
-    )
+    md_output = f"""
+**Soul Score:** {score_str}  
+**Energy:** {energy}  
+**Classification:** {cls}  
+**Verdict:** {verdict}  
+**Tier:** {tier}  
 
-    output = (
-        score_block +
-        "\n----------------------------------------\n\n"
-        "RULE-BASED HUMANIZED CODE\n\n" +
-        humanized +
-        "\n\n----------------------------------------\n\n"
-        "LLM BLENDED CODE (GROK)\n\n" +
-        blended_safe
-    )
+**Breakdown:**  
+- Comments bonus: +{breakdown['comments']}  
+- Naming chaos: +{breakdown['naming']}  
+- Complexity pulse: +{breakdown['complexplexity']}  
+- Repetition penalty: {breakdown['repetition_penalty']}  
+- Simplicity dock: {breakdown['simplicity_penalty']}  
+- Risk flags: {breakdown['risk_penalty']}  
 
-    return output
-
-# ────────────────────────────────────────────────
-#   GRADIO UI
-# ────────────────────────────────────────────────
-
-with gr.Blocks() as demo:
-
-    gr.Markdown("VATA – Code Soul Scanner & Humanizer\nPaste code on the left. Output appears on the right.")
-
-    with gr.Row():
-
-        with gr.Column(scale=1):
-
-            code_input = gr.Textbox(
-                label="Input Code",
-                lines=25,
-                placeholder="Paste your code here..."
-            )
-
-            api_key_input = gr.Textbox(
-                label="XAI Grok API Key",
-                type="password",
-                placeholder="sk-..."
-            )
-
-            with gr.Accordion("Humanizer Controls", open=False):
-
-                intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Overall Intensity")
-                comment_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Comment Intensity")
-                debug_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Debug Intensity")
-                sarcasm_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Sarcasm Intensity")
-                inconsistency_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Inconsistency Intensity")
-                rename_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Rename Intensity")
-                redundancy_intensity_slider = gr.Slider(0, 10, value=3, step=0.5, label="Redundancy Intensity")
-
-                comment_style_dropdown = gr.Dropdown(
-                    choices=["Casual", "Professional", "Sarcastic", "Minimal"],
-                    value="Casual",
-                    label="Comment Style"
-                )
-
-                naming_style_dropdown = gr.Dropdown(
-                    choices=["Random Flair", "Conservative"],
-                    value="Random Flair",
-                    label="Naming Style"
-                )
-
-                debug_prefix_box = gr.Textbox(
-                    label="Debug Prefix",
-                    value="DEBUG:"
-                )
-
-                language_override_dropdown = gr.Dropdown(
-                    choices=["Auto", "python", "javascript", "java", "csharp", "cpp"],
-                    value="Auto",
-                    label="Language Override"
-                )
-                # ────────────────────────────────────────────────
-#   MAIN ENTRY
-# ────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    demo.launch()
+**Humanized Version (Rule-based + optional LLM):**  
