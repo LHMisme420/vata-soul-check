@@ -4,7 +4,6 @@ import traceback
 import warnings
 import sys
 
-# Suppress noisy warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -17,12 +16,12 @@ try:
     from xai_sdk import Client
     from xai_sdk.chat import user, system
 except ImportError as e:
-    print(f"CRITICAL IMPORT ERROR: {e}")
-    print("Install missing: pip install numpy pandas xgboost transformers torch xai-sdk")
+    print(f"CRITICAL: Missing required packages - {e}")
+    print("Run: pip install numpy pandas xgboost transformers torch xai-sdk")
     raise
 
 # Config
-MODEL_PATH = "models/xgboost_soul_model.json"  # your trained XGBoost model (if exists)
+MODEL_PATH = "models/xgboost_soul_model.json"
 PERPLEXITY_MODEL = "microsoft/codebert-base"
 
 _perplexity_tokenizer = None
@@ -36,7 +35,6 @@ def load_perplexity_model():
         _perplexity_model = AutoModelForSequenceClassification.from_pretrained(PERPLEXITY_MODEL)
     return _perplexity_tokenizer, _perplexity_model
 
-# Feature extraction (basic placeholder — expand later with real AST/entropy)
 def extract_features(code: str) -> dict:
     try:
         length = len(code)
@@ -47,7 +45,7 @@ def extract_features(code: str) -> dict:
         inputs = tokenizer(code, return_tensors="pt", truncation=True, max_length=512)
         with torch.no_grad():
             outputs = model(**inputs)
-        perplexity = float(outputs.logits.abs().mean()) * 10  # naive proxy
+        perplexity = float(outputs.logits.abs().mean()) * 10
 
         return {
             "length": length,
@@ -60,7 +58,6 @@ def extract_features(code: str) -> dict:
         print(f"[FEATURES] Error: {e}")
         return {"error": str(e)}
 
-# Soul scoring (placeholder until real model file is uploaded)
 def score_soul(features: dict) -> tuple[float, str]:
     if "error" in features:
         return 0.0, "Feature extraction failed"
@@ -69,75 +66,74 @@ def score_soul(features: dict) -> tuple[float, str]:
         print("[SCORE] No model file → using dummy logic")
         score = 50.0 + features.get("has_todo", 0) * 25 + features.get("comment_entropy", 0) * 5
     else:
-        # Real XGBoost (uncomment when model exists)
+        # Uncomment when you upload real model
         # model = xgb.XGBClassifier()
         # model.load_model(MODEL_PATH)
         # score = model.predict_proba(pd.DataFrame([features]))[0][1] * 100
-        score = 65.0  # dummy fallback
+        score = 65.0
 
     status = "Soulless Void" if score < 30 else "Low Soul" if score < 60 else "Human-ish" if score < 85 else "Vata Full Soul"
     return round(score, 1), status
 
-# Real Grok humanization
 def humanize_with_grok(code: str, api_key: str) -> str:
     if not api_key.strip():
-        return code + "\n\n# No xAI Grok API key entered → original code kept"
+        return code + "\n\n# No xAI Grok API key provided"
 
     print(f"[GROK] Starting call | Key prefix: {api_key[:6]}...")
 
     try:
         client = Client(api_key=api_key.strip(), timeout=120)
 
-        # Model order: prefer stable/available ones first (Jan 2026 reality)
         models_to_try = ["grok-beta", "grok-3-mini", "grok-4"]
 
         for model_name in models_to_try:
             try:
-                print(f"[GROK] Trying: {model_name}")
+                print(f"[GROK] Trying model: {model_name}")
                 chat = client.chat.create(model=model_name)
 
                 chat.append(system(
-                    "You are a passionate, eccentric developer with real soul and personality in your code. "
-                    "Rewrite the given code to feel hand-crafted: add witty/sarcastic comments, slight imperfections, "
-                    "creative names, artistic structure, a dash of chaos/flair — but keep it fully functional "
-                    "and in the original language. Output ONLY the rewritten code. No explanations, no fences."
+                    "You are a quirky, passionate senior developer with real soul in your code. "
+                    "Rewrite the given code to feel authentically hand-written: add witty or sarcastic comments, "
+                    "subtle imperfections, creative naming, artistic structure, a bit of chaos/flair. "
+                    "Keep it 100% functional and in the same language. "
+                    "Output ONLY the rewritten code — no explanations, no markdown fences."
                 ))
 
                 chat.append(user(code))
 
-                response = chat.sample(temperature=0.9, max_tokens=2000)
+                # IMPORTANT: removed temperature and max_tokens because current xai-sdk does not support them
+                response = chat.sample()
                 result = response.content.strip()
 
-                print(f"[GROK] Success ({model_name}) — chars: {len(result)}")
+                print(f"[GROK] Success with {model_name} — length: {len(result)}")
                 if len(result) > 40:
-                    return f"# Grok-polished with {model_name}\n{result}"
+                    return f"# Grok-polished ({model_name})\n{result}"
 
             except Exception as inner_e:
-                print(f"[GROK] {model_name} failed: {str(inner_e)}")
+                print(f"[GROK] Model {model_name} failed: {str(inner_e)}")
                 continue
 
-        return code + "\n\n# Grok failed on all models — check Logs tab for details"
+        return code + "\n\n# All Grok models failed — check Logs tab for details"
 
     except Exception as e:
         msg = str(e).lower()
         hint = ""
-        if any(k in msg for k in ["auth", "invalid", "key", "credential", "forbidden"]):
-            hint = " → Check key validity / credits at https://console.x.ai"
-        elif any(k in msg for k in ["rate", "limit", "quota", "429"]):
-            hint = " → Rate limit — wait 1–5 min and retry"
+        if any(word in msg for word in ["auth", "invalid", "key", "credential", "forbidden"]):
+            hint = " → invalid or expired API key / check credits at console.x.ai"
+        elif any(word in msg for word in ["rate", "limit", "quota", "429"]):
+            hint = " → rate limit or quota exceeded — wait a few minutes"
         elif "model" in msg or "not found" in msg:
-            hint = " → Model unavailable — try different key or tier"
+            hint = " → model unavailable — try different key/tier"
 
-        print(f"[GROK CRITICAL] {e}")
-        return code + f"\n\n# Grok API failed{hint}:\n{str(e)}"
+        print(f"[GROK CRITICAL ERROR] {e}")
+        return code + f"\n\n# Grok connection failed{hint}:\n{str(e)}"
 
-# Main logic
 def analyze_soul(code: str, grok_api_key: str = ""):
     if not code.strip():
         return "Paste some code first.", "", "Empty input"
 
     if len(code) > 30000:
-        return "Code too long!", "", "Over limit (~30k chars)"
+        return "Code too long!", "", "Too large"
 
     try:
         features = extract_features(code)
@@ -153,10 +149,9 @@ Grok: {'Attempted' if grok_api_key.strip() else 'Skipped'}"""
 
     except Exception as e:
         tb = traceback.format_exc()
-        print(f"[ANALYZE CRASH] {tb}")
-        return "Crashed 😢", code, f"ERROR:\n{str(e)}\n\n{tb}"
+        print(f"[CRASH] {tb}")
+        return "Crashed", code, f"ERROR:\n{str(e)}\n\n{tb}"
 
-# Gradio UI
 with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
     gr.Markdown("""
     # VATA - Code Soul Scanner & Humanizer 🔥🪬
