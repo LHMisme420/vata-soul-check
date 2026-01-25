@@ -4,9 +4,9 @@ emoji: 🔥
 colorFrom: blue
 colorTo: purple
 sdk: gradio
-sdk_version: 5.0.2   # adjust to your actual Gradio version if pinned
+sdk_version: 6.4.0
 app_file: app.py
-python_version: 3.10   # ← exactly like this: major.minor, no quotes needed
+python_version: 3.1
 ---
 
 # VATA — Code Authenticity Scanner & Humanizer
