@@ -411,3 +411,109 @@ combined_output = (
 )
 
 return combined_output 
+# ────────────────────────────────────────────────
+#   GRADIO UI – DARK TWO-PANEL CONSOLE
+# ────────────────────────────────────────────────
+
+with gr.Blocks(
+    theme="gradio/soft",
+    css="""
+body { background-color: #05060a; }
+.gradio-container { background-color: #05060a !important; color: #f5f5f5; }
+textarea, .gr-textbox { font-family: monospace; font-size: 13px; }
+"""
+) as demo:
+
+    gr.Markdown(
+        """
+# VATA – Code Soul Scanner & Humanizer
+
+Paste code on the left.  
+See Soul Score, breakdown, rule-based humanization, and Grok-blended output on the right.
+        """
+    )
+
+    with gr.Row():
+        # LEFT PANEL
+        with gr.Column(scale=1):
+            code_input = gr.Textbox(
+                label="Input Code",
+                lines=28,
+                placeholder="Paste your code here...",
+                show_label=True
+            )
+
+            api_key_input = gr.Textbox(
+                label="XAI Grok API Key (server-side, not logged)",
+                type="password",
+                lines=1,
+                placeholder="sk-...",
+                show_label=True
+            )
+
+            with gr.Accordion("Humanizer Controls", open=False):
+                intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Overall Intensity")
+                comment_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Comment Intensity")
+                debug_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Debug Intensity")
+                sarcasm_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Sarcasm Intensity")
+                inconsistency_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Inconsistency Intensity")
+                rename_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Rename Intensity")
+                redundancy_intensity_slider = gr.Slider(0, 10, value=3, step=0.5, label="Redundancy Intensity")
+
+                comment_style_dropdown = gr.Dropdown(
+                    choices=["Casual", "Professional", "Sarcastic", "Minimal"],
+                    value="Casual",
+                    label="Comment Style Preset"
+                )
+                naming_style_dropdown = gr.Dropdown(
+                    choices=["Random Flair", "Conservative"],
+                    value="Random Flair",
+                    label="Naming Style"
+                )
+                debug_prefix_box = gr.Textbox(
+                    label="Debug Prefix",
+                    value="DEBUG:",
+                    lines=1
+                )
+                language_override_dropdown = gr.Dropdown(
+                    choices=["Auto", "python", "javascript", "java", "csharp", "cpp"],
+                    value="Auto",
+                    label="Language Override"
+                )
+
+            run_button = gr.Button("Run VATA Pipeline", variant="primary")
+
+        # RIGHT PANEL
+        with gr.Column(scale=1):
+            output_panel = gr.Markdown(
+                "Output will appear here...",
+                elem_id="output_panel"
+            )
+
+    # BUTTON WIRING
+    run_button.click(
+        fn=full_pipeline,
+        inputs=[
+            code_input,
+            api_key_input,
+            intensity_slider,
+            comment_intensity_slider,
+            debug_intensity_slider,
+            sarcasm_intensity_slider,
+            inconsistency_intensity_slider,
+            rename_intensity_slider,
+            redundancy_intensity_slider,
+            comment_style_dropdown,
+            naming_style_dropdown,
+            debug_prefix_box,
+            language_override_dropdown
+        ],
+        outputs=[output_panel]
+    )
+
+# ────────────────────────────────────────────────
+#   MAIN ENTRY
+# ────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    demo.launch()
