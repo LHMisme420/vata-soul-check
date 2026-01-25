@@ -469,3 +469,9 @@ with gr.Blocks() as demo:
                     value="Auto",
                     label="Language Override"
                 )
+                # ────────────────────────────────────────────────
+#   MAIN ENTRY
+# ────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    demo.launch()
