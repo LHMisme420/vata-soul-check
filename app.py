@@ -213,21 +213,20 @@ def llm_blend_code(code: str, api_key: str, model: str = "grok-beta"):
         return code + "\n\n# LLM blending skipped: no API key provided"
 
     # Safe multi-line string with .format outside
-    prompt_template = """
+   prompt_template = """
 You are an expert senior developer with 12+ years of experience who writes clean but slightly imperfect, human-feeling code.
-
 Take the following code that has already been lightly humanized with comments, debug statements, inconsistencies, etc.
-
 Your task is to refine it further so it looks 100% like real hand-written code from a competent but busy mid/senior developer:
-
 - Keep the logic 100% identical — no functional changes, no new bugs
 - Make comments more natural/personal (some helpful, some sarcastic/joking, some "TODO" style)
 - Add or adjust debug prints/logs that a human might leave temporarily
 - Vary naming slightly (mix camelCase/snake_case, add personal abbreviations)
 - Introduce tiny harmless redundancies (extra temp var, unnecessary else after return, etc.)
 - Keep it readable and professional overall — not sloppy beginner code
-- Aim for "this was written by a real person in a hurry, but knows what they're doing"
+- Aim for "this was written by a real person in a hurry"
+
+Return ONLY the final code, no explanation, no markdown fences.
 
 Input code:
 ```python
-{}
+{0}
