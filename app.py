@@ -10,18 +10,16 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 try:
     import numpy as np
     import pandas as pd
-    import xgboost as xgb
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
     import torch
     from xai_sdk import Client
     from xai_sdk.chat import user, system
 except ImportError as e:
-    print(f"CRITICAL: Missing required packages - {e}")
-    print("Run: pip install numpy pandas xgboost transformers torch xai-sdk")
+    print(f"CRITICAL IMPORT ERROR: {e}")
+    print("Run: pip install numpy pandas transformers torch xai-sdk")
     raise
 
 # Config
-MODEL_PATH = "models/xgboost_soul_model.json"
 PERPLEXITY_MODEL = "microsoft/codebert-base"
 
 _perplexity_tokenizer = None
@@ -45,12 +43,12 @@ def extract_features(code: str) -> dict:
         inputs = tokenizer(code, return_tensors="pt", truncation=True, max_length=512)
         with torch.no_grad():
             outputs = model(**inputs)
-        perplexity = float(outputs.logits.abs().mean()) * 10
+        perplexity_proxy = float(outputs.logits.abs().mean()) * 10
 
         return {
             "length": length,
             "comment_entropy": 3.14 if has_comment else 0.0,
-            "perplexity": perplexity,
+            "perplexity_proxy": perplexity_proxy,
             "has_todo": 1 if has_todo else 0,
             "risky_commands": 0,
         }
@@ -62,17 +60,18 @@ def score_soul(features: dict) -> tuple[float, str]:
     if "error" in features:
         return 0.0, "Feature extraction failed"
 
-    if not os.path.exists(MODEL_PATH):
-        print("[SCORE] No model file → using dummy logic")
-        score = 50.0 + features.get("has_todo", 0) * 25 + features.get("comment_entropy", 0) * 5
-    else:
-        # Uncomment when you upload real model
-        # model = xgb.XGBClassifier()
-        # model.load_model(MODEL_PATH)
-        # score = model.predict_proba(pd.DataFrame([features]))[0][1] * 100
-        score = 65.0
+    # Dummy score logic
+    score = 50.0
+    score += features.get("has_todo", 0) * 25
+    score += features.get("comment_entropy", 0) * 5
+    score += min(features.get("perplexity_proxy", 0) / 5, 20)
 
-    status = "Soulless Void" if score < 30 else "Low Soul" if score < 60 else "Human-ish" if score < 85 else "Vata Full Soul"
+    status = (
+        "Soulless Void" if score < 30 else
+        "Low Soul" if score < 60 else
+        "Human-ish" if score < 85 else
+        "Vata Full Soul"
+    )
     return round(score, 1), status
 
 def humanize_with_grok(code: str, api_key: str) -> str:
@@ -88,7 +87,7 @@ def humanize_with_grok(code: str, api_key: str) -> str:
 
         for model_name in models_to_try:
             try:
-                print(f"[GROK] Trying model: {model_name}")
+                print(f"[GROK] Trying: {model_name}")
                 chat = client.chat.create(model=model_name)
 
                 chat.append(system(
@@ -101,7 +100,6 @@ def humanize_with_grok(code: str, api_key: str) -> str:
 
                 chat.append(user(code))
 
-                # IMPORTANT: removed temperature and max_tokens because current xai-sdk does not support them
                 response = chat.sample()
                 result = response.content.strip()
 
@@ -110,7 +108,7 @@ def humanize_with_grok(code: str, api_key: str) -> str:
                     return f"# Grok-polished ({model_name})\n{result}"
 
             except Exception as inner_e:
-                print(f"[GROK] Model {model_name} failed: {str(inner_e)}")
+                print(f"[GROK] {model_name} failed: {str(inner_e)}")
                 continue
 
         return code + "\n\n# All Grok models failed — check Logs tab for details"
@@ -118,22 +116,22 @@ def humanize_with_grok(code: str, api_key: str) -> str:
     except Exception as e:
         msg = str(e).lower()
         hint = ""
-        if any(word in msg for word in ["auth", "invalid", "key", "credential", "forbidden"]):
-            hint = " → invalid or expired API key / check credits at console.x.ai"
-        elif any(word in msg for word in ["rate", "limit", "quota", "429"]):
-            hint = " → rate limit or quota exceeded — wait a few minutes"
+        if any(w in msg for w in ["auth", "invalid", "key", "credential", "forbidden"]):
+            hint = " → Check key validity / credits at https://console.x.ai"
+        elif any(w in msg for w in ["rate", "limit", "quota", "429"]):
+            hint = " → Rate limit — wait a few minutes"
         elif "model" in msg or "not found" in msg:
-            hint = " → model unavailable — try different key/tier"
+            hint = " → Model unavailable — try different key/tier"
 
-        print(f"[GROK CRITICAL ERROR] {e}")
-        return code + f"\n\n# Grok connection failed{hint}:\n{str(e)}"
+        print(f"[GROK CRITICAL] {e}")
+        return code + f"\n\n# Grok API failed{hint}:\n{str(e)}"
 
 def analyze_soul(code: str, grok_api_key: str = ""):
     if not code.strip():
-        return "Paste some code first.", "", "Empty input"
+        return "<p style='text-align:center; color:grey;'>Paste some code first.</p>", ""
 
     if len(code) > 30000:
-        return "Code too long!", "", "Too large"
+        return "<p style='text-align:center; color:grey;'>Code too long!</p>", ""
 
     try:
         features = extract_features(code)
@@ -141,22 +139,22 @@ def analyze_soul(code: str, grok_api_key: str = ""):
 
         humanized = humanize_with_grok(code, grok_api_key)
 
-        detailed = f"""Score: {score}/100 – {status}
-Features: {features}
-Grok: {'Attempted' if grok_api_key.strip() else 'Skipped'}"""
+        # Visual feedback for score
+        color = "green" if score >= 85 else "blue" if score >= 60 else "orange" if score >= 30 else "red"
+        score_visual = f"<h2 style='color: {color}; text-align:center;'>{status} ({score}%)</h2>"
 
-        return f"{status} ({score}%)", humanized, detailed
+        return score_visual, humanized
 
     except Exception as e:
         tb = traceback.format_exc()
         print(f"[CRASH] {tb}")
-        return "Crashed", code, f"ERROR:\n{str(e)}\n\n{tb}"
+        return "<p style='text-align:center; color:red;'>Crashed! Check logs.</p>", code
 
 with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
     gr.Markdown("""
     # VATA - Code Soul Scanner & Humanizer 🔥🪬
 
-    Paste code → Analyze → soul score + optional Grok-polished version.
+    Paste code → Analyze → soul score + optional Grok-polished version.  
     Add xAI Grok API key for real humanization (https://console.x.ai).
     """)
 
@@ -165,11 +163,11 @@ with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
             input_code = gr.Textbox(
                 label="Input Code (paste your script)",
                 lines=12,
-                placeholder="# Paste PowerShell / Python etc here",
+                placeholder="# Paste PowerShell / Python / JS here",
             )
 
         with gr.Column(scale=1):
-            status_output = gr.Textbox(label="Status & Score", lines=8, interactive=False)
+            status_output = gr.Markdown("**Status & Score**", elem_id="score-display")
 
     humanized_output = gr.Textbox(label="Humanized / Polished Code (Grok if key provided)", lines=12)
 
