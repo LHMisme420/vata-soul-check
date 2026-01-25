@@ -4,10 +4,12 @@ import random
 import statistics
 import hashlib
 import time
+import requests
+import json
 from collections import Counter
 
 # ────────────────────────────────────────────────
-#   LANGUAGE & COMMENT HELPERS
+#   LANGUAGE & COMMENT HELPERS (unchanged)
 # ────────────────────────────────────────────────
 
 def detect_language(code: str) -> str:
@@ -36,7 +38,7 @@ def get_comment_styles(lang: str):
     return styles.get(lang, styles["other"])
 
 # ────────────────────────────────────────────────
-#   ANALYZER
+#   ANALYZER (unchanged)
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
@@ -111,40 +113,39 @@ def calculate_soul_score(code: str):
     return score_str, energy, cls, verdict, tier
 
 # ────────────────────────────────────────────────
-#   HUMANIZER – highly configurable
+#   RULE-BASED HUMANIZER (fast, deterministic)
 # ────────────────────────────────────────────────
 
-def humanize_code(
+def rule_based_humanize(
     code: str,
-    intensity: float = 5.0,
-    comment_intensity: float = 5.0,
-    debug_intensity: float = 5.0,
-    sarcasm_intensity: float = 5.0,
-    inconsistency_intensity: float = 5.0,
-    rename_intensity: float = 5.0,
-    redundancy_intensity: float = 3.0,
-    comment_style_preset: str = "Casual",
-    naming_style: str = "Random Flair",
-    debug_prefix: str = "DEBUG:",
-    language_override: str = "Auto"
+    intensity: float,
+    comment_int: float,
+    debug_int: float,
+    sarcasm_int: float,
+    incon_int: float,
+    rename_int: float,
+    redund_int: float,
+    comment_preset: str,
+    naming_style: str,
+    debug_prefix: str,
+    lang_override: str
 ):
     if not code.strip():
         return code
 
-    lang = language_override if language_override != "Auto" else detect_language(code)
-    comments = get_comment_styles(lang)
-    single = comments["single"]
+    lang = lang_override if lang_override != "Auto" else detect_language(code)
+    single = get_comment_styles(lang)["single"]
 
     lines = code.splitlines()
     new_lines = lines[:]
 
     intensities = {
-        'comment': comment_intensity / 10,
-        'debug': debug_intensity / 10,
-        'sarcasm': sarcasm_intensity / 10,
-        'inconsistency': inconsistency_intensity / 10,
-        'rename': rename_intensity / 10,
-        'redundancy': redundancy_intensity / 10
+        'comment': comment_int / 10,
+        'debug': debug_int / 10,
+        'sarcasm': sarcasm_int / 10,
+        'inconsistency': incon_int / 10,
+        'rename': rename_int / 10,
+        'redundancy': redund_int / 10
     }
 
     comment_pools = {
@@ -153,7 +154,7 @@ def humanize_code(
         "Sarcastic": ['why do we even...', 'future me hates me', 'send help', 'enterprise quality™', 'this is fine.jpg'],
         "Minimal": ['todo', 'fixme', 'note', 'debug']
     }
-    comments_list = comment_pools.get(comment_style_preset, comment_pools["Casual"])
+    comments_list = comment_pools.get(comment_preset, comment_pools["Casual"])
 
     rename_map = {
         "input": "rawInput", "data": "stuff", "result": "finalRes", "value": "val",
@@ -198,124 +199,33 @@ def humanize_code(
             new_lines[i] = line
 
     humanized = "\n".join(new_lines)
-
     short_hash = hashlib.sha256(humanized.encode()).hexdigest()[:8].upper()
-    humanized += f"\n\n# VATA Humanized – hash {short_hash} – intensity {intensity:.1f}/10"
+    humanized += f"\n\n# VATA Rule-based Humanized – hash {short_hash} – intensity {intensity:.1f}"
 
     return humanized
 
 # ────────────────────────────────────────────────
-#   Gradio INTERFACE – with auto-scoring in Humanizer
+#   LLM BLENDING PASS (optional second stage)
 # ────────────────────────────────────────────────
 
-custom_css = """
-body { background: linear-gradient(135deg, #0a0015, #1a0033); color: #00ff9d; font-family: 'Courier New', monospace; }
-.gradio-container { border: 2px solid #00ff9d; border-radius: 12px; background: rgba(5,5,25,0.85); max-width: 1300px; margin: auto; padding: 1rem; }
-h1, h2 { color: #00ff9d; text-shadow: 0 0 12px #00ff9d; }
-button { background: #00ff9d !important; color: black !important; border: none; border-radius: 6px; font-weight: bold; }
-button:hover { box-shadow: 0 0 18px #00ff9d; }
-.output-badge { font-weight: bold; padding: 6px 12px; border-radius: 6px; }
-.success { background: #00cc66; color: black; }
-.warning { background: #ffaa00; color: black; }
-.danger { background: #ff4444; color: white; }
-"""
+def llm_blend_code(code: str, api_key: str, model: str = "grok-beta"):
+    if not api_key.strip():
+        return code + "\n\n# LLM blending skipped: no API key provided"
 
-with gr.Blocks(css=custom_css, title="VATA Soul Check – Auto-Scoring Edition") as demo:
-    gr.Markdown("# VATA Soul Check – Auto-Scoring Humanizer")
-    gr.Markdown("Humanize code → instantly see before/after soul scores & delta")
+    prompt = f"""You are an expert senior developer with 12+ years of experience who writes clean but slightly imperfect, human-feeling code.
 
-    code_in = gr.Textbox(lines=16, label="Paste Code (AI or any)", placeholder="Paste code here...")
+Take the following code that has already been lightly humanized with comments, debug statements, inconsistencies, etc.
 
-    with gr.Row():
-        lang_override = gr.Dropdown(
-            choices=["Auto", "Python", "Java", "C#", "JavaScript", "C++", "Other"],
-            value="Auto", label="Force Language"
-        )
-        intensity_global = gr.Slider(0, 10, value=5, step=0.5, label="Global Intensity")
+Your task is to **refine it further** so it looks 100% like real hand-written code from a competent but busy mid/senior developer:
 
-    with gr.Accordion("Detailed Controls (optional)", open=False):
-        with gr.Row():
-            comment_int = gr.Slider(0, 10, value=5, label="Comment Intensity")
-            debug_int   = gr.Slider(0, 10, value=5, label="Debug Intensity")
-            sarcasm_int = gr.Slider(0, 10, value=5, label="Sarcasm Intensity")
-        with gr.Row():
-            incon_int   = gr.Slider(0, 10, value=5, label="Inconsistency Intensity")
-            rename_int  = gr.Slider(0, 10, value=5, label="Rename Intensity")
-            redund_int  = gr.Slider(0, 10, value=3, label="Redundancy Intensity")
+- Keep the logic 100% identical — no functional changes, no new bugs
+- Make comments more natural/personal (some helpful, some sarcastic/joking, some "TODO" style)
+- Add or adjust debug prints/logs that a human might leave temporarily
+- Vary naming slightly (mix camelCase/snake_case, add personal abbreviations)
+- Introduce tiny harmless redundancies (extra temp var, unnecessary else after return, etc.)
+- Keep it readable and professional overall — not sloppy beginner code
+- Aim for "this was written by a real person in a hurry, but knows what they're doing"
 
-        comment_preset = gr.Dropdown(
-            choices=["Casual", "Professional", "Sarcastic", "Minimal"],
-            value="Casual", label="Comment Style Preset"
-        )
-        naming_style = gr.Dropdown(
-            choices=["Keep Original", "Random Flair", "Abbreviate", "CamelCase → snake_case"],
-            value="Random Flair", label="Naming Style"
-        )
-        debug_prefix = gr.Textbox(value="DEBUG:", label="Debug Prefix")
-
-    btn_humanize = gr.Button("Humanize + Auto-Score", variant="primary")
-
-    humanized_out = gr.Textbox(lines=14, label="Humanized Output", interactive=False)
-
-    with gr.Row():
-        orig_score   = gr.Textbox(label="Original Score")
-        new_score    = gr.Textbox(label="Humanized Score")
-        delta_badge  = gr.HTML(label="Delta / Improvement")
-        energy_out   = gr.Textbox(label="Energy (after)")
-        cls_out      = gr.Textbox(label="Classification (after)")
-        verdict_out  = gr.Textbox(label="Verdict (after)")
-
-    # ── Auto-score after humanization ──
-    def humanize_and_score(code, lang_ovr, glob_int, c_int, d_int, s_int, i_int, r_int, rd_int, c_preset, n_style, dbg_pre):
-        if not code.strip():
-            return "", "0%", "0%", "<span class='danger'>No code</span>", "", "", ""
-
-        humanized = humanize_code(
-            code, glob_int, c_int, d_int, s_int, i_int, rd_int,
-            comment_style_preset=c_preset, naming_style=n_style,
-            debug_prefix=dbg_pre, language_override=lang_ovr
-        )
-
-        o_score, o_energy, o_cls, o_verdict, o_tier = calculate_soul_score(code)
-        h_score, h_energy, h_cls, h_verdict, h_tier = calculate_soul_score(humanized)
-
-        o_num = int(o_score.rstrip("%")) if "%" in o_score else 0
-        h_num = int(h_score.rstrip("%")) if "%" in h_score else 0
-        delta = h_num - o_num
-
-        badge_class = 'success' if delta > 20 else 'warning' if delta > 0 else 'danger'
-        badge = f"<span class='output-badge {badge_class}'>{delta:+}%</span>"
-
-        return (
-            humanized,
-            o_score,
-            h_score,
-            badge,
-            h_energy,
-            h_cls,
-            h_verdict
-        )
-
-    btn_humanize.click(
-        humanize_and_score,
-        inputs=[
-            code_in, lang_override, intensity_global,
-            comment_int, debug_int, sarcasm_int,
-            incon_int, rename_int, redund_int,
-            comment_preset, naming_style, debug_prefix
-        ],
-        outputs=[
-            humanized_out,
-            orig_score,
-            new_score,
-            delta_badge,
-            energy_out,
-            cls_out,
-            verdict_out
-        ]
-    )
-
-    gr.Markdown("Auto-scoring enabled – see improvement instantly | Built by @Lhmisme | 2026")
-
-if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+Input code:
+```python
+{code}
