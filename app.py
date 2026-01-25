@@ -384,7 +384,7 @@ Right: see Soul Score, rule-based humanization, and Grok-blended human output.
                 "Output will appear here...",
                 elem_id="output_panel"
             )
-                run_button.click(
+        run_button.click(
         fn=full_pipeline,
         inputs=[
             code_input,
