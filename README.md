@@ -1,13 +1,15 @@
 ---
-title: VATA - Code Soul Scanner & Humanizer
-emoji: 🧬
-colorFrom: indigo
-colorTo: blue
+---
+title: VATA Soul Check
+emoji: 🔥
+colorFrom: blue
+colorTo: purple
 sdk: gradio
-sdk_version: 6.4.0
+sdk_version: 5.0.2   # or whatever you're using
 app_file: app.py
 pinned: false
-license: mit
+python_version: 3.10   # ← add this line
+
 ---
 # VATA — Code Authenticity Scanner & Humanizer
 
