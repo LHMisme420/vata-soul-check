@@ -6,7 +6,7 @@ colorTo: purple
 sdk: gradio
 sdk_version: 6.4.0
 app_file: app.py
-python_version: 3.1
+
 pinned: false
 short_description: Detects human soul in code + optional Grok humanization
 license: apache-2.0
