@@ -19,7 +19,10 @@ except ImportError as e:
     print("Run: pip install numpy pandas transformers torch xai-sdk")
     raise
 
-# Config
+# ────────────────────────────────────────────────
+# CONFIG & MODELS
+# ────────────────────────────────────────────────
+
 PERPLEXITY_MODEL = "microsoft/codebert-base"
 
 _perplexity_tokenizer = None
@@ -32,6 +35,10 @@ def load_perplexity_model():
         _perplexity_tokenizer = AutoTokenizer.from_pretrained(PERPLEXITY_MODEL)
         _perplexity_model = AutoModelForSequenceClassification.from_pretrained(PERPLEXITY_MODEL)
     return _perplexity_tokenizer, _perplexity_model
+
+# ────────────────────────────────────────────────
+# FEATURE EXTRACTION
+# ────────────────────────────────────────────────
 
 def extract_features(code: str) -> dict:
     try:
@@ -56,23 +63,33 @@ def extract_features(code: str) -> dict:
         print(f"[FEATURES] Error: {e}")
         return {"error": str(e)}
 
+# ────────────────────────────────────────────────
+# SOUL SCORING (improved dummy version)
+# ────────────────────────────────────────────────
+
 def score_soul(features: dict) -> tuple[float, str]:
     if "error" in features:
         return 0.0, "Feature extraction failed"
 
-    # Dummy score logic
     score = 50.0
-    score += features.get("has_todo", 0) * 25
-    score += features.get("comment_entropy", 0) * 5
-    score += min(features.get("perplexity_proxy", 0) / 5, 20)
+    score += features.get("has_todo", 0) * 25          # TODOs = soul
+    score += features.get("comment_entropy", 0) * 8    # comments = soul
+    score += min(features.get("perplexity_proxy", 0) / 8, 15)  # some chaos/perplexity bonus
+    score -= max(0, (features.get("length", 0) - 500) / 100)   # long clean code penalised slightly
+
+    score = max(0, min(100, score))
 
     status = (
         "Soulless Void" if score < 30 else
-        "Low Soul" if score < 60 else
-        "Human-ish" if score < 85 else
+        "Low Soul"      if score < 60 else
+        "Human-ish"     if score < 85 else
         "Vata Full Soul"
     )
     return round(score, 1), status
+
+# ────────────────────────────────────────────────
+# GROK HUMANIZER
+# ────────────────────────────────────────────────
 
 def humanize_with_grok(code: str, api_key: str) -> str:
     if not api_key.strip():
@@ -126,12 +143,16 @@ def humanize_with_grok(code: str, api_key: str) -> str:
         print(f"[GROK CRITICAL] {e}")
         return code + f"\n\n# Grok API failed{hint}:\n{str(e)}"
 
+# ────────────────────────────────────────────────
+# MAIN ANALYZE FUNCTION (with visual score)
+# ────────────────────────────────────────────────
+
 def analyze_soul(code: str, grok_api_key: str = ""):
     if not code.strip():
-        return "<p style='text-align:center; color:grey;'>Paste some code first.</p>", ""
+        return "<p style='text-align:center; color:grey; font-size:1.2em;'>Paste some code first.</p>", ""
 
     if len(code) > 30000:
-        return "<p style='text-align:center; color:grey;'>Code too long!</p>", ""
+        return "<p style='text-align:center; color:orange; font-size:1.2em;'>Code too long (max ~30k chars)!</p>", ""
 
     try:
         features = extract_features(code)
@@ -139,24 +160,58 @@ def analyze_soul(code: str, grok_api_key: str = ""):
 
         humanized = humanize_with_grok(code, grok_api_key)
 
-        # Visual feedback for score
-        color = "green" if score >= 85 else "blue" if score >= 60 else "orange" if score >= 30 else "red"
-        score_visual = f"<h2 style='color: {color}; text-align:center;'>{status} ({score}%)</h2>"
+        # Visual colored score
+        color = "red" if score < 30 else "orange" if score < 60 else "blue" if score < 85 else "green"
+        score_visual = f"<h2 style='color:{color}; text-align:center; margin:20px 0;'>{status} ({score}%)</h2>"
 
         return score_visual, humanized
 
     except Exception as e:
         tb = traceback.format_exc()
         print(f"[CRASH] {tb}")
-        return "<p style='text-align:center; color:red;'>Crashed! Check logs.</p>", code
+        return "<p style='text-align:center; color:red; font-size:1.2em;'>Crashed! Check logs.</p>", code
+
+# ────────────────────────────────────────────────
+# GRADIO UI with examples + loading
+# ────────────────────────────────────────────────
 
 with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
     gr.Markdown("""
     # VATA - Code Soul Scanner & Humanizer 🔥🪬
 
-    Paste code → Analyze → soul score + optional Grok-polished version.  
+    Paste code → get soul score + optional Grok-polished version.  
     Add xAI Grok API key for real humanization (https://console.x.ai).
     """)
+
+    gr.Examples(
+        examples=[
+            [
+                """function Get-SystemInfo {
+    param([string]$ComputerName = $env:COMPUTERNAME)
+    Get-ComputerInfo -ComputerName $ComputerName |
+        Select-Object WindowsProductName, OsVersion
+}""",
+                "Clean AI-style PowerShell – expect low soul"
+            ],
+            [
+                """# this kills zombie tabs dont @ me
+Get-Process chrome | ? {$_.WorkingSet64 -gt 1GB} | % {
+    "Murdering $($_.ProcessName) - $($_.WorkingSet64 / 1MB)MB"
+    Stop-Process $_.Id -Force
+}""",
+                "Messy human-style PowerShell – expect higher soul"
+            ],
+            [
+                """def factorial(n):
+    return 1 if n == 0 else n * factorial(n-1)
+
+print(factorial(6))""",
+                "Short Python – test Grok rewrite"
+            ],
+        ],
+        inputs=gr.Textbox(lines=12, label="Input Code"),
+        label="Try these examples"
+    )
 
     with gr.Row():
         with gr.Column(scale=2):
@@ -167,7 +222,7 @@ with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
             )
 
         with gr.Column(scale=1):
-            status_output = gr.Markdown("**Status & Score**", elem_id="score-display")
+            status_output = gr.Markdown("**Status & Score**\nWaiting for input...", elem_id="score-display")
 
     humanized_output = gr.Textbox(label="Humanized / Polished Code (Grok if key provided)", lines=12)
 
@@ -182,13 +237,16 @@ with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
     analyze_btn.click(
         fn=analyze_soul,
         inputs=[input_code, api_key],
-        outputs=[status_output, humanized_output]
+        outputs=[status_output, humanized_output],
+        _js="() => {return []}",  # optional: can add client-side loading if needed
+        loading=True  # shows loading spinner on button
     )
 
     input_code.submit(
         fn=analyze_soul,
         inputs=[input_code, api_key],
-        outputs=[status_output, humanized_output]
+        outputs=[status_output, humanized_output],
+        loading=True
     )
 
 if __name__ == "__main__":
