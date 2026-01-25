@@ -92,9 +92,21 @@ Skipped automatically if no API key is provided.
 5. Run the pipeline.
 6. View the score breakdown, humanized version, and optional Grok-polished output.
 
-## Installation & Local Run
+# VATA Soul Check – Proof of Concept
 
-(Coming soon — currently available via Hugging Face Space. Repo setup instructions will be added once public GitHub repo is ready.)
+**Detects "human soul" in code** (currently PowerShell-focused) using ML: comment entropy, AST complexity, structural chaos, perplexity penalties, risky command flags → XGBoost score 0–100.
+
+Higher score = more likely hand-written by a human with intent / personality.  
+Low score = likely AI-generated, overly clean, or dangerously scripted.
+
+## Quick Start
+
+```bash
+git clone https://github.com/LHMisme420/ProjectVata-PoC.git
+cd ProjectVata-PoC
+python -m venv .venv
+source .venv/bin/activate    # or .venv\Scripts\activate on Windows
+pip install -r requirements.txt
 
 ## Roadmap
 
