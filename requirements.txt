@@ -2,4 +2,18 @@ skl2onnx
 onnx
 ezkl
 gradio>=4.0.0
+# Core inference / UI
+gradio==5.0.2
+xgboost==2.1.1
+numpy==1.26.4
+pandas==2.2.3
 
+# Feature extraction & ML
+scikit-learn==1.5.2
+transformers==4.45.2          # for perplexity (CodeBERT or similar)
+torch==2.4.1                  # transformers dependency
+sentencepiece==0.2.0          # often needed
+
+# Utilities
+python-dotenv==1.0.1
+tqdm==4.66.5
