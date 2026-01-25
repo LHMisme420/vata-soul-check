@@ -4,11 +4,11 @@ emoji: 🔥🪬
 colorFrom: indigo
 colorTo: purple
 sdk: gradio
-sdk_version: 6.4.0
+sdk_version: 5.0.2
 app_file: app.py
-python_version: 3.1
+python_version: 3.10
 pinned: false
-short_description: Code soul scanner + Grok humanizer
+short_description: Detects human soul in code + optional Grok humanization
 license: apache-2.0
 ---
 
