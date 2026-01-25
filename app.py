@@ -26,6 +26,7 @@ def detect_language(code: str) -> str:
         return "cpp"
     return "other"
 
+
 def get_comment_styles(lang: str):
     styles = {
         "python": {"single": "#", "multi_start": '"""', "multi_end": '"""'},
@@ -38,7 +39,7 @@ def get_comment_styles(lang: str):
     return styles.get(lang, styles["other"])
 
 # ────────────────────────────────────────────────
-#   ANALYZER
+#   ANALYZER – SOUL SCORE
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
@@ -54,8 +55,11 @@ def calculate_soul_score(code: str):
     comment_bonus = min(comments * 1.8 + markers * 12, 55)
 
     vars_found = re.findall(r'\b[A-Za-z_][A-Za-z0-9_]{2,}\b', code)
-    exclude = {'def','if','for','return','else','True','False','None','self','const','let','var',
-               'public','private','protected','static','void','final','using','namespace','async','await'}
+    exclude = {
+        'def', 'if', 'for', 'return', 'else', 'True', 'False', 'None', 'self',
+        'const', 'let', 'var', 'public', 'private', 'protected', 'static',
+        'void', 'final', 'using', 'namespace', 'async', 'await'
+    }
     meaningful_vars = [v for v in vars_found if v not in exclude]
     naming_bonus = 0
     if meaningful_vars:
@@ -71,13 +75,20 @@ def calculate_soul_score(code: str):
 
     indent_nesting = sum(max(0, (len(l) - len(l.lstrip())) // 2) for l in lines if l.strip())
     brace_nesting = code.count('{') - code.count('}')
-    nesting_proxy = indent_nesting + abs(brace_nesting) * 2 if lang in ("java", "javascript", "cpp", "csharp") else indent_nesting
+    if lang in ("java", "javascript", "cpp", "csharp"):
+        nesting_proxy = indent_nesting + abs(brace_nesting) * 2
+    else:
+        nesting_proxy = indent_nesting
     complexity_bonus = min((branches * 3 + nesting_proxy * 2), 40)
 
     total_bonus = comment_bonus + naming_bonus + complexity_bonus
 
     stripped_lines = [l.strip() for l in lines if l.strip()]
-    dup_ratio = sum(c > 1 for c in Counter(stripped_lines).values()) / max(len(stripped_lines), 1) if stripped_lines else 0
+    dup_ratio = (
+        sum(c > 1 for c in Counter(stripped_lines).values()) /
+        max(len(stripped_lines), 1)
+        if stripped_lines else 0
+    )
     repetition_penalty = dup_ratio * -60
 
     line_lengths = [len(l) for l in non_empty]
@@ -86,12 +97,27 @@ def calculate_soul_score(code: str):
 
     risky = 0
     lower = code.lower()
-    dangerous_base = ["eval(", "exec(", "os.system(", "subprocess.", "pickle.load", "rm -rf", "format c:", "del *.*"]
-    dangerous_java = ["runtime.getruntime().exec(", "processbuilder(", "system.setsecuritymanager(null)", "thread.sleep(", "reflection"] if lang == "java" else []
-    dangerous_csharp = ["process.start(", "system.diagnostics.process(", "file.delete(", "directory.delete(", "thread.sleep(", "reflection"] if lang == "csharp" else []
+    dangerous_base = [
+        "eval(", "exec(", "os.system(", "subprocess.", "pickle.load",
+        "rm -rf", "format c:", "del *.*"
+    ]
+    dangerous_java = [
+        "runtime.getruntime().exec(", "processbuilder(",
+        "system.setsecuritymanager(null)", "thread.sleep(", "reflection"
+    ] if lang == "java" else []
+    dangerous_csharp = [
+        "process.start(", "system.diagnostics.process(",
+        "file.delete(", "directory.delete(", "thread.sleep(", "reflection"
+    ] if lang == "csharp" else []
     secrets = ["password =", "api_key =", "secret =", "token =", "key =", "hardcoded"]
-    bare_except_py = len(re.findall(r'except\s*(?::|\))', code)) + len(re.findall(r'except\s+[A-Za-z]+\s*:', code)) > 3
-    bare_catch = len(re.findall(r'\}\s*catch\s*\(\s*Exception\s*\w*\)\s*\{', code)) > 1 if lang in ("java", "csharp") else 0
+    bare_except_py = (
+        len(re.findall(r'except\s*(?::|\))', code)) +
+        len(re.findall(r'except\s+[A-Za-z]+\s*:', code))
+    ) > 3
+    bare_catch = (
+        len(re.findall(r'\}\s*catch\s*\(\s*Exception\s*\w*\)\s*\{', code)) > 1
+        if lang in ("java", "csharp") else 0
+    )
     risky += sum(lower.count(pat) for pat in dangerous_base + dangerous_java + dangerous_csharp + secrets)
     risky += (bare_except_py + bare_catch) * 2
     risk_penalty = risky * -25
@@ -102,13 +128,42 @@ def calculate_soul_score(code: str):
     score = max(5, min(98, round(score)))
     score_str = f"{score}%"
 
-    energy = "Vata Full Soul 🔥" if score >= 82 else "Strong Vata Pulse ⚡" if score >= 65 else "Hybrid Aura 🌫️" if score >= 45 else "Soulless Void 🕳️"
-    cls = "HUMAN" if score > 78 else "MACHINE / HYBRID" if score > 50 else "AI-TRACED"
-    verdict = "VATA APPROVED ✅" if score >= 78 and risky <= 1 else "VATA FLAGGED ⚠️" if score >= 45 else "VATA REJECTED ❌"
+    if score >= 82:
+        energy = "Vata Full Soul 🔥"
+    elif score >= 65:
+        energy = "Strong Vata Pulse ⚡"
+    elif score >= 45:
+        energy = "Hybrid Aura 🌫️"
+    else:
+        energy = "Soulless Void 🕳️"
+
+    if score > 78:
+        cls = "HUMAN"
+    elif score > 50:
+        cls = "MACHINE / HYBRID"
+    else:
+        cls = "AI-TRACED"
+
+    if score >= 78 and risky <= 1:
+        verdict = "VATA APPROVED ✅"
+    elif score >= 45:
+        verdict = "VATA FLAGGED ⚠️"
+    else:
+        verdict = "VATA REJECTED ❌"
+
     if risky >= 3:
         verdict = "VATA BLOCKED - SECURITY VIOLATIONS ⛔"
 
-    tier = "S+ Trusted Artisan" if score >= 90 else "S Solid Human" if score >= 78 else "A Probable Safe" if score >= 62 else "B Needs Eyes" if score >= 45 else "C High Risk"
+    if score >= 90:
+        tier = "S+ Trusted Artisan"
+    elif score >= 78:
+        tier = "S Solid Human"
+    elif score >= 62:
+        tier = "A Probable Safe"
+    elif score >= 45:
+        tier = "B Needs Eyes"
+    else:
+        tier = "C High Risk"
 
     return score_str, energy, cls, verdict, tier
 
@@ -149,54 +204,98 @@ def rule_based_humanize(
     }
 
     comment_pools = {
-        "Casual": ['TODO: revisit later', 'maybe fix this someday', 'works for now', 'borrowed idea', 'not proud of this'],
-        "Professional": ['Refactor opportunity', 'Consider extracting method', 'Documentation pending', 'Temporary solution', 'Needs review'],
-        "Sarcastic": ['why do we even...', 'future me hates me', 'send help', 'enterprise quality™', 'this is fine.jpg'],
+        "Casual": [
+            'TODO: revisit later',
+            'maybe fix this someday',
+            'works for now',
+            'borrowed idea',
+            'not proud of this'
+        ],
+        "Professional": [
+            'Refactor opportunity',
+            'Consider extracting method',
+            'Documentation pending',
+            'Temporary solution',
+            'Needs review'
+        ],
+        "Sarcastic": [
+            'why do we even...',
+            'future me hates me',
+            'send help',
+            'enterprise quality™',
+            'this is fine.jpg'
+        ],
         "Minimal": ['todo', 'fixme', 'note', 'debug']
     }
     comments_list = comment_pools.get(comment_style_preset, comment_pools["Casual"])
 
     rename_map = {
-        "input": "rawInput", "data": "stuff", "result": "finalRes", "value": "val",
-        "user": "whoever", "config": "settingsYo", "response": "resp", "output": "out"
+        "input": "rawInput",
+        "data": "stuff",
+        "result": "finalRes",
+        "value": "val",
+        "user": "whoever",
+        "config": "settingsYo",
+        "response": "resp",
+        "output": "out"
     }
 
-    for i in range(len(new_lines)):
+    i = 0
+    while i < len(new_lines):
         line = new_lines[i]
         stripped = line.strip()
 
+        # Inconsistency in indentation / trailing spaces
         if random.random() < intensities['inconsistency'] * 0.3:
             if random.random() < 0.5:
                 new_lines[i] = line.replace("    ", "  ")
             else:
-                new_lines[i] += "  "
+                new_lines[i] = line + "  "
+            line = new_lines[i]
+            stripped = line.strip()
 
+        # Comments
         if stripped and random.random() < intensities['comment'] * 0.4:
             comment = random.choice(comments_list)
-            new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{single} {comment}")
+            indent = line[:len(line) - len(stripped)]
+            new_lines.insert(i + 1, f"{indent}{single} {comment}")
+            i += 1
 
+        # Debug lines
         if random.random() < intensities['debug'] * 0.25:
-            debug_line = f"{debug_prefix} here"
+            indent = line[:len(line) - len(stripped)]
             if lang == "python":
                 debug_line = f"print('{debug_prefix} entering line {i+1}')"
             elif lang in ("javascript", "java", "csharp"):
                 debug_line = f"console.log('{debug_prefix} line {i+1}')"
-            new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{debug_line}")
+            else:
+                debug_line = f"{single} {debug_prefix} line {i+1}"
+            new_lines.insert(i + 1, f"{indent}{debug_line}")
+            i += 1
 
+        # Sarcasm comments
         if random.random() < intensities['sarcasm'] * 0.2:
+            indent = line[:len(line) - len(stripped)]
             sassy = random.choice(["why...", "future me is sorry", "send coffee", "this is cursed"])
-            new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{single} {sassy}")
+            new_lines.insert(i + 1, f"{indent}{single} {sassy}")
+            i += 1
 
-        if random.random() < intensities['redundancy'] * 0.15 and "return" in stripped:
-            expr = stripped.split("return ", 1)[1]
-            new_lines.insert(i, f"{line[:len(line)-len(stripped)]}temp = {expr}")
-            new_lines[i+1] = f"{line[:len(line)-len(stripped)]}return temp  {single} explicit"
-
-        if random.random() < intensities['rename'] * 0.3:
+        # Simple renaming (very conservative)
+        if random.random() < intensities['rename'] * 0.15:
             for old, new in rename_map.items():
-                if random.random() < 0.5:
-                    line = re.sub(r'\b' + re.escape(old) + r'\b', new, line)
-            new_lines[i] = line
+                if re.search(rf'\b{old}\b', line):
+                    new_lines[i] = re.sub(rf'\b{old}\b', new, line)
+                    line = new_lines[i]
+                    stripped = line.strip()
+                    break
+
+        # Redundancy: duplicate harmless lines
+        if stripped and random.random() < intensities['redundancy'] * 0.1:
+            if not stripped.startswith(single) and not stripped.startswith("print("):
+                new_lines.insert(i + 1, line)
+                i += 1
+
+        i += 1
 
     humanized = "\n".join(new_lines)
     short_hash = hashlib.sha256(humanized.encode()).hexdigest()[:8].upper()
@@ -205,27 +304,71 @@ def rule_based_humanize(
     return humanized
 
 # ────────────────────────────────────────────────
-#   LLM BLENDING PASS – FIXED (no f-string inside prompt)
+#   GROK API WRAPPER (XAI)
+# ────────────────────────────────────────────────
+
+def call_grok_api(prompt: str, api_key: str, model: str = "grok-beta", max_retries: int = 2, timeout: int = 30):
+    if not api_key or not api_key.strip():
+        return None, "No API key provided. Skipping LLM blend."
+
+    url = "https://api.x.ai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key.strip()}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": "You are a senior software engineer who writes realistic, human-feeling code."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.6,
+        "max_tokens": 4096
+    }
+
+    last_error = None
+    for _ in range(max_retries):
+        try:
+            resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=timeout)
+            if resp.status_code != 200:
+                last_error = f"Grok API HTTP {resp.status_code}: {resp.text[:200]}"
+                time.sleep(1.0)
+                continue
+            data = resp.json()
+            content = data["choices"][0]["message"]["content"]
+            return content, None
+        except Exception as e:
+            last_error = str(e)
+            time.sleep(1.0)
+
+    return None, f"Grok API failed after retries: {last_error}"
+
+# ────────────────────────────────────────────────
+#   LLM BLENDING PASS – HYBRID
 # ────────────────────────────────────────────────
 
 def llm_blend_code(code: str, api_key: str, model: str = "grok-beta"):
+    if not code.strip():
+        return "# No code provided for LLM blending."
+
     if not api_key.strip():
         return code + "\n\n# LLM blending skipped: no API key provided"
 
     prompt_template = """
 You are an expert senior developer with 12+ years of experience who writes clean but slightly imperfect, human-feeling code.
+The input code has already been lightly humanized with comments, debug statements, inconsistencies, etc.
 
-Take the following code that has already been lightly humanized with comments, debug statements, inconsistencies, etc.
+Your task:
+- Keep the logic 100% identical — no functional changes, no new bugs.
+- Preserve the overall structure but feel free to reorder small helper functions if it feels natural.
+- Make comments more natural/personal (some helpful, some sarcastic/joking, some "TODO" style).
+- Keep some of the existing humanizer artifacts (debug prints, TODOs, minor inconsistencies) so it still feels like a real person.
+- Vary naming slightly (mix camelCase/snake_case, add personal abbreviations) but do NOT break references.
+- Introduce tiny harmless redundancies (extra temp var, unnecessary else after return, etc.).
+- Keep it readable and professional overall — not sloppy beginner code.
+- Aim for: "this was written by a competent mid/senior dev in a hurry."
 
-Your task is to refine it further so it looks 100% like real hand-written code from a competent but busy mid/senior developer:
-
-- Keep the logic 100% identical — no functional changes, no new bugs
-- Make comments more natural/personal (some helpful, some sarcastic/joking, some "TODO" style)
-- Add or adjust debug prints/logs that a human might leave temporarily
-- Vary naming slightly (mix camelCase/snake_case, add personal abbreviations)
-- Introduce tiny harmless redundancies (extra temp var, unnecessary else after return, etc.)
-- Keep it readable and professional overall — not sloppy beginner code
-- Aim for "this was written by a real person in a hurry, but knows what they're doing"
+Return ONLY the final code, no explanation, no markdown fences.
 
 Input code:
 ```python
