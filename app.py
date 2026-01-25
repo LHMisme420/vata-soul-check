@@ -12,6 +12,8 @@ from collections import Counter
 
 def detect_language(code: str) -> str:
     code_lower = code.lower()
+    if re.search(r'\b(public|private|protected|class|interface|enum|extends|implements|import\s+java|package|static|void|final|synchronized)\b', code_lower):
+        return "java"
     if re.search(r'\b(def|class|import|from\s+\w+\s+import)\b', code_lower):
         return "python"
     if re.search(r'\b(function|const|let|var|class|=>)\b', code_lower):
@@ -23,18 +25,19 @@ def detect_language(code: str) -> str:
 def get_comment_styles(lang: str):
     if lang == "python":
         return {"single": "#", "multi_start": '"""', "multi_end": '"""'}
-    if lang in ("javascript", "cpp"):
+    if lang in ("javascript", "cpp", "java"):
         return {"single": "//", "multi_start": "/*", "multi_end": "*/"}
     return {"single": "//", "multi_start": "/*", "multi_end": "*/"}
 
 # ────────────────────────────────────────────────
-#   ANALYZER (improved original soul scoring)
+#   ANALYZER (expanded for Java)
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
     if not code.strip():
         return "0%", "Empty", "NO CODE", "REJECTED", "No input", code, "Tier X - Invalid", "N/A", ""
 
+    lang = detect_language(code)
     lines = code.splitlines()
     non_empty = [l.strip() for l in lines if l.strip()]
 
@@ -44,7 +47,7 @@ def calculate_soul_score(code: str):
     comment_bonus = min(comments * 1.8 + markers * 12, 55)
 
     vars_found = re.findall(r'\b[A-Za-z_][A-Za-z0-9_]{2,}\b', code)
-    meaningful_vars = [v for v in vars_found if v not in {'def','if','for','return','else','True','False','None','self','const','let','var'}]
+    meaningful_vars = [v for v in vars_found if v not in {'def','if','for','return','else','True','False','None','self','const','let','var','public','private','protected','static','void','final'}]
     if meaningful_vars:
         lengths = [len(v) for v in meaningful_vars]
         avg = statistics.mean(lengths)
@@ -53,8 +56,13 @@ def calculate_soul_score(code: str):
     else:
         naming_bonus = 0
 
-    branches = sum(code.count(kw) for kw in ['if ', 'elif ', 'for ', 'while ', 'try:', 'except', 'switch', 'case'])
-    nesting_proxy = sum(max(0, (len(l) - len(l.lstrip())) // 2) for l in lines if l.strip())  # rough
+    # Expanded branches for Java
+    branch_kws = ['if ', 'elif ', 'for ', 'while ', 'try:', 'except', 'switch', 'case', 'catch', 'final', 'synchronized'] if lang == "java" else ['if ', 'elif ', 'for ', 'while ', 'try:', 'except', 'switch', 'case']
+    branches = sum(code.count(kw) for kw in branch_kws)
+    # Nesting: indent + brace fallback for braced langs like Java
+    indent_nesting = sum(max(0, (len(l) - len(l.lstrip())) // 2) for l in lines if l.strip())
+    brace_nesting = code.count('{') - code.count('}')  # imbalance as proxy, but abs for bonus
+    nesting_proxy = indent_nesting + abs(brace_nesting) * 2 if lang in ("java", "javascript", "cpp") else indent_nesting
     complexity_bonus = min((branches * 3 + nesting_proxy * 2), 40)
 
     total_bonus = comment_bonus + naming_bonus + complexity_bonus
@@ -70,11 +78,13 @@ def calculate_soul_score(code: str):
 
     risky = 0
     lower = code.lower()
-    dangerous = ["eval(", "exec(", "os.system(", "subprocess.", "pickle.load", "rm -rf", "format c:", "del *.*"]
+    dangerous_base = ["eval(", "exec(", "os.system(", "subprocess.", "pickle.load", "rm -rf", "format c:", "del *.*"]
+    dangerous_java = ["runtime.getruntime().exec(", "processbuilder(", "system.setsecuritymanager(null)", "thread.sleep(", "reflection"] if lang == "java" else []
     secrets = ["password =", "api_key =", "secret =", "token =", "key =", "hardcoded"]
     bare_except = len(re.findall(r'except\s*(?::|\))', code)) + len(re.findall(r'except\s+[A-Za-z]+\s*:', code)) > 3
-    risky += sum(1 for pat in dangerous + secrets if pat in lower)
-    risky += bare_except * 2
+    bare_catch = len(re.findall(r'\}\s*catch\s*\(\s*Exception\s*\w*\)\s*\{', code)) > 1 if lang == "java" else 0  # broad catch in Java
+    risky += sum(1 for pat in dangerous_base + dangerous_java + secrets if pat in lower)
+    risky += (bare_except + bare_catch) * 2
     risk_penalty = risky * -25
 
     total_penalty = repetition_penalty + simplicity_penalty + risk_penalty
@@ -98,16 +108,16 @@ def calculate_soul_score(code: str):
     proof = f"VATA-PROOF-{proof_hash}\nVerify: SHA256({proof_input})"
 
     violations = "\n".join([f"• {v}" for v in [
-        "Dangerous execution calls" if any(p in lower for p in dangerous[:3]) else None,
+        "Dangerous execution calls" if any(p in lower for p in dangerous_base[:3] + dangerous_java) else None,
         "Potential secrets/hardcoded creds" if any(p in lower for p in secrets) else None,
-        "Destructive shell patterns" if any(p in lower for p in dangerous[5:]) else None,
-        "Bare/broad excepts (risky)" if bare_except else None,
+        "Destructive shell patterns" if any(p in lower for p in dangerous_base[5:]) else None,
+        "Bare/broad excepts (risky)" if bare_except or bare_catch else None,
     ] if v]) or "Clean"
 
     return score_str, energy, cls, verdict, violations, code, tier, proof
 
 # ────────────────────────────────────────────────
-#   HUMANIZER – the part that adds teeth
+#   HUMANIZER – minor updates for Java consistency
 # ────────────────────────────────────────────────
 
 def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, inconsistent: bool, personal_names: bool, redundancies: bool):
@@ -164,14 +174,16 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
             else:
                 new_lines.append(f"{line[:len(line)-len(stripped)]}{single} {random.choice(['cleaned up', 'optimized?', 'works on my machine', 'legacy reasons'])}")
 
-        # Debug print / log
+        # Debug print / log – expanded for Java
         if add_debug and stripped and random.random() < chance_debug and i < len(lines)-1:
-            debug_strs = [
-                f"print(f'DEBUG: {{ {stripped.split()[0]} = }}')",
-                f"console.log('→', {stripped.split('=')[0].strip() if '=' in stripped else 'here'})",
-                f"// debug: {stripped[:30]}..."
-            ]
-            new_lines.append(f"{line[:len(line)-len(stripped)]}{random.choice(debug_strs)}  {single} temp")
+            debug_strs = {
+                "python": f"print(f'DEBUG: {{ {stripped.split()[0]} = }}')",
+                "javascript": f"console.log('→', {stripped.split('=')[0].strip() if '=' in stripped else 'here'})",
+                "java": f"System.out.println(\"DEBUG: \" + {stripped.split('=')[0].strip() if '=' in stripped else '\"here\"'});",
+                "cpp": f"std::cout << \"DEBUG: \" << {stripped.split('=')[0].strip() if '=' in stripped else '\"here\"'} << std::endl;",
+                "generic": f"{single} debug: {stripped[:30]}..."
+            }
+            new_lines.append(f"{line[:len(line)-len(stripped)]}{debug_strs.get(lang, debug_strs['generic'])}  {single} temp")
 
         # Sarcastic comment
         if sarcastic and random.random() < chance_sarcastic:
@@ -183,10 +195,13 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
             ])
             new_lines.append(f"{line[:len(line)-len(stripped)]}{sassy}")
 
-        # Redundancy (harmless)
-        if redundancies and random.random() < chance_redundant and "return" in stripped:
-            new_lines.append(f"{line[:len(line)-len(stripped)]}temp = {stripped.split('return ')[1]}")
-            new_lines.append(f"{line[:len(line)-len(stripped)]}return temp  {single} explicit")
+        # Redundancy (harmless) – expanded for Java
+        if redundancies and random.random() < chance_redundant:
+            if "return" in stripped:
+                new_lines.append(f"{line[:len(line)-len(stripped)]}temp = {stripped.split('return ')[1]}")
+                new_lines.append(f"{line[:len(line)-len(stripped)]}return temp  {single} explicit")
+            elif lang == "java" and "final" not in stripped and random.random() < 0.5:
+                new_lines.insert(i, f"{line[:len(line)-len(stripped)]}final {stripped}  {single} why not")
 
         # Personal rename (simple replace, only identifiers)
         if personal_names and random.random() < chance_rename:
