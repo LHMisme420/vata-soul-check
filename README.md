@@ -3,11 +3,8 @@ title: VATA Soul Check
 emoji: 🔥
 colorFrom: blue
 colorTo: purple
-sdk: gradio
-sdk_version: 6.4.0
-app_file: app.py
-pinned: false
-python_version: 3.1
+sdk: docker   # ← this line switches to Dockerfile build
+app_port: 7860
 ---
 # VATA — Code Authenticity Scanner & Humanizer
 
