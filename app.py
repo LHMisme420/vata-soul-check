@@ -9,7 +9,7 @@ import json
 from collections import Counter
 
 # ────────────────────────────────────────────────
-#   LANGUAGE & COMMENT HELPERS (unchanged)
+#   LANGUAGE & COMMENT HELPERS
 # ────────────────────────────────────────────────
 
 def detect_language(code: str) -> str:
@@ -113,39 +113,39 @@ def calculate_soul_score(code: str):
     return score_str, energy, cls, verdict, tier
 
 # ────────────────────────────────────────────────
-#   RULE-BASED HUMANIZER (fast, deterministic)
+#   RULE-BASED HUMANIZER
 # ────────────────────────────────────────────────
 
 def rule_based_humanize(
     code: str,
-    intensity: float,
-    comment_int: float,
-    debug_int: float,
-    sarcasm_int: float,
-    incon_int: float,
-    rename_int: float,
-    redund_int: float,
-    comment_preset: str,
-    naming_style: str,
-    debug_prefix: str,
-    lang_override: str
+    intensity: float = 5.0,
+    comment_intensity: float = 5.0,
+    debug_intensity: float = 5.0,
+    sarcasm_intensity: float = 5.0,
+    inconsistency_intensity: float = 5.0,
+    rename_intensity: float = 5.0,
+    redundancy_intensity: float = 3.0,
+    comment_style_preset: str = "Casual",
+    naming_style: str = "Random Flair",
+    debug_prefix: str = "DEBUG:",
+    language_override: str = "Auto"
 ):
     if not code.strip():
         return code
 
-    lang = lang_override if lang_override != "Auto" else detect_language(code)
+    lang = language_override if language_override != "Auto" else detect_language(code)
     single = get_comment_styles(lang)["single"]
 
     lines = code.splitlines()
     new_lines = lines[:]
 
     intensities = {
-        'comment': comment_int / 10,
-        'debug': debug_int / 10,
-        'sarcasm': sarcasm_int / 10,
-        'inconsistency': incon_int / 10,
-        'rename': rename_int / 10,
-        'redundancy': redund_int / 10
+        'comment': comment_intensity / 10,
+        'debug': debug_intensity / 10,
+        'sarcasm': sarcasm_intensity / 10,
+        'inconsistency': inconsistency_intensity / 10,
+        'rename': rename_intensity / 10,
+        'redundancy': redundancy_intensity / 10
     }
 
     comment_pools = {
@@ -154,7 +154,7 @@ def rule_based_humanize(
         "Sarcastic": ['why do we even...', 'future me hates me', 'send help', 'enterprise quality™', 'this is fine.jpg'],
         "Minimal": ['todo', 'fixme', 'note', 'debug']
     }
-    comments_list = comment_pools.get(comment_preset, comment_pools["Casual"])
+    comments_list = comment_pools.get(comment_style_preset, comment_pools["Casual"])
 
     rename_map = {
         "input": "rawInput", "data": "stuff", "result": "finalRes", "value": "val",
@@ -205,18 +205,19 @@ def rule_based_humanize(
     return humanized
 
 # ────────────────────────────────────────────────
-#   LLM BLENDING PASS (optional second stage)
+#   LLM BLENDING PASS (fixed syntax)
 # ────────────────────────────────────────────────
 
 def llm_blend_code(code: str, api_key: str, model: str = "grok-beta"):
     if not api_key.strip():
         return code + "\n\n# LLM blending skipped: no API key provided"
 
-    prompt = f"""You are an expert senior developer with 12+ years of experience who writes clean but slightly imperfect, human-feeling code.
+    prompt = """
+You are an expert senior developer with 12+ years of experience who writes clean but slightly imperfect, human-feeling code.
 
 Take the following code that has already been lightly humanized with comments, debug statements, inconsistencies, etc.
 
-Your task is to **refine it further** so it looks 100% like real hand-written code from a competent but busy mid/senior developer:
+Your task is to refine it further so it looks 100% like real hand-written code from a competent but busy mid/senior developer:
 
 - Keep the logic 100% identical — no functional changes, no new bugs
 - Make comments more natural/personal (some helpful, some sarcastic/joking, some "TODO" style)
@@ -228,4 +229,4 @@ Your task is to **refine it further** so it looks 100% like real hand-written co
 
 Input code:
 ```python
-{code}
+{}
