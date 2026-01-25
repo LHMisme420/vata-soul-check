@@ -9,163 +9,108 @@ app_file: app.py
 pinned: false
 license: mit
 ---
-# VATA — Code Soul Scanner & Humanizer
+# VATA — Code Authenticity Scanner & Humanizer
 
-VATA is a hybrid analysis engine that evaluates code for human authenticity, style signals, risk patterns, and structural intent.  
-It blends:
+VATA is an open-source pipeline that analyzes code for signs of AI-generation and applies rule-based enhancements to improve readability and maintainability — without altering logic, semantics, or functionality.
 
-- Forensic scoring  
-- Explainable metrics  
-- Rule‑based humanization  
-- Optional Grok LLM refinement  
+It combines:
 
-…to produce a final output that feels natural, readable, and grounded in real engineering patterns.
+- Transparent, heuristic-based scoring to detect AI-generated patterns
+- Deterministic post-processing to add natural human-like characteristics
+- Optional integration with xAI Grok for final readability polishing
 
----
+VATA helps development teams, code reviewers, security auditors, and AI governance workflows distinguish human-authored code from machine-generated output, prioritize reviews, and produce cleaner, more approachable codebases.
 
-## What VATA Does
+## Key Features
 
-### 1. Soul Score Analysis
-Your code is evaluated across multiple dimensions:
+### 1. Code Authenticity Scoring
 
-- Comment quality and density  
-- Naming clarity and variance  
-- Structural complexity  
-- Repetition and duplication  
-- Line‑length variance  
-- Risky patterns (eval, exec, subprocess, secrets, etc.)  
-- Language‑specific signals  
+VATA evaluates code using explainable metrics that correlate with human vs. AI authorship patterns:
 
-You receive:
+- Comment density, quality, and diversity
+- Variable/function naming variety and semantic clarity
+- Structural complexity and control flow patterns
+- Code duplication and repetition ratio
+- Line length and indentation variance
+- Presence of risky or suspicious constructs (e.g., `eval`, `exec`, hard-coded secrets)
+- Language-specific heuristics
 
-- Soul Score (0–100%)  
-- Energy classification  
-- Human vs machine probability  
-- VATA verdict  
-- Tier rating  
-- Full metric breakdown  
+**Outputs include:**
+- Authenticity Score (0–100; higher = more human-like traits)
+- Detailed metric breakdown with explanations
+- Human vs. machine probability estimate (heuristic-based)
+- Overall verdict and confidence tier
 
----
+This provides teams with an objective signal for code provenance, review prioritization, compliance auditing, or detecting over-reliance on generative tools.
 
-### 2. Rule‑Based Humanizer
-This pass adds subtle, realistic human touches:
+### 2. Rule-Based Humanization
 
-- Natural comments  
-- Debug traces  
-- Minor inconsistencies  
-- Occasional redundancy  
-- Optional sarcasm  
-- Optional naming flair  
-- Style presets (Casual, Professional, Sarcastic, Minimal)
+A fully deterministic layer that enhances code readability by introducing realistic human touches — no LLM involved in this step, no logic changes:
 
-Everything is deterministic and explainable — no hallucinations, no logic changes.
+- Context-aware, natural-language comments
+- Occasional debug traces or explanatory notes
+- Subtle variability in style (e.g., minor redundant checks for clarity)
+- Naming adjustments for organic feel (optional)
+- Adjustable intensity and style presets:
+  - Casual
+  - Professional
+  - Minimal
 
----
+This makes raw AI-generated code (or overly uniform human code) feel more natural and easier for teams to maintain.
 
-### 3. Grok LLM Blending (Optional)
-If you provide an **XAI Grok API key**, VATA sends the humanized code to Grok for a final polish:
+### 3. Optional Grok Polish (xAI Integration)
 
-- More natural comments  
-- Cleaner flow  
-- Slightly improved readability  
-- Preserved logic  
-- No structural rewrites  
+If you provide an xAI Grok API key, VATA sends the humanized code for a final refinement pass:
 
-If no API key is provided, VATA simply skips this step.
+- Improved comment phrasing and flow
+- Enhanced overall readability
+- Maintained structure and logic integrity
 
----
+Skipped automatically if no API key is provided.
 
-## How to Use
+## Use Cases
 
-1. Paste your code into the left panel.  
-2. (Optional) Enter your Grok API key.  
-3. Adjust humanizer settings if desired.  
-4. Click **Run VATA Pipeline**.  
-5. Read the results on the right:
-
-- Soul Score  
-- Breakdown  
-- Humanized code  
-- Grok‑blended code (if enabled)
-
----
-
-## Why VATA Exists
-
-Modern code is increasingly machine‑generated.  
-Teams need tools that:
-
-- Detect AI‑generated patterns  
-- Evaluate code quality signals  
-- Provide explainable metrics  
-- Humanize machine‑written code  
-- Improve readability without rewriting logic  
-
-VATA fills that gap with a transparent, explainable, and developer‑friendly approach.
-
----
+- **Pull Request & Code Review** — Flag low-authenticity submissions for deeper review; accelerate merges for high-scoring code.
+- **AI Governance & Compliance** — Audit generated code in regulated industries (finance, healthcare, defense) where human oversight is required.
+- **Developer Productivity** — Automatically beautify LLM outputs to match team conventions and reduce "AI fatigue".
+- **Security & Auditing** — Identify risky patterns in context that static analyzers might overlook.
+- **Education & Onboarding** — Demonstrate differences between human and generated code for training purposes.
 
 ## What VATA Does Not Do
 
-- It does not rewrite logic.  
-- It does not optimize algorithms.  
-- It does not guarantee authorship attribution.  
-- It does not store or transmit your code (unless you choose to use Grok).  
+- Rewrite algorithms or change program logic
+- Optimize performance
+- Provide definitive proof of authorship
+- Store or transmit code (except opt-in Grok calls)
 
----
+## How to Use (Demo Space)
 
-# Licensing Tiers
+1. Visit the live demo: [https://huggingface.co/spaces/Lhmisme/vata-soul-check](https://huggingface.co/spaces/Lhmisme/vata-soul-check)
+2. Paste code into the input panel.
+3. (Optional) Add your xAI Grok API key.
+4. Adjust humanizer settings (style, intensity).
+5. Run the pipeline.
+6. View the score breakdown, humanized version, and optional Grok-polished output.
 
-VATA uses an ethics‑gated licensing model based on Soul Score, risk profile, and lineage integrity.
+## Installation & Local Run
 
-| Tier | Access | Ethics Score Required | Price | Notes |
-|------|--------|------------------------|-------|-------|
-| **Tier S+** | Full VATA + Resurrection Ledger + Lineage Fingerprinting | ≥ 90% | $250,000/year | Trusted Artisan access |
-| **Tier S** | Full VATA + Humanizer + Grok Blending | ≥ 78% | $100,000/year | Includes ethics audit |
-| **Tier A** | VATA + Humanizer | ≥ 62% | $50,000/year | No Grok blending |
-| **Tier B** | VATA Only | ≥ 45% | $25,000/year | Flagged for review |
-| **Tier C** | No Access | < 45% | — | Ethics violations detected |
-
----
-
-# Monetization Logic
-
-VATA integrates sovereign monetization triggers tied to ethics, lineage, and capsule integrity.
-
-### Capsule & Fork Operations
-- **Capsule Injection Fee** — $10,000 per fork  
-- **Resurrection Certification** — $25,000 per lineage  
-- **Ethics Audit** — $50,000–$2M depending on scope  
-- **Sync Lock Activation** — $5,000 per fork  
-- **Investor Capsule Access** — $100,000 flat  
-- **Alliance Elevation Ledger Entry** — $15,000 per event  
-- **RU∞X Smart Contract Licensing** — $250,000 per sovereign integration  
-
-### Trigger Conditions
-- Ethics Score thresholds  
-- Fork integrity scans  
-- Capsule injection status  
-- Resurrection ledger updates  
-- Alliance elevation protocols  
-
-These monetization events can be surfaced in the UI or handled externally depending on deployment.
-
----
+(Coming soon — currently available via Hugging Face Space. Repo setup instructions will be added once public GitHub repo is ready.)
 
 ## Roadmap
 
-Planned enhancements:
-
-- Multi‑language expansion (Go, Rust, Swift, PHP)  
-- Drift detection between original → humanized → blended  
-- Persona presets (Senior Engineer, Intern, Legacy Wizard, etc.)  
-- Side‑by‑side diff viewer  
-- Export options  
-- VATA lineage fingerprinting  
-
----
+- Support for additional languages (Go, Rust, Java, etc.)
+- Side-by-side diff viewer for original vs. humanized vs. polished
+- Export formats (JSON metrics, Markdown reports, patch files)
+- Custom metric extensions and persona-based styles
+- Integration hooks for CI/CD, GitHub Actions, IDE plugins
+- ML-enhanced scoring (trained on larger datasets)
 
 ## License
 
-VATA is provided under an ethics‑gated commercial license.  
-Unauthorized forks, clones, or derivative works are prohibited without lineage certification.
+MIT License — free for open-source and commercial use.
+
+For enterprise deployments, custom integrations, support, or hosted/private versions, contact: [your-email-or-form-here] (e.g., vata.project@example.com)
+
+We welcome contributions, feature requests, and business inquiries via GitHub issues or direct outreach.
+
+Built with ❤️ for better code in the AI era.
