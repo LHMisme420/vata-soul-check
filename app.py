@@ -36,13 +36,14 @@ def get_comment_styles(lang: str):
     return styles.get(lang, styles["other"])
 
 # ────────────────────────────────────────────────
-#   ANALYZER (unchanged core logic)
+#   ANALYZER
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
     if not code.strip():
-        return "0%", "Empty", "NO CODE", "REJECTED", "No input", code, "Tier X - Invalid", "N/A", ""
+        return "0%", "Empty", "NO CODE", "REJECTED", "Tier X - Invalid"
 
+    lang = detect_language(code)
     lines = code.splitlines()
     non_empty = [l.strip() for l in lines if l.strip()]
 
@@ -51,22 +52,30 @@ def calculate_soul_score(code: str):
     comment_bonus = min(comments * 1.8 + markers * 12, 55)
 
     vars_found = re.findall(r'\b[A-Za-z_][A-Za-z0-9_]{2,}\b', code)
-    meaningful_vars = [v for v in vars_found if v not in {'def','if','for','return','else','True','False','None','self','const','let','var'}]
+    exclude = {'def','if','for','return','else','True','False','None','self','const','let','var',
+               'public','private','protected','static','void','final','using','namespace','async','await'}
+    meaningful_vars = [v for v in vars_found if v not in exclude]
     naming_bonus = 0
     if meaningful_vars:
         lengths = [len(v) for v in meaningful_vars]
-        avg = statistics.mean(lengths)
+        avg = statistics.mean(lengths) if lengths else 0
         std = statistics.stdev(lengths) if len(lengths) > 1 else 0
         naming_bonus = min(avg * 4 + std * 8, 35)
 
-    branches = sum(code.count(kw) for kw in ['if ', 'elif ', 'for ', 'while ', 'try:', 'except', 'switch', 'case'])
-    nesting_proxy = sum(max(0, (len(l) - len(l.lstrip())) // 2) for l in lines if l.strip())
+    branch_kws_base = ['if ', 'elif ', 'for ', 'while ', 'try:', 'except', 'switch', 'case']
+    branch_kws_java = ['catch', 'final', 'synchronized'] if lang == "java" else []
+    branch_kws_csharp = ['catch', 'finally', 'foreach', 'lock', 'checked', 'unchecked'] if lang == "csharp" else []
+    branches = sum(code.count(kw) for kw in branch_kws_base + branch_kws_java + branch_kws_csharp)
+
+    indent_nesting = sum(max(0, (len(l) - len(l.lstrip())) // 2) for l in lines if l.strip())
+    brace_nesting = code.count('{') - code.count('}')
+    nesting_proxy = indent_nesting + abs(brace_nesting) * 2 if lang in ("java", "javascript", "cpp", "csharp") else indent_nesting
     complexity_bonus = min((branches * 3 + nesting_proxy * 2), 40)
 
     total_bonus = comment_bonus + naming_bonus + complexity_bonus
 
     stripped_lines = [l.strip() for l in lines if l.strip()]
-    dup_ratio = sum(c > 1 for c in Counter(stripped_lines).values()) / max(len(stripped_lines), 1)
+    dup_ratio = sum(c > 1 for c in Counter(stripped_lines).values()) / max(len(stripped_lines), 1) if stripped_lines else 0
     repetition_penalty = dup_ratio * -60
 
     line_lengths = [len(l) for l in non_empty]
@@ -75,11 +84,14 @@ def calculate_soul_score(code: str):
 
     risky = 0
     lower = code.lower()
-    dangerous = ["eval(", "exec(", "os.system(", "subprocess.", "pickle.load", "rm -rf", "format c:", "del *.*"]
+    dangerous_base = ["eval(", "exec(", "os.system(", "subprocess.", "pickle.load", "rm -rf", "format c:", "del *.*"]
+    dangerous_java = ["runtime.getruntime().exec(", "processbuilder(", "system.setsecuritymanager(null)", "thread.sleep(", "reflection"] if lang == "java" else []
+    dangerous_csharp = ["process.start(", "system.diagnostics.process(", "file.delete(", "directory.delete(", "thread.sleep(", "reflection"] if lang == "csharp" else []
     secrets = ["password =", "api_key =", "secret =", "token =", "key =", "hardcoded"]
-    bare_except = len(re.findall(r'except\s*(?::|\))', code)) + len(re.findall(r'except\s+[A-Za-z]+\s*:', code)) > 3
-    risky += sum(1 for pat in dangerous + secrets if pat in lower)
-    risky += bare_except * 2
+    bare_except_py = len(re.findall(r'except\s*(?::|\))', code)) + len(re.findall(r'except\s+[A-Za-z]+\s*:', code)) > 3
+    bare_catch = len(re.findall(r'\}\s*catch\s*\(\s*Exception\s*\w*\)\s*\{', code)) > 1 if lang in ("java", "csharp") else 0
+    risky += sum(lower.count(pat) for pat in dangerous_base + dangerous_java + dangerous_csharp + secrets)
+    risky += (bare_except_py + bare_catch) * 2
     risk_penalty = risky * -25
 
     total_penalty = repetition_penalty + simplicity_penalty + risk_penalty
@@ -99,7 +111,7 @@ def calculate_soul_score(code: str):
     return score_str, energy, cls, verdict, tier
 
 # ────────────────────────────────────────────────
-#   ADVANCED HUMANIZER – highly configurable
+#   HUMANIZER – highly configurable
 # ────────────────────────────────────────────────
 
 def humanize_code(
@@ -126,7 +138,6 @@ def humanize_code(
     lines = code.splitlines()
     new_lines = lines[:]
 
-    # Normalize intensities to 0–1
     intensities = {
         'comment': comment_intensity / 10,
         'debug': debug_intensity / 10,
@@ -136,7 +147,6 @@ def humanize_code(
         'redundancy': redundancy_intensity / 10
     }
 
-    # Comment pool based on preset
     comment_pools = {
         "Casual": ['TODO: revisit later', 'maybe fix this someday', 'works for now', 'borrowed idea', 'not proud of this'],
         "Professional": ['Refactor opportunity', 'Consider extracting method', 'Documentation pending', 'Temporary solution', 'Needs review'],
@@ -154,19 +164,16 @@ def humanize_code(
         line = new_lines[i]
         stripped = line.strip()
 
-        # Inconsistency
         if random.random() < intensities['inconsistency'] * 0.3:
             if random.random() < 0.5:
                 new_lines[i] = line.replace("    ", "  ")
             else:
                 new_lines[i] += "  "
 
-        # Comments
         if stripped and random.random() < intensities['comment'] * 0.4:
             comment = random.choice(comments_list)
             new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{single} {comment}")
 
-        # Debug
         if random.random() < intensities['debug'] * 0.25:
             debug_line = f"{debug_prefix} here"
             if lang == "python":
@@ -175,18 +182,15 @@ def humanize_code(
                 debug_line = f"console.log('{debug_prefix} line {i+1}')"
             new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{debug_line}")
 
-        # Sarcasm (extra layer on top of comments)
         if random.random() < intensities['sarcasm'] * 0.2:
             sassy = random.choice(["why...", "future me is sorry", "send coffee", "this is cursed"])
             new_lines.insert(i+1, f"{line[:len(line)-len(stripped)]}{single} {sassy}")
 
-        # Redundancy
         if random.random() < intensities['redundancy'] * 0.15 and "return" in stripped:
             expr = stripped.split("return ", 1)[1]
             new_lines.insert(i, f"{line[:len(line)-len(stripped)]}temp = {expr}")
             new_lines[i+1] = f"{line[:len(line)-len(stripped)]}return temp  {single} explicit"
 
-        # Rename
         if random.random() < intensities['rename'] * 0.3:
             for old, new in rename_map.items():
                 if random.random() < 0.5:
@@ -201,7 +205,7 @@ def humanize_code(
     return humanized
 
 # ────────────────────────────────────────────────
-#   Gradio INTERFACE – now super configurable
+#   Gradio INTERFACE – with auto-scoring in Humanizer
 # ────────────────────────────────────────────────
 
 custom_css = """
@@ -216,81 +220,102 @@ button:hover { box-shadow: 0 0 18px #00ff9d; }
 .danger { background: #ff4444; color: white; }
 """
 
-with gr.Blocks(css=custom_css, title="VATA Soul Check – Fully Configurable") as demo:
-    gr.Markdown("# VATA Soul Check – Fully Configurable Edition")
-    gr.Markdown("Control every aspect of humanization. Analyzer + Humanizer in one place.")
+with gr.Blocks(css=custom_css, title="VATA Soul Check – Auto-Scoring Edition") as demo:
+    gr.Markdown("# VATA Soul Check – Auto-Scoring Humanizer")
+    gr.Markdown("Humanize code → instantly see before/after soul scores & delta")
 
-    with gr.Tab("Humanizer + Analyzer"):
-        code_in = gr.Textbox(lines=16, label="Paste Code (AI or any)", placeholder="Paste code here...")
+    code_in = gr.Textbox(lines=16, label="Paste Code (AI or any)", placeholder="Paste code here...")
 
+    with gr.Row():
+        lang_override = gr.Dropdown(
+            choices=["Auto", "Python", "Java", "C#", "JavaScript", "C++", "Other"],
+            value="Auto", label="Force Language"
+        )
+        intensity_global = gr.Slider(0, 10, value=5, step=0.5, label="Global Intensity")
+
+    with gr.Accordion("Detailed Controls (optional)", open=False):
         with gr.Row():
-            lang_override = gr.Dropdown(
-                choices=["Auto", "Python", "Java", "C#", "JavaScript", "C++", "Other"],
-                value="Auto", label="Force Language"
-            )
-            intensity_global = gr.Slider(0, 10, value=5, step=0.5, label="Global Intensity")
-
-        with gr.Accordion("Detailed Controls", open=False):
-            with gr.Row():
-                comment_int = gr.Slider(0, 10, value=5, label="Comment Intensity")
-                debug_int   = gr.Slider(0, 10, value=5, label="Debug Print Intensity")
-                sarcasm_int = gr.Slider(0, 10, value=5, label="Sarcasm Intensity")
-            with gr.Row():
-                incon_int   = gr.Slider(0, 10, value=5, label="Inconsistency Intensity")
-                rename_int  = gr.Slider(0, 10, value=5, label="Rename Intensity")
-                redund_int  = gr.Slider(0, 10, value=3, label="Redundancy Intensity")
-
-            comment_preset = gr.Dropdown(
-                choices=["Casual", "Professional", "Sarcastic", "Minimal"],
-                value="Casual", label="Comment Style Preset"
-            )
-            naming_style = gr.Dropdown(
-                choices=["Keep Original", "Random Flair", "Abbreviate", "CamelCase → snake_case"],
-                value="Random Flair", label="Naming Style"
-            )
-            debug_prefix = gr.Textbox(value="DEBUG:", label="Debug Prefix")
-
+            comment_int = gr.Slider(0, 10, value=5, label="Comment Intensity")
+            debug_int   = gr.Slider(0, 10, value=5, label="Debug Intensity")
+            sarcasm_int = gr.Slider(0, 10, value=5, label="Sarcasm Intensity")
         with gr.Row():
-            btn_humanize = gr.Button("Humanize Code", variant="primary")
-            btn_analyze  = gr.Button("Only Analyze (no change)", variant="secondary")
+            incon_int   = gr.Slider(0, 10, value=5, label="Inconsistency Intensity")
+            rename_int  = gr.Slider(0, 10, value=5, label="Rename Intensity")
+            redund_int  = gr.Slider(0, 10, value=3, label="Redundancy Intensity")
 
-        humanized_out = gr.Textbox(lines=14, label="Humanized Output", interactive=False)
-        with gr.Row():
-            orig_score   = gr.Textbox(label="Original Score")
-            new_score    = gr.Textbox(label="Humanized Score")
-            delta_badge  = gr.HTML(label="Delta")
+        comment_preset = gr.Dropdown(
+            choices=["Casual", "Professional", "Sarcastic", "Minimal"],
+            value="Casual", label="Comment Style Preset"
+        )
+        naming_style = gr.Dropdown(
+            choices=["Keep Original", "Random Flair", "Abbreviate", "CamelCase → snake_case"],
+            value="Random Flair", label="Naming Style"
+        )
+        debug_prefix = gr.Textbox(value="DEBUG:", label="Debug Prefix")
 
-        # ── Run humanize + auto-score ──
-        def humanize_and_score(code, lang_ovr, glob_int, c_int, d_int, s_int, i_int, r_int, rd_int, c_preset, n_style, dbg_pre):
-            humanized = humanize_code(
-                code, glob_int, d_int, s_int, i_int, r_int, rd_int,
-                comment_style_preset=c_preset, naming_style=n_style,
-                debug_prefix=dbg_pre, language_override=lang_ovr
-            )
-            o_score, _, _, _, _ = calculate_soul_score(code)
-            h_score, _, _, _, _ = calculate_soul_score(humanized)
-            delta = int(h_score.rstrip("%")) - int(o_score.rstrip("%"))
-            badge = f"<span class='output-badge {'success' if delta > 20 else 'warning' if delta > 0 else 'danger'}'>{delta:+}%</span>"
-            return humanized, o_score, h_score, badge
+    btn_humanize = gr.Button("Humanize + Auto-Score", variant="primary")
 
-        btn_humanize.click(
-            humanize_and_score,
-            inputs=[code_in, lang_override, intensity_global, comment_int, debug_int, sarcasm_int, incon_int, rename_int, redund_int, comment_preset, naming_style, debug_prefix],
-            outputs=[humanized_out, orig_score, new_score, delta_badge]
+    humanized_out = gr.Textbox(lines=14, label="Humanized Output", interactive=False)
+
+    with gr.Row():
+        orig_score   = gr.Textbox(label="Original Score")
+        new_score    = gr.Textbox(label="Humanized Score")
+        delta_badge  = gr.HTML(label="Delta / Improvement")
+        energy_out   = gr.Textbox(label="Energy (after)")
+        cls_out      = gr.Textbox(label="Classification (after)")
+        verdict_out  = gr.Textbox(label="Verdict (after)")
+
+    # ── Auto-score after humanization ──
+    def humanize_and_score(code, lang_ovr, glob_int, c_int, d_int, s_int, i_int, r_int, rd_int, c_preset, n_style, dbg_pre):
+        if not code.strip():
+            return "", "0%", "0%", "<span class='danger'>No code</span>", "", "", ""
+
+        humanized = humanize_code(
+            code, glob_int, c_int, d_int, s_int, i_int, rd_int,
+            comment_style_preset=c_preset, naming_style=n_style,
+            debug_prefix=dbg_pre, language_override=lang_ovr
         )
 
-        # ── Just analyze ──
-        def only_analyze(code):
-            score, energy, cls, verdict, tier = calculate_soul_score(code)
-            return score, energy, cls, verdict, tier
+        o_score, o_energy, o_cls, o_verdict, o_tier = calculate_soul_score(code)
+        h_score, h_energy, h_cls, h_verdict, h_tier = calculate_soul_score(humanized)
 
-        btn_analyze.click(
-            only_analyze,
-            inputs=code_in,
-            outputs=[orig_score, gr.Textbox(label="Energy"), gr.Textbox(label="Classification"), gr.Textbox(label="Verdict"), gr.Textbox(label="Tier")]
+        o_num = int(o_score.rstrip("%")) if "%" in o_score else 0
+        h_num = int(h_score.rstrip("%")) if "%" in h_score else 0
+        delta = h_num - o_num
+
+        badge_class = 'success' if delta > 20 else 'warning' if delta > 0 else 'danger'
+        badge = f"<span class='output-badge {badge_class}'>{delta:+}%</span>"
+
+        return (
+            humanized,
+            o_score,
+            h_score,
+            badge,
+            h_energy,
+            h_cls,
+            h_verdict
         )
 
-    gr.Markdown("Fully configurable – every slider matters | Built by @Lhmisme | 2026")
+    btn_humanize.click(
+        humanize_and_score,
+        inputs=[
+            code_in, lang_override, intensity_global,
+            comment_int, debug_int, sarcasm_int,
+            incon_int, rename_int, redund_int,
+            comment_preset, naming_style, debug_prefix
+        ],
+        outputs=[
+            humanized_out,
+            orig_score,
+            new_score,
+            delta_badge,
+            energy_out,
+            cls_out,
+            verdict_out
+        ]
+    )
+
+    gr.Markdown("Auto-scoring enabled – see improvement instantly | Built by @Lhmisme | 2026")
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860)
