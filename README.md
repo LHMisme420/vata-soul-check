@@ -4,7 +4,7 @@ emoji: 🧬
 colorFrom: indigo
 colorTo: blue
 sdk: gradio
-sdk_version: 4.0.0
+sdk_version: 6.4.0
 app_file: app.py
 pinned: false
 license: mit
@@ -123,4 +123,4 @@ Planned enhancements:
 - Persona presets (Senior Engineer, Intern, Legacy Wizard, etc.)  
 - Side‑by‑side diff viewer  
 - Export options  
-- VATA lineage fingerprinting  
+- VATA lineage fingerprinting
