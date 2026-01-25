@@ -384,3 +384,25 @@ Right: see Soul Score, rule-based humanization, and Grok-blended human output.
                 "Output will appear here...",
                 elem_id="output_panel"
             )
+                run_button.click(
+        fn=full_pipeline,
+        inputs=[
+            code_input,
+            api_key_input,
+            intensity_slider,
+            comment_intensity_slider,
+            debug_intensity_slider,
+            sarcasm_intensity_slider,
+            inconsistency_intensity_slider,
+            rename_intensity_slider,
+            redundancy_intensity_slider,
+            comment_style_dropdown,
+            naming_style_dropdown,
+            debug_prefix_box,
+            language_override_dropdown
+        ],
+        outputs=[output_panel]
+    )
+
+if __name__ == "__main__":
+    demo.launch()
