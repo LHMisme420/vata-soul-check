@@ -1,16 +1,14 @@
 ---
----
 title: VATA Soul Check
 emoji: 🔥
 colorFrom: blue
 colorTo: purple
 sdk: gradio
-sdk_version: 5.0.2   # or whatever you're using
+sdk_version: 5.0.2   # adjust to your actual Gradio version if pinned
 app_file: app.py
-pinned: false
-python_version: 3.10   # ← add this line
-
+python_version: 3.10   # ← exactly like this: major.minor, no quotes needed
 ---
+
 # VATA — Code Authenticity Scanner & Humanizer
 
 VATA is an open-source pipeline that analyzes code for signs of AI-generation and applies rule-based enhancements to improve readability and maintainability — without altering logic, semantics, or functionality.
