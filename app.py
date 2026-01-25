@@ -401,7 +401,7 @@ blended = llm_blend_code(humanized, api_key=api_key)
 safe_blended = (
     blended
     .replace("```", "`` `")
-    .replace('"""', "''\\\"")
+    .replace("\"\"\"", "''\\\"")
     .replace("'''", "'\\''")
 )
 
