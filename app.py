@@ -38,7 +38,7 @@ def get_comment_styles(lang: str):
     return styles.get(lang, styles["other"])
 
 # ────────────────────────────────────────────────
-#   ANALYZER (unchanged)
+#   ANALYZER
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
@@ -205,7 +205,7 @@ def rule_based_humanize(
     return humanized
 
 # ────────────────────────────────────────────────
-#   LLM BLENDING PASS (fixed syntax)
+#   LLM BLENDING PASS (fixed version)
 # ────────────────────────────────────────────────
 
 def llm_blend_code(code: str, api_key: str, model: str = "grok-beta"):
