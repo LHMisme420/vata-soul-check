@@ -47,7 +47,7 @@ def calculate_soul_score(code: str):
         return "0%", "Empty", "NO CODE", "REJECTED", "Tier X - Invalid", {
             "comments": 0,
             "naming": 0,
-            "complexity": 0,
+            "complexplexity": 0,
             "repetition_penalty": 0,
             "simplicity_penalty": 0,
             "risk_penalty": 0,
@@ -182,8 +182,9 @@ def calculate_soul_score(code: str):
     }
 
     return score_str, energy, cls, verdict, tier, breakdown
-    # ────────────────────────────────────────────────
-#   RULE-BASED HUMANIZER (SAFE, NO MULTILINE STRINGS)
+
+# ────────────────────────────────────────────────
+#   RULE-BASED HUMANIZER
 # ────────────────────────────────────────────────
 
 def rule_based_humanize(
@@ -273,7 +274,7 @@ def rule_based_humanize(
     return "\n".join(new_lines)
 
 # ────────────────────────────────────────────────
-#   GROK API WRAPPER (SAFE, NO MULTILINE STRINGS)
+#   GROK API WRAPPER
 # ────────────────────────────────────────────────
 
 def call_grok_api(prompt, api_key, model="grok-beta", max_retries=2, timeout=30):
@@ -314,7 +315,7 @@ def call_grok_api(prompt, api_key, model="grok-beta", max_retries=2, timeout=30)
     return None, "Grok API failed: " + str(last_error)
 
 # ────────────────────────────────────────────────
-#   LLM BLENDING PASS (SAFE, NO TRIPLE QUOTES)
+#   LLM BLENDING PASS
 # ────────────────────────────────────────────────
 
 def llm_blend_code(code, api_key, model="grok-beta"):
@@ -339,8 +340,9 @@ def llm_blend_code(code, api_key, model="grok-beta"):
 
     safe = blended.replace("```", "`` ").replace("\"\"\"", "''").replace("'''", "'")
     return safe
-    # ────────────────────────────────────────────────
-#   FULL PIPELINE (NO MARKDOWN FENCES)
+
+# ────────────────────────────────────────────────
+#   FULL PIPELINE
 # ────────────────────────────────────────────────
 
 def full_pipeline(
@@ -370,7 +372,7 @@ def full_pipeline(
         "BREAKDOWN\n"
         "Comments: " + str(breakdown["comments"]) + "\n"
         "Naming: " + str(breakdown["naming"]) + "\n"
-        "Complexity: " + str(breakdown["complexity"]) + "\n"
+        "Complexity: " + str(breakdown["complexplexity"]) + "\n"
         "Repetition penalty: " + str(breakdown["repetition_penalty"]) + "\n"
         "Simplicity penalty: " + str(breakdown["simplicity_penalty"]) + "\n"
         "Risk penalty: " + str(breakdown["risk_penalty"]) + "\n"
@@ -410,8 +412,9 @@ def full_pipeline(
     )
 
     return output
-    # ────────────────────────────────────────────────
-#   GRADIO UI (NO CSS, NO MULTILINE STRINGS)
+
+# ────────────────────────────────────────────────
+#   GRADIO UI
 # ────────────────────────────────────────────────
 
 with gr.Blocks() as demo:
@@ -420,7 +423,6 @@ with gr.Blocks() as demo:
 
     with gr.Row():
 
-        # LEFT PANEL
         with gr.Column(scale=1):
 
             code_input = gr.Textbox(
@@ -438,69 +440,4 @@ with gr.Blocks() as demo:
             with gr.Accordion("Humanizer Controls", open=False):
 
                 intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Overall Intensity")
-                comment_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Comment Intensity")
-                debug_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Debug Intensity")
-                sarcasm_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Sarcasm Intensity")
-                inconsistency_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Inconsistency Intensity")
-                rename_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label="Rename Intensity")
-                redundancy_intensity_slider = gr.Slider(0, 10, value=3, step=0.5, label="Redundancy Intensity")
-
-                comment_style_dropdown = gr.Dropdown(
-                    choices=["Casual", "Professional", "Sarcastic", "Minimal"],
-                    value="Casual",
-                    label="Comment Style"
-                )
-
-                naming_style_dropdown = gr.Dropdown(
-                    choices=["Random Flair", "Conservative"],
-                    value="Random Flair",
-                    label="Naming Style"
-                )
-
-                debug_prefix_box = gr.Textbox(
-                    label="Debug Prefix",
-                    value="DEBUG:"
-                )
-
-                language_override_dropdown = gr.Dropdown(
-                    choices=["Auto", "python", "javascript", "java", "csharp", "cpp"],
-                    value="Auto",
-                    label="Language Override"
-                )
-
-            run_button = gr.Button("Run VATA Pipeline", variant="primary")
-
-        # RIGHT PANEL
-        with gr.Column(scale=1):
-            output_panel = gr.Textbox(
-                label="Output",
-                lines=40
-            )
-
-    # BUTTON WIRING
-    run_button.click(
-        fn=full_pipeline,
-        inputs=[
-            code_input,
-            api_key_input,
-            intensity_slider,
-            comment_intensity_slider,
-            debug_intensity_slider,
-            sarcasm_intensity_slider,
-            inconsistency_intensity_slider,
-            rename_intensity_slider,
-            redundancy_intensity_slider,
-            comment_style_dropdown,
-            naming_style_dropdown,
-            debug_prefix_box,
-            language_override_dropdown
-        ],
-        outputs=[output_panel]
-    )
-
-# ────────────────────────────────────────────────
-#   MAIN ENTRY
-# ────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    demo.launch()
+                comment_intensity_slider = gr.Slider(0, 10, value=5, step=0.5, label
