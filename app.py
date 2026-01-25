@@ -398,7 +398,12 @@ humanized = rule_based_humanize(
 
 blended = llm_blend_code(humanized, api_key=api_key)
 
-safe_blended = blended.replace("```", "`` `").replace('"""', "''\\\"")
+safe_blended = (
+    blended
+    .replace("```", "`` `")
+    .replace('"""', "''\\\"")
+    .replace("'''", "'\\''")
+)
 
 combined_output = (
     f"{score_block}\n\n"
