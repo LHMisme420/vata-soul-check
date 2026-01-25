@@ -52,7 +52,8 @@ def calculate_soul_score(code: str):
     lines = code.splitlines()
     non_empty = [l.strip() for l in lines if l.strip()]
 
-    comments = sum(1 for l in lines if l.strip().startswith(('#', '//', '/\*', '\*')))
+    # Fixed: use raw string or double backslash to avoid invalid escape warning
+    comments = sum(1 for l in lines if l.strip().startswith(('#', '//', '/*', r'*/', '* ')))
     markers = len(re.findall(r'\b(TODO|FIXME|HACK|NOTE|BUG|XXX|WTF|DEBUG)\b', code, re.I))
     comment_bonus = min(comments * 1.8 + markers * 12, 55)
 
@@ -93,7 +94,7 @@ def calculate_soul_score(code: str):
     repetition_penalty = dup_ratio * -60
 
     line_lengths = [len(l) for l in non_empty]
-    len_std = statistics.stdev(line_lengths) if line_lengths > 1 else 0
+    len_std = statistics.stdev(line_lengths) if len(line_lengths) > 1 else 0
     simplicity_penalty = -max(0, 30 - len_std * 1.5)
 
     risky = 0
@@ -353,7 +354,7 @@ def process_code(
         llm_prompt = (
             f"Take this already lightly humanized code and make it feel even more authentically human-written:\n"
             f"Add subtle imperfections, varied style, personal touches, maybe a funny or thoughtful comment.\n"
-            f"Keep the logic intact.\n\nCode:\n``` \n{humanized}\n```"
+            f"Keep the logic intact.\n\nCode:\n```\n{humanized}\n```"
         )
         enhanced, err = call_grok_api(llm_prompt, api_key)
         if enhanced:
@@ -362,6 +363,7 @@ def process_code(
         else:
             llm_result = f"\n**LLM skipped/error:** {err}"
 
+    # Fixed: properly closed multi-line f-string
     md_output = f"""
 **Soul Score:** {score_str}  
 **Energy:** {energy}  
@@ -378,3 +380,93 @@ def process_code(
 - Risk flags: {breakdown['risk_penalty']}  
 
 **Humanized Version (Rule-based + optional LLM):**  
+
+{llm_result}
+"""
+
+    return md_output, f"Detected lang: {detected_lang.upper()} | Intensity: {overall_intensity}"
+
+# ────────────────────────────────────────────────
+# GRADIO UI
+# ────────────────────────────────────────────────
+
+with gr.Blocks(title="VATA Soul Check – Detect & Humanize Code Soul") as demo:
+    gr.Markdown("""
+    # VATA – Code Soul Scanner & Humanizer ⚡🌀
+    Paste code on the left → Click **Analyze Soul & Humanize** (or press Enter in code box) → See soul score + humanized version on right.
+    """)
+
+    with gr.Row():
+        with gr.Column(scale=6):
+            code_input = gr.Textbox(
+                label="Input Code (paste your script here)",
+                lines=25,
+                placeholder="def soul_check(code): ... # TODO: add more chaos",
+                elem_id="code-input"
+            )
+
+            api_key = gr.Textbox(
+                label="xAI Grok API Key (optional – for extra LLM soul polish)",
+                type="password",
+                placeholder="gsk_..."
+            )
+
+            with gr.Accordion("Humanizer Controls", open=False):
+                overall_intensity = gr.Slider(0, 10, value=5, step=1, label="Overall Intensity")
+                comment_intensity = gr.Slider(0, 10, value=5, step=1, label="Comment Intensity")
+                debug_intensity = gr.Slider(0, 10, value=3, step=1, label="Debug Print Intensity")
+                sarcasm_intensity = gr.Slider(0, 10, value=4, step=1, label="Sarcasm Level")
+                inconsistency_intensity = gr.Slider(0, 10, value=2, step=1, label="Inconsistency (tiny typos)")
+                rename_intensity = gr.Slider(0, 10, value=3, step=1, label="Variable Rename Chaos")
+                redundancy_intensity = gr.Slider(0, 10, value=2, step=1, label="Redundancy Spice")
+
+                comment_style = gr.Dropdown(["Casual", "Professional", "Sarcastic", "Mixed"], value="Casual", label="Comment Style Preset")
+                naming_style = gr.Dropdown(["Mixed", "CamelCase", "snake_case", "Random"], value="Mixed", label="Naming Style")
+                debug_prefix = gr.Textbox(value="DEBUG:", label="Debug Prefix")
+                lang_override = gr.Dropdown(["Auto", "python", "javascript", "java", "csharp", "cpp"], value="Auto", label="Force Language")
+
+        with gr.Column(scale=4):
+            output = gr.Markdown(label="VATA Soul Analysis & Humanized Code")
+            status = gr.Textbox(label="Status", interactive=False)
+
+    analyze_btn = gr.Button("Analyze Soul & Humanize 🔥", variant="primary", scale=2, size="lg")
+
+    # Wire up the button
+    analyze_btn.click(
+        fn=process_code,
+        inputs=[
+            code_input, api_key, overall_intensity, comment_intensity,
+            debug_intensity, sarcasm_intensity, inconsistency_intensity,
+            rename_intensity, redundancy_intensity, comment_style,
+            naming_style, debug_prefix, lang_override
+        ],
+        outputs=[output, status]
+    )
+
+    # Also allow Enter in code box to trigger
+    code_input.submit(
+        fn=process_code,
+        inputs=[
+            code_input, api_key, overall_intensity, comment_intensity,
+            debug_intensity, sarcasm_intensity, inconsistency_intensity,
+            rename_intensity, redundancy_intensity, comment_style,
+            naming_style, debug_prefix, lang_override
+        ],
+        outputs=[output, status]
+    )
+
+    # Optional: live preview on major changes (but button is king)
+    for slider in [overall_intensity, comment_intensity, sarcasm_intensity]:
+        slider.change(
+            fn=process_code,
+            inputs=[
+                code_input, api_key, overall_intensity, comment_intensity,
+                debug_intensity, sarcasm_intensity, inconsistency_intensity,
+                rename_intensity, redundancy_intensity, comment_style,
+                naming_style, debug_prefix, lang_override
+            ],
+            outputs=output
+        )
+
+demo.launch()
+    
