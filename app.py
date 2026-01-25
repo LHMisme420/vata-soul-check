@@ -1,361 +1,270 @@
-import re
-import math
-import statistics
-import pickle
-from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
-
 import gradio as gr
+import re
+import random
+import statistics
+import hashlib
+import time
+from collections import Counter
 
+# ────────────────────────────────────────────────
+#   HELPER FUNCTIONS
+# ────────────────────────────────────────────────
 
-# =========================
-#   DATA MODEL
-# =========================
+def detect_language(code: str) -> str:
+    code_lower = code.lower()
+    if re.search(r'\b(def|class|import|from\s+\w+\s+import)\b', code_lower):
+        return "python"
+    if re.search(r'\b(function|const|let|var|class|=>)\b', code_lower):
+        return "javascript"
+    if re.search(r'\b#include|<.*?>|std::|cout|cin\b', code_lower):
+        return "cpp"
+    return "generic"
 
-@dataclass
-class Fingerprint:
-    line_count: int
-    avg_line_length: float
-    indent_variance: float
-    comment_density: float
-    todo_count: int
-    reasoning_comment_count: int
-    debug_artifacts: int
-    magic_numbers: int
-    naming_entropy: float
-    repetition_ratio: float
-    token_entropy: float
-    operator_density: float
-    operator_spacing_variance: float
+def get_comment_styles(lang: str):
+    if lang == "python":
+        return {"single": "#", "multi_start": '"""', "multi_end": '"""'}
+    if lang in ("javascript", "cpp"):
+        return {"single": "//", "multi_start": "/*", "multi_end": "*/"}
+    return {"single": "//", "multi_start": "/*", "multi_end": "*/"}
 
+# ────────────────────────────────────────────────
+#   ANALYZER (improved original soul scoring)
+# ────────────────────────────────────────────────
 
-# =========================
-#   REGEX + CONSTANTS
-# =========================
+def calculate_soul_score(code: str):
+    if not code.strip():
+        return "0%", "Empty", "NO CODE", "REJECTED", "No input", code, "Tier X - Invalid", "N/A", ""
 
-COMMENT_RE = re.compile(r'^\s*#')
-TODO_RE = re.compile(r'\bTODO\b', re.IGNORECASE)
-DEBUG_RE = re.compile(r'\bprint\(')
-MAGIC_NUMBER_RE = re.compile(r'\b\d+\b')
-VAR_NAME_RE = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\b')
-
-TOKEN_RE = re.compile(
-    r"[A-Za-z_][A-Za-z0-9_]*"
-    r"|\d+"
-    r"|==|!=|<=|>="
-    r"|[+\-*/%=<>():,\.]"
-)
-
-OPERATORS = {"+", "-", "*", "/", "%", "=", "==", "!=", "<", ">", "<=", ">="}
-
-REASONING_HINTS = [
-    "because", "why", "so that", "workaround",
-    "hack", "temporary", "for now", "later"
-]
-
-
-# =========================
-#   UTILS
-# =========================
-
-def entropy(tokens: List[str]) -> float:
-    if not tokens:
-        return 0.0
-    from collections import Counter
-    counts = Counter(tokens)
-    total = sum(counts.values())
-    return -sum((c/total) * math.log2(c/total) for c in counts.values())
-
-
-# =========================
-#   FEATURE EXTRACTION
-# =========================
-
-def extract_fingerprint(code: str) -> Fingerprint:
     lines = code.splitlines()
-    non_empty = [l for l in lines if l.strip()]
-    line_count = len(non_empty) or 1
+    non_empty = [l.strip() for l in lines if l.strip()]
 
-    # structural
-    lengths = [len(l) for l in non_empty]
-    avg_line_length = sum(lengths) / line_count
+    # ── Bonuses ─────────────────────────────────────
+    comments = sum(1 for l in lines if l.strip().startswith(('#', '//', '/*', '*', '"""', "'''")))
+    markers = len(re.findall(r'\b(TODO|FIXME|HACK|NOTE|BUG|XXX|WTF|DEBUG)\b', code, re.I))
+    comment_bonus = min(comments * 1.8 + markers * 12, 55)
 
-    indents = [(len(l) - len(l.lstrip(" "))) for l in non_empty]
-    indent_variance = statistics.pvariance(indents) if len(indents) > 1 else 0.0
-
-    # comments
-    comments = [l for l in non_empty if COMMENT_RE.search(l)]
-    comment_density = len(comments) / line_count
-    todo_count = sum(1 for l in comments if TODO_RE.search(l))
-    reasoning_comment_count = sum(
-        1 for l in comments if any(h in l.lower() for h in REASONING_HINTS)
-    )
-
-    # artifacts
-    debug_artifacts = sum(1 for l in non_empty if DEBUG_RE.search(l))
-    magic_numbers = sum(
-        len(MAGIC_NUMBER_RE.findall(l))
-        for l in non_empty
-        if "for " not in l and "range(" not in l
-    )
-
-    # naming entropy
-    names = [
-        n for l in non_empty
-        if not COMMENT_RE.search(l)
-        for n in VAR_NAME_RE.findall(l)
-        if len(n) > 1
-    ]
-    naming_entropy = entropy(names)
-
-    repetition_ratio = 0.0
-    if names:
-        from collections import Counter
-        counts = Counter(names)
-        repetition_ratio = counts.most_common(1)[0][1] / len(names)
-
-    # token fingerprint
-    all_tokens = []
-    operator_spacing = []
-
-    for line in non_empty:
-        tokens = TOKEN_RE.findall(line)
-        all_tokens.extend(tokens)
-
-        for match in TOKEN_RE.finditer(line):
-            tok = match.group(0)
-            if tok in OPERATORS:
-                start = match.start()
-
-                left = 0
-                right = 0
-
-                i = start - 1
-                while i >= 0 and line[i] == " ":
-                    left += 1
-                    i -= 1
-
-                j = match.end()
-                while j < len(line) and line[j] == " ":
-                    right += 1
-                    j += 1
-
-                operator_spacing.append(left + right)
-
-    token_entropy = entropy(all_tokens)
-    operator_density = (
-        sum(1 for t in all_tokens if t in OPERATORS) / len(all_tokens)
-        if all_tokens else 0.0
-    )
-    operator_spacing_variance = (
-        statistics.pvariance(operator_spacing)
-        if len(operator_spacing) > 1 else 0.0
-    )
-
-    return Fingerprint(
-        line_count=line_count,
-        avg_line_length=avg_line_length,
-        indent_variance=indent_variance,
-        comment_density=comment_density,
-        todo_count=todo_count,
-        reasoning_comment_count=reasoning_comment_count,
-        debug_artifacts=debug_artifacts,
-        magic_numbers=magic_numbers,
-        naming_entropy=naming_entropy,
-        repetition_ratio=repetition_ratio,
-        token_entropy=token_entropy,
-        operator_density=operator_density,
-        operator_spacing_variance=operator_spacing_variance,
-    )
-
-
-# =========================
-#   ML HOOKS (OPTIONAL)
-# =========================
-
-MODEL_PATH = "model.pkl"
-
-FEATURE_ORDER = [
-    "line_count",
-    "avg_line_length",
-    "indent_variance",
-    "comment_density",
-    "todo_count",
-    "reasoning_comment_count",
-    "debug_artifacts",
-    "magic_numbers",
-    "naming_entropy",
-    "repetition_ratio",
-    "token_entropy",
-    "operator_density",
-    "operator_spacing_variance",
-]
-
-
-def fingerprint_to_vector(fp: Fingerprint) -> List[float]:
-    d = fp.__dict__
-    return [float(d[k]) for k in FEATURE_ORDER]
-
-
-def load_model() -> Optional[object]:
-    try:
-        with open(MODEL_PATH, "rb") as f:
-            return pickle.load(f)
-    except Exception:
-        return None
-
-
-MODEL = load_model()
-
-
-# =========================
-#   HEURISTIC SCORING
-# =========================
-
-def heuristic_score(fp: Fingerprint):
-    reasons = []
-    score = 0.0
-
-    score += min(fp.comment_density * 50, 25)
-    if fp.todo_count:
-        score += 10
-        reasons.append("TODO markers detected.")
-    if fp.reasoning_comment_count:
-        score += 15
-        reasons.append("Reasoning-style comments detected.")
-
-    if fp.debug_artifacts:
-        score += 20
-        reasons.append("Debug prints detected.")
-    if fp.magic_numbers:
-        score += min(fp.magic_numbers * 4, 12)
-        reasons.append("Magic numbers detected.")
-
-    if fp.indent_variance > 0:
-        score += min(fp.indent_variance * 0.5, 10)
-        reasons.append("Indentation irregularity detected.")
-
-    if fp.naming_entropy > 2.0:
-        score += 10
-    elif fp.naming_entropy < 1.0 and fp.line_count > 10:
-        score -= 5
-
-    if fp.repetition_ratio > 0.5 and fp.line_count > 10:
-        score -= 8
-
-    if fp.token_entropy > 4.0:
-        score += 10
-    elif fp.token_entropy < 2.0 and fp.line_count > 10:
-        score -= 5
-
-    if 0.05 <= fp.operator_density <= 0.25:
-        score += 5
+    vars_found = re.findall(r'\b[A-Za-z_][A-Za-z0-9_]{2,}\b', code)
+    meaningful_vars = [v for v in vars_found if v not in {'def','if','for','return','else','True','False','None','self','const','let','var'}]
+    if meaningful_vars:
+        lengths = [len(v) for v in meaningful_vars]
+        avg = statistics.mean(lengths)
+        std = statistics.stdev(lengths) if len(lengths) > 1 else 0
+        naming_bonus = min(avg * 4 + std * 8, 35)
     else:
-        score -= 3
+        naming_bonus = 0
 
-    if fp.operator_spacing_variance > 0.5:
-        score += 7
-    elif fp.operator_spacing_variance < 0.1 and fp.line_count > 10:
-        score -= 5
+    branches = sum(code.count(kw) for kw in ['if ', 'elif ', 'for ', 'while ', 'try:', 'except', 'switch', 'case'])
+    nesting_proxy = sum(max(0, (len(l) - len(l.lstrip())) // 2) for l in lines if l.strip())  # rough
+    complexity_bonus = min((branches * 3 + nesting_proxy * 2), 40)
 
-    if fp.line_count < 5:
-        score *= 0.7
+    total_bonus = comment_bonus + naming_bonus + complexity_bonus
 
-    score = max(0, min(100, score))
-    prob = round(1 / (1 + math.exp(-(score - 50) / 10)) * 100, 1)
+    # ── Penalties ───────────────────────────────────
+    stripped_lines = [l.strip() for l in lines if l.strip()]
+    dup_ratio = sum(c > 1 for c in Counter(stripped_lines).values()) / max(len(stripped_lines), 1)
+    repetition_penalty = dup_ratio * -60
 
-    return score, prob, reasons
+    line_lengths = [len(l) for l in non_empty]
+    len_std = statistics.stdev(line_lengths) if len(line_lengths) > 1 else 0
+    simplicity_penalty = -max(0, 30 - len_std * 1.5)
 
+    risky = 0
+    lower = code.lower()
+    dangerous = ["eval(", "exec(", "os.system(", "subprocess.", "pickle.load", "rm -rf", "format c:", "del *.*"]
+    secrets = ["password =", "api_key =", "secret =", "token =", "key =", "hardcoded"]
+    bare_except = len(re.findall(r'except\s*(?::|\))', code)) + len(re.findall(r'except\s+[A-Za-z]+\s*:', code)) > 3
+    risky += sum(1 for pat in dangerous + secrets if pat in lower)
+    risky += bare_except * 2
+    risk_penalty = risky * -25
 
-# =========================
-#   COMBINED SCORING
-# =========================
+    total_penalty = repetition_penalty + simplicity_penalty + risk_penalty
 
-def score(fp: Fingerprint) -> Dict[str, Any]:
-    if MODEL:
-        try:
-            vec = fingerprint_to_vector(fp)
-            proba = MODEL.predict_proba([vec])[0][1]
-            prob = round(float(proba) * 100, 1)
-            score_val = prob
-            reasons = ["Probability derived from trained ML model."]
-        except Exception:
-            score_val, prob, reasons = heuristic_score(fp)
-            reasons.insert(0, "Model error — using heuristic scoring.")
-    else:
-        score_val, prob, reasons = heuristic_score(fp)
-        reasons.insert(0, "No model found — using heuristic scoring.")
+    # ── Final ───────────────────────────────────────
+    score = 45 + total_bonus + total_penalty
+    score = max(5, min(98, round(score)))
+    score_str = f"{score}% Human Soul"
 
-    if prob >= 75:
-        classification = "LIKELY HUMAN"
-    elif prob >= 45:
-        classification = "UNCERTAIN"
-    else:
-        classification = "LIKELY AI"
+    energy = "Vata Full Soul 🔥" if score >= 82 else "Strong Vata Pulse" if score >= 65 else "Hybrid Aura" if score >= 45 else "Soulless Void"
+    cls = "HUMAN" if score > 78 else "MACHINE / HYBRID" if score > 50 else "AI-TRACED"
+    verdict = "VATA APPROVED" if score >= 78 and risky <= 1 else "VATA FLAGGED" if score >= 45 else "VATA REJECTED"
+    if risky >= 3:
+        verdict = "VATA BLOCKED - SECURITY VIOLATIONS"
 
-    return {
-        "score": score_val,
-        "probability": prob,
-        "classification": classification,
-        "reasons": reasons,
-        "raw": fp.__dict__,
+    tier = "S+ Trusted Artisan" if score >= 90 else "S Solid Human" if score >= 78 else "A Probable Safe" if score >= 62 else "B Needs Eyes" if score >= 45 else "C High Risk"
+
+    timestamp = int(time.time())
+    proof_input = f"{code.strip()}|{score_str}|{verdict}|{timestamp}"
+    proof_hash = hashlib.sha256(proof_input.encode()).hexdigest()[:16].upper()
+    proof = f"VATA-PROOF-{proof_hash}\nVerify: SHA256({proof_input})"
+
+    violations = "\n".join([f"• {v}" for v in [
+        "Dangerous execution calls" if any(p in lower for p in dangerous[:3]) else None,
+        "Potential secrets/hardcoded creds" if any(p in lower for p in secrets) else None,
+        "Destructive shell patterns" if any(p in lower for p in dangerous[5:]) else None,
+        "Bare/broad excepts (risky)" if bare_except else None,
+    ] if v]) or "Clean"
+
+    return score_str, energy, cls, verdict, violations, code, tier, proof
+
+# ────────────────────────────────────────────────
+#   HUMANIZER – the part that adds teeth
+# ────────────────────────────────────────────────
+
+def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, inconsistent: bool, personal_names: bool, redundancies: bool):
+    if not code.strip():
+        return code
+
+    lang = detect_language(code)
+    comments = get_comment_styles(lang)
+    single = comments["single"]
+
+    lines = code.splitlines()
+    new_lines = []
+
+    # Intensity scaling (0–10 → multiplier)
+    factor = intensity / 10.0
+    chance_comment      = 0.25 * factor
+    chance_debug        = 0.20 * factor if add_debug else 0
+    chance_sarcastic    = 0.18 * factor if sarcastic else 0
+    chance_inconsistent = 0.35 * factor if inconsistent else 0
+    chance_rename       = 0.22 * factor if personal_names else 0
+    chance_redundant    = 0.15 * factor if redundancies else 0
+
+    # ── Personal rename dictionary (applied sparingly) ──
+    rename_map = {
+        "input_data":   "rawInput",
+        "result":       "finalRes",
+        "data":         "stuff",
+        "user":         "whoever",
+        "config":       "settingsYo",
+        "response":     "resp",
+        "output":       "out",
+        "value":        "val",
     }
 
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
 
-# =========================
-#   UI
-# =========================
+        # Occasionally skip indent consistency
+        if inconsistent and random.random() < 0.08 * factor:
+            indent = line[:len(line) - len(stripped)]
+            if random.random() < 0.5:
+                new_lines.append(indent.replace("    ", "  ") + stripped)  # mix 2/4 spaces
+            else:
+                new_lines.append(indent + " " + stripped)  # random extra space
+        else:
+            new_lines.append(line)
 
-EXAMPLE = """# Human-like messy code
-def calc(x):
-    # TODO: fix later
-    result = x * 2 + 42
-    print("debug:", result)
-    return result
+        # Add comment block sometimes
+        if stripped and random.random() < chance_comment:
+            if random.random() < 0.6:
+                new_lines.append(f"{line[:len(line)-len(stripped)]}{single} {random.choice(['TODO: revisit', 'FIXME later', 'this is cursed but works', 'god why', 'borrowed from stackoverflow 2018'])}")
+            else:
+                new_lines.append(f"{line[:len(line)-len(stripped)]}{single} {random.choice(['cleaned up', 'optimized?', 'works on my machine', 'legacy reasons'])}")
+
+        # Debug print / log
+        if add_debug and stripped and random.random() < chance_debug and i < len(lines)-1:
+            debug_strs = [
+                f"print(f'DEBUG: {{ {stripped.split()[0]} = }}')",
+                f"console.log('→', {stripped.split('=')[0].strip() if '=' in stripped else 'here'})",
+                f"// debug: {stripped[:30]}..."
+            ]
+            new_lines.append(f"{line[:len(line)-len(stripped)]}{random.choice(debug_strs)}  {single} temp")
+
+        # Sarcastic comment
+        if sarcastic and random.random() < chance_sarcastic:
+            sassy = random.choice([
+                f"{single} why do we even...",
+                f"{single} future me: I'm so sorry",
+                f"{single} if you're reading this: send help",
+                f"{single} enterprise quality™",
+            ])
+            new_lines.append(f"{line[:len(line)-len(stripped)]}{sassy}")
+
+        # Redundancy (harmless)
+        if redundancies and random.random() < chance_redundant and "return" in stripped:
+            new_lines.append(f"{line[:len(line)-len(stripped)]}temp = {stripped.split('return ')[1]}")
+            new_lines.append(f"{line[:len(line)-len(stripped)]}return temp  {single} explicit")
+
+        # Personal rename (simple replace, only identifiers)
+        if personal_names and random.random() < chance_rename:
+            for old, new in rename_map.items():
+                if random.random() < 0.4:
+                    line = re.sub(r'\b' + re.escape(old) + r'\b', new, line)
+
+        i += 1
+
+    # Final touch: random trailing whitespace on ~10% lines
+    for j in range(len(new_lines)):
+        if random.random() < 0.12 * factor:
+            new_lines[j] = new_lines[j].rstrip() + "  "
+
+    humanized = "\n".join(new_lines)
+
+    # Quick integrity note
+    short_hash = hashlib.sha256(humanized.encode()).hexdigest()[:8].upper()
+    humanized += f"\n\n# Humanized VATA-touch – hash {short_hash} – intensity {intensity}/10"
+
+    return humanized
+
+# ────────────────────────────────────────────────
+#   Gradio INTERFACE
+# ────────────────────────────────────────────────
+
+custom_css = """
+body { background: linear-gradient(135deg, #0a0015, #1a0033); color: #00ff9d; font-family: 'Courier New', monospace; }
+.gradio-container { border: 2px solid #00ff9d; border-radius: 12px; background: rgba(5,5,25,0.85); max-width: 1100px; margin: auto; }
+h1, h2 { color: #00ff9d; text-shadow: 0 0 12px #00ff9d; }
+button { background: #00ff9d !important; color: black !important; border: none; border-radius: 6px; }
+button:hover { box-shadow: 0 0 18px #00ff9d; }
 """
 
+with gr.Blocks(css=custom_css, title="VATA Soul Check – Real Edition") as demo:
+    gr.Markdown("# VATA Soul Check 2026 – Human vs Machine Reality Check")
+    gr.Markdown("Analyzer scores code soul. Humanizer makes AI code look hand-written. Use both.")
 
-def run(code: str):
-    if not code.strip():
-        return 0, 0, "N/A", "No code provided.", "{}", ""
+    with gr.Tab("Analyzer (Detect)"):
+        with gr.Row():
+            code_in = gr.Textbox(lines=18, label="Paste Code", placeholder="Any language…")
+        with gr.Row():
+            analyze_btn = gr.Button("Run VATA Soul Scan", variant="primary")
+        with gr.Row():
+            score_out      = gr.Textbox(label="Soul Score")
+            energy_out     = gr.Textbox(label="Energy")
+            class_out      = gr.Textbox(label="Classification")
+            verdict_out    = gr.Textbox(label="Verdict")
+        with gr.Row():
+            viol_out       = gr.Textbox(label="Violations / Risks", lines=3)
+            tier_out       = gr.Textbox(label="Trust Tier")
+            proof_out      = gr.Textbox(label="VATA Proof (SHA256)", lines=3)
+        analyze_btn.click(
+            calculate_soul_score,
+            inputs=code_in,
+            outputs=[score_out, energy_out, class_out, verdict_out, viol_out, code_in, tier_out, proof_out]
+        )
 
-    fp = extract_fingerprint(code)
-    res = score(fp)
+    with gr.Tab("Humanizer (Make it Human)"):
+        with gr.Row():
+            code_in_h = gr.Textbox(lines=18, label="Paste (AI) Code to Humanize")
+        with gr.Row():
+            intensity = gr.Slider(1, 10, value=5, step=1, label="Humanization Intensity")
+            add_debug = gr.Checkbox(label="Add debug prints/logs", value=True)
+            sarcastic = gr.Checkbox(label="Sarcastic / personal comments", value=True)
+            inconsistent = gr.Checkbox(label="Inconsistent formatting", value=True)
+            personal_names = gr.Checkbox(label="Personal / quirky variable names", value=True)
+            redundancies = gr.Checkbox(label="Harmless redundancies", value=False)
+        with gr.Row():
+            humanize_btn = gr.Button("Humanize Code", variant="primary")
+        humanized_out = gr.Textbox(lines=22, label="Humanized Output")
+        humanize_btn.click(
+            humanize_code,
+            inputs=[code_in_h, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies],
+            outputs=humanized_out
+        )
 
-    reasons = "\n".join(f"- {r}" for r in res["reasons"])
-    raw = "\n".join(f"{k}: {v}" for k, v in res["raw"].items())
-
-    return (
-        res["score"],
-        res["probability"],
-        res["classification"],
-        reasons,
-        raw,
-        code,
-    )
-
-
-with gr.Blocks(theme=gr.themes.Monochrome()) as demo:
-    gr.Markdown(
-        "<h1 style='text-align:center;color:#E0E0E0;'>VATA Authorship Fingerprint</h1>"
-        "<p style='text-align:center;color:#A0A0A0;'>Forensic analysis of human vs AI code behavior.</p>"
-    )
-
-    with gr.Row():
-        with gr.Column():
-            code_in = gr.Code(label="Code Input", value=EXAMPLE, language="python")
-            btn = gr.Button("Analyze", variant="primary")
-
-        with gr.Column():
-            score_out = gr.Slider(0, 100, label="Human Behavior Score", interactive=False)
-            prob_out = gr.Slider(0, 100, label="Human Authorship Probability (%)", interactive=False)
-            class_out = gr.Textbox(label="Classification", interactive=False)
-            reasons_out = gr.Textbox(label="Reasons", lines=8, interactive=False)
-            raw_out = gr.Textbox(label="Raw Metrics", lines=12, interactive=False)
-            echo = gr.Code(label="Input Echo", language="python", interactive=False)
-
-    btn.click(run, code_in, [score_out, prob_out, class_out, reasons_out, raw_out, echo])
-
+    gr.Markdown("Built by @Lhmisme | Now with actual configurable teeth – 2026")
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(server_name="0.0.0.0", server_port=7860)
