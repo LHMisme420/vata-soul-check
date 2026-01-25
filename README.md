@@ -1,3 +1,14 @@
+---
+title: VATA - Code Soul Scanner & Humanizer
+emoji: 🧬
+colorFrom: indigo
+colorTo: blue
+sdk: gradio
+sdk_version: 4.0.0
+app_file: app.py
+pinned: false
+license: mit
+---
 # VATA — Code Soul Scanner & Humanizer
 
 **VATA** is a hybrid analysis engine that evaluates code for human authenticity, style signals, risk patterns, and structural intent.  
