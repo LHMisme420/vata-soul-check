@@ -14,7 +14,7 @@ from pathlib import Path
 from difflib import unified_diff
 
 # ────────────────────────────────────────────────
-#   HELPERS (same as Phase 2)
+#   HELPERS
 # ────────────────────────────────────────────────
 
 def detect_language(code: str) -> str:
@@ -41,7 +41,7 @@ def get_comment_styles(lang: str):
 SUPPORTED_EXTS = {".py", ".java", ".cs", ".js", ".cpp", ".hpp", ".ts"}
 
 # ────────────────────────────────────────────────
-#   ANALYZER (same)
+#   ANALYZER
 # ────────────────────────────────────────────────
 
 def calculate_soul_score(code: str):
@@ -63,7 +63,7 @@ def calculate_soul_score(code: str):
     naming_bonus = 0
     if meaningful_vars:
         lengths = [len(v) for v in meaningful_vars]
-        avg = statistics.mean(lengths)
+        avg = statistics.mean(lengths) if lengths else 0
         std = statistics.stdev(lengths) if len(lengths) > 1 else 0
         naming_bonus = min(avg * 4 + std * 8, 35)
 
@@ -116,7 +116,7 @@ def calculate_soul_score(code: str):
     return score_str, energy, cls, verdict, tier, risky
 
 # ────────────────────────────────────────────────
-#   STYLE FINGERPRINT (same)
+#   STYLE FINGERPRINT
 # ────────────────────────────────────────────────
 
 def compute_style_fingerprint(code: str):
@@ -152,7 +152,7 @@ def compute_style_fingerprint(code: str):
     }
 
 # ────────────────────────────────────────────────
-#   HUMANIZER (same as Phase 2)
+#   HUMANIZER
 # ────────────────────────────────────────────────
 
 def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, inconsistent: bool, personal_names: bool, redundancies: bool, ref_fingerprint=None):
@@ -261,7 +261,7 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
 
     human_score, _, _, _, _, risky = calculate_soul_score(humanized)
 
-    o_num = int(calculate_soul_score(code)[0].rstrip("%")) if code.strip() else 0
+    o_num = int(calculate_soul_score(code)[0].rstrip("%")) if code.strip() and "%" in calculate_soul_score(code)[0] else 0
     h_num = int(human_score.rstrip("%"))
     delta = h_num - o_num
     evasion = min(95, max(30, 40 + delta * 1.8 - risky * 10))
@@ -272,18 +272,24 @@ def humanize_code(code: str, intensity: int, add_debug: bool, sarcastic: bool, i
     return humanized, human_score, short_hash, f"{evasion}%"
 
 # ────────────────────────────────────────────────
-#   ZIP PROCESSING (same)
+#   ZIP PROCESSING – safer version
 # ────────────────────────────────────────────────
 
-def process_zip(zip_path, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies, ref_code):
+def process_zip(zip_path: str, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies, ref_code):
+    if not os.path.isfile(zip_path):
+        raise ValueError("Provided path is not a valid file")
+
     ref_fingerprint = compute_style_fingerprint(ref_code) if ref_code else None
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         output_dir = os.path.join(tmp_dir, "humanized")
         os.makedirs(output_dir)
 
-        with zipfile.ZipFile(zip_path, 'r') as zin:
-            zin.extractall(tmp_dir)
+        try:
+            with zipfile.ZipFile(zip_path, 'r') as zin:
+                zin.extractall(tmp_dir)
+        except zipfile.BadZipFile:
+            raise ValueError("Invalid or corrupted zip file")
 
         for root, _, files in os.walk(tmp_dir):
             for file in files:
@@ -300,10 +306,9 @@ def process_zip(zip_path, intensity, add_debug, sarcastic, inconsistent, persona
                     with open(out_path, 'w', encoding='utf-8') as f:
                         f.write(humanized)
 
-        output_zip = os.path.join(tmp_dir, "humanized_output.zip")
-        shutil.make_archive(output_zip[:-4], 'zip', output_dir)
-
-        return output_zip
+        output_zip_path = os.path.join(tmp_dir, "humanized_output.zip")
+        shutil.make_archive(output_zip_path[:-4], 'zip', output_dir)
+        return output_zip_path
 
 # ────────────────────────────────────────────────
 #   DIFF & EXPORT HELPERS
@@ -343,7 +348,7 @@ def suggest_commit_message(delta, evasion):
     return f"chore: {change} AI-generated code (VATA evasion ~{evasion})"
 
 # ────────────────────────────────────────────────
-#   PRESETS (same)
+#   PRESETS
 # ────────────────────────────────────────────────
 
 def apply_preset(preset):
@@ -361,7 +366,7 @@ def apply_preset(preset):
         return 5, True, True, True, True, False
 
 # ────────────────────────────────────────────────
-#   Gradio INTERFACE – Phase 3 polish
+#   Gradio INTERFACE
 # ────────────────────────────────────────────────
 
 custom_css = """
@@ -377,9 +382,9 @@ button:hover { box-shadow: 0 0 18px #00ff9d; }
 .diff-container { background: #0d001a; border: 1px solid #00ff9d; border-radius: 8px; padding: 12px; }
 """
 
-with gr.Blocks(css=custom_css, title="VATA Soul Check – Phase 3") as demo:
-    gr.Markdown("# VATA Soul Check 2026 – Phase 3: Full Workflow + Shareable Proofs")
-    gr.Markdown("Humanize code, see diffs/patches, generate commit messages, share results. Multi-file zip + style matching included.")
+with gr.Blocks(css=custom_css, title="VATA Soul Check – Fixed") as demo:
+    gr.Markdown("# VATA Soul Check – Fixed Version (2026)")
+    gr.Markdown("Single code + zip support with safe file handling. Use Factory Reboot after updating.")
 
     with gr.Tab("Humanizer"):
         with gr.Row():
@@ -388,7 +393,7 @@ with gr.Blocks(css=custom_css, title="VATA Soul Check – Phase 3") as demo:
         code_in_h = gr.Textbox(lines=10, label="Paste Code", visible=True)
         zip_in = gr.File(label="Upload Zip", file_types=[".zip"], visible=False)
 
-        ref_code = gr.Textbox(lines=6, label="Reference Human Code (optional – paste to match style)")
+        ref_code = gr.Textbox(lines=6, label="Reference Human Code (optional)")
 
         with gr.Row():
             preset_dropdown = gr.Dropdown(
@@ -406,28 +411,26 @@ with gr.Blocks(css=custom_css, title="VATA Soul Check – Phase 3") as demo:
 
         humanize_btn = gr.Button("Humanize → Analyze → Export", variant="primary")
 
+        humanized_out = gr.Textbox(lines=8, label="Humanized Code (single)")
+        download_zip = gr.File(label="Humanized Zip (multi)", interactive=False)
+
         with gr.Row():
             original_score = gr.Textbox(label="Original Score")
             humanized_score = gr.Textbox(label="Humanized Score")
             evasion_conf = gr.Textbox(label="Est. Evasion %")
             delta_badge = gr.HTML(label="Delta")
 
-        humanized_out = gr.Textbox(lines=8, label="Humanized Code (single)")
-        download_zip = gr.File(label="Humanized Zip (multi)", interactive=False)
-
-        with gr.Accordion("Diff View & Exports", open=False):
+        with gr.Accordion("Diff & Exports", open=False):
             diff_html = gr.HTML(label="Visual Diff")
-            patch_out = gr.Textbox(lines=10, label="Git Patch / Unified Diff", interactive=False)
-            commit_suggest = gr.Textbox(label="Suggested Commit Message")
-            proof_md = gr.Textbox(lines=6, label="Shareable Proof Card (copy-paste)", interactive=False)
+            patch_out = gr.Textbox(lines=10, label="Git Patch", interactive=False)
+            commit_suggest = gr.Textbox(label="Suggested Commit")
+            proof_md = gr.Textbox(lines=6, label="Shareable Proof", interactive=False)
 
-        # Input toggle
-        input_mode.change(
-            lambda m: (gr.update(visible=m == "Single Code"), gr.update(visible=m == "Zip File")),
-            input_mode, [code_in_h, zip_in]
-        )
+        def toggle_input(mode):
+            return gr.update(visible=mode == "Single Code"), gr.update(visible=mode == "Zip File")
 
-        # Preset
+        input_mode.change(toggle_input, input_mode, [code_in_h, zip_in])
+
         preset_dropdown.change(
             apply_preset,
             preset_dropdown,
@@ -438,69 +441,54 @@ with gr.Blocks(css=custom_css, title="VATA Soul Check – Phase 3") as demo:
             ref_fp = compute_style_fingerprint(ref) if ref else None
 
             if mode == "Single Code":
-                if not code.strip():
-                    return ("", "", "0%", "0%", "0%", "<span class='danger'>No input</span>",
-                            "", "", "", "", "")
-                humanized, h_score, h_hash, evasion = humanize_code(code, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref_fp)
-                o_score, _, _, _, _, risky = calculate_soul_score(code)
-                o_num = int(o_score.rstrip("%"))
-                h_num = int(h_score.rstrip("%"))
-                delta = h_num - o_num
-                badge_class = 'success' if delta > 20 else 'warning' if delta > 5 else 'danger'
-                badge = f"<span class='output-badge {badge_class}'>{delta:+}%</span>"
+                if not code or not code.strip():
+                    return "", "", "0%", "0%", "0%", "<span class='danger'>No code</span>", "", "", "", ""
+                try:
+                    humanized, h_score, h_hash, evasion = humanize_code(code, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref_fp)
+                    o_score, _, _, _, _, risky = calculate_soul_score(code)
+                    o_num = int(o_score.rstrip("%")) if "%" in o_score else 0
+                    h_num = int(h_score.rstrip("%"))
+                    delta = h_num - o_num
+                    badge_class = 'success' if delta > 20 else 'warning' if delta > 5 else 'danger'
+                    badge = f"<span class='output-badge {badge_class}'>{delta:+}%</span>"
 
-                html_diff = generate_html_diff(code, humanized)
-                patch = generate_patch(code, humanized)
-                commit_msg = suggest_commit_message(delta, evasion)
-                proof = f"""**VATA Proof Card**
+                    html_diff = generate_html_diff(code, humanized)
+                    patch = generate_patch(code, humanized)
+                    commit_msg = suggest_commit_message(delta, evasion)
+                    proof = f"""**VATA Proof**
 - Original: {o_score}
 - Humanized: {h_score} (Δ {delta:+}%)
-- Evasion est.: {evasion}
-- Hash: VATA-{h_hash}
-- Intensity: {intensity_val}/10
-- Risks: {risky}
-Made with VATA Soul Check @ https://huggingface.co/spaces/Lhmisme/vata-soul-check"""
+- Evasion: {evasion}
+- Hash: {h_hash}
+- Intensity: {intensity_val}"""
 
-                return (humanized, "", o_score, h_score, evasion, badge,
-                        html_diff, patch, commit_msg, proof, "")
-
-            else:  # Zip
-                if not zip_file:
-                    return ("", "", "0%", "0%", "0%", "<span class='danger'>No zip</span>",
-                            "", "", "", "", "")
-                try:
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as tmp:
-                        shutil.copyfileobj(zip_file, tmp)
-                        tmp_path = tmp.name
-                    out_zip = process_zip(tmp_path, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref)
-                    os.unlink(tmp_path)
-                    return ("Multi-file processed", out_zip, "N/A", "N/A", "N/A", "<span class='success'>Zip ready</span>",
-                            "<pre>Multi-file – no single diff</pre>", "", "chore: humanize project files", "", out_zip)
+                    return humanized, "", o_score, h_score, evasion, badge, html_diff, patch, commit_msg, proof
                 except Exception as e:
-                    return (f"Error: {str(e)}", "", "Error", "Error", "Error", "<span class='danger'>Failed</span>",
-                            "", "", "", "", "")
+                    return f"Error: {str(e)}", "", "Error", "Error", "Error", f"<span class='danger'>{str(e)}</span>", "", "", "", ""
+
+            else:  # Zip mode
+                if not zip_file:
+                    return "No zip uploaded", "", "Error", "Error", "Error", "<span class='danger'>No file</span>", "", "", "", ""
+                try:
+                    # Safe path extraction
+                    if not hasattr(zip_file, 'path') or not zip_file.path:
+                        raise ValueError("Invalid file object")
+                    zip_path = zip_file.path
+                    if not os.path.isfile(zip_path):
+                        raise ValueError(f"Path is not a file: {zip_path}")
+
+                    out_zip = process_zip(zip_path, intensity_val, debug_val, sarc_val, inc_val, names_val, red_val, ref)
+                    return "Multi-file processed", out_zip, "N/A", "N/A", "N/A", "<span class='success'>Zip ready</span>", "<pre>Multi-file – no diff</pre>", "", "chore: humanize files", "", out_zip
+                except Exception as e:
+                    return f"Zip failed: {str(e)}", "", "Error", "Error", "Error", f"<span class='danger'>{str(e)}</span>", "", "", "", ""
 
         humanize_btn.click(
             run_full_process,
-            [input_mode, code_in_h, zip_in, ref_code, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies],
-            [humanized_out, download_zip, original_score, humanized_score, evasion_conf, delta_badge,
-             diff_html, patch_out, commit_suggest, proof_md, download_zip]  # last for file
+            inputs=[input_mode, code_in_h, zip_in, ref_code, intensity, add_debug, sarcastic, inconsistent, personal_names, redundancies],
+            outputs=[humanized_out, download_zip, original_score, humanized_score, evasion_conf, delta_badge, diff_html, patch_out, commit_suggest, proof_md]
         )
 
-    with gr.Tab("Gallery / Examples"):
-        gr.Markdown("""
-### Example Showcases (static for now)
-**Example 1: Clean Python function → Humanized**
-- Original: 42% → Humanized: 88% (+46%) | Evasion ~92%
-- Style matched to senior dev reference
-
-**Example 2: Java class module (zip)**
-- Processed 5 files | Avg delta +38% | Commit: "refactor: humanize AI-assisted module"
-
-Share your own results via proof card!
-        """)
-
-    gr.Markdown("Phase 3 – Diffs, patches, commits, shareable proofs | Built by @Lhmisme | 2026")
+    gr.Markdown("Fixed version – safe zip handling | @Lhmisme | 2026")
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860)
