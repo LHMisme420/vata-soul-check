@@ -129,3 +129,4 @@ For enterprise deployments, custom integrations, support, or hosted/private vers
 We welcome contributions, feature requests, and business inquiries via GitHub issues or direct outreach.
 
 Built with ❤️ for better code in the AI era.
+https://buymeacoffee.com/lhmisme2017
