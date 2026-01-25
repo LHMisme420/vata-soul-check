@@ -72,10 +72,10 @@ def score_soul(features: dict) -> tuple[float, str]:
         return 0.0, "Feature extraction failed"
 
     score = 50.0
-    score += features.get("has_todo", 0) * 25          # TODOs = soul
-    score += features.get("comment_entropy", 0) * 8    # comments = soul
-    score += min(features.get("perplexity_proxy", 0) / 8, 15)  # chaos bonus
-    score -= max(0, (features.get("length", 0) - 500) / 100)   # long clean code penalty
+    score += features.get("has_todo", 0) * 25
+    score += features.get("comment_entropy", 0) * 8
+    score += min(features.get("perplexity_proxy", 0) / 8, 15)
+    score -= max(0, (features.get("length", 0) - 500) / 100)
 
     score = max(0, min(100, score))
 
@@ -160,7 +160,6 @@ def analyze_soul(code: str, grok_api_key: str = ""):
 
         humanized = humanize_with_grok(code, grok_api_key)
 
-        # Colored visual score
         color = "red" if score < 30 else "orange" if score < 60 else "blue" if score < 85 else "green"
         score_visual = f"<h2 style='color:{color}; text-align:center; margin:20px 0; font-size:1.8em;'>{status} ({score}%)</h2>"
 
@@ -238,15 +237,13 @@ print(factorial(6))""",
     analyze_btn.click(
         fn=analyze_soul,
         inputs=[input_code, api_key],
-        outputs=[status_output, humanized_output],
-        loading=True
+        outputs=[status_output, humanized_output]
     )
 
     input_code.submit(
         fn=analyze_soul,
         inputs=[input_code, api_key],
-        outputs=[status_output, humanized_output],
-        loading=True
+        outputs=[status_output, humanized_output]
     )
 
 if __name__ == "__main__":
