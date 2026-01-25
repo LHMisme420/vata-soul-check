@@ -425,8 +425,12 @@ with gr.Blocks(
     css="""
 body { background-color: #05060a; }
 .gradio-container { background-color: #05060a !important; color: #f5f5f5; }
+css="""
+body { background-color: #05060a; }
+.gradio-container { background-color: #05060a !important; color: #f5f5f5; }
 textarea, .gr-textbox { font-family: monospace; font-size: 13px; }
 """
+
 ) as demo:
 
     gr.Markdown(
