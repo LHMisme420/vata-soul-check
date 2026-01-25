@@ -361,3 +361,53 @@ if error is not None or blended is None:
 return code + f"\n\n# LLM blending failed or skipped: {error}"
 
 return blended   
+  breakdown_block = (
+    f"- Comments: **{breakdown['comments']}**\n"
+    f"- Naming: **{breakdown['naming']}**\n"
+    f"- Complexity: **{breakdown['complexity']}**\n"
+    f"- Repetition penalty: **{breakdown['repetition_penalty']}**\n"
+    f"- Simplicity penalty: **{breakdown['simplicity_penalty']}**\n"
+    f"- Risk penalty: **{breakdown['risk_penalty']}**\n"
+)
+
+score_block = (
+    f"### VATA Soul Score\n"
+    f"- Score: **{score_str}**\n"
+    f"- Energy: **{energy}**\n"
+    f"- Class: **{cls}**\n"
+    f"- Verdict: **{verdict}**\n"
+    f"- Tier: **{tier}**\n\n"
+    f"#### Breakdown\n"
+    f"{breakdown_block}"
+)
+
+humanized = rule_based_humanize(
+    code=code,
+    intensity=intensity,
+    comment_intensity=comment_intensity,
+    debug_intensity=debug_intensity,
+    sarcasm_intensity=sarcasm_intensity,
+    inconsistency_intensity=inconsistency_intensity,
+    rename_intensity=rename_intensity,
+    redundancy_intensity=redundancy_intensity,
+    comment_style_preset=comment_style_preset,
+    naming_style=naming_style,
+    debug_prefix=debug_prefix,
+    language_override=language_override
+)
+
+blended = llm_blend_code(humanized, api_key=api_key)
+
+safe_blended = blended.replace("```", "`` `").replace('"""', "''\"")
+
+combined_output = (
+    f"{score_block}\n\n"
+    f"---\n\n"
+    f"### Rule-based Humanized Code\n\n"
+    f"```python\n{humanized}\n```\n\n"
+    f"---\n\n"
+    f"### LLM Blended Code (Grok Hybrid)\n\n"
+    f"```python\n{safe_blended}\n```"
+)
+
+return combined_output 
