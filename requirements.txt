@@ -1,11 +1,23 @@
-# existing lines ...
-numpy==1.26.4
-pandas==2.2.3
-xgboost==2.1.1
-transformers==4.45.2
-torch==2.4.1
-sentencepiece==0.2.0
-python-dotenv==1.0.1
-tqdm==4.66.5
+# Core UI & web server
 gradio>=5.0.0,<6.0
+
+# Machine Learning & features
+xgboost>=2.1.0
+scikit-learn>=1.5.0
+numpy>=1.26.4
+pandas>=2.2.0
+
+# Perplexity / code understanding
+transformers>=4.45.0
+torch>=2.5.0                  # >=2.5 needed for Python 3.13 compatibility
+sentencepiece>=0.2.0
+
+# xAI Grok API integration
 xai-sdk>=1.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+
+# Optional / debugging
+pytest>=8.0.0                 # if you add tests later
