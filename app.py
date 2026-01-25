@@ -205,14 +205,14 @@ def rule_based_humanize(
     return humanized
 
 # ────────────────────────────────────────────────
-#   LLM BLENDING PASS (fixed version)
+#   LLM BLENDING PASS – FIXED (no f-string inside prompt)
 # ────────────────────────────────────────────────
 
 def llm_blend_code(code: str, api_key: str, model: str = "grok-beta"):
     if not api_key.strip():
         return code + "\n\n# LLM blending skipped: no API key provided"
 
-    prompt = """
+    prompt_template = """
 You are an expert senior developer with 12+ years of experience who writes clean but slightly imperfect, human-feeling code.
 
 Take the following code that has already been lightly humanized with comments, debug statements, inconsistencies, etc.
@@ -229,4 +229,4 @@ Your task is to refine it further so it looks 100% like real hand-written code f
 
 Input code:
 ```python
-{}
+{0}
