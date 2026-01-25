@@ -1,3 +1,5 @@
 skl2onnx
 onnx
 ezkl
+gradio>=4.0.0
+
