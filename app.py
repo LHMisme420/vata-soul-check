@@ -64,7 +64,7 @@ def extract_features(code: str) -> dict:
         return {"error": str(e)}
 
 # ────────────────────────────────────────────────
-# SOUL SCORING (improved dummy version)
+# SOUL SCORING – improved dummy version
 # ────────────────────────────────────────────────
 
 def score_soul(features: dict) -> tuple[float, str]:
@@ -74,8 +74,8 @@ def score_soul(features: dict) -> tuple[float, str]:
     score = 50.0
     score += features.get("has_todo", 0) * 25          # TODOs = soul
     score += features.get("comment_entropy", 0) * 8    # comments = soul
-    score += min(features.get("perplexity_proxy", 0) / 8, 15)  # some chaos/perplexity bonus
-    score -= max(0, (features.get("length", 0) - 500) / 100)   # long clean code penalised slightly
+    score += min(features.get("perplexity_proxy", 0) / 8, 15)  # chaos bonus
+    score -= max(0, (features.get("length", 0) - 500) / 100)   # long clean code penalty
 
     score = max(0, min(100, score))
 
@@ -144,15 +144,15 @@ def humanize_with_grok(code: str, api_key: str) -> str:
         return code + f"\n\n# Grok API failed{hint}:\n{str(e)}"
 
 # ────────────────────────────────────────────────
-# MAIN ANALYZE FUNCTION (with visual score)
+# MAIN ANALYZE FUNCTION
 # ────────────────────────────────────────────────
 
 def analyze_soul(code: str, grok_api_key: str = ""):
     if not code.strip():
-        return "<p style='text-align:center; color:grey; font-size:1.2em;'>Paste some code first.</p>", ""
+        return "<p style='text-align:center; color:grey; font-size:1.3em;'>Paste some code first.</p>", ""
 
     if len(code) > 30000:
-        return "<p style='text-align:center; color:orange; font-size:1.2em;'>Code too long (max ~30k chars)!</p>", ""
+        return "<p style='text-align:center; color:orange; font-size:1.3em;'>Code too long (max ~30k chars)!</p>", ""
 
     try:
         features = extract_features(code)
@@ -160,26 +160,26 @@ def analyze_soul(code: str, grok_api_key: str = ""):
 
         humanized = humanize_with_grok(code, grok_api_key)
 
-        # Visual colored score
+        # Colored visual score
         color = "red" if score < 30 else "orange" if score < 60 else "blue" if score < 85 else "green"
-        score_visual = f"<h2 style='color:{color}; text-align:center; margin:20px 0;'>{status} ({score}%)</h2>"
+        score_visual = f"<h2 style='color:{color}; text-align:center; margin:20px 0; font-size:1.8em;'>{status} ({score}%)</h2>"
 
         return score_visual, humanized
 
     except Exception as e:
         tb = traceback.format_exc()
         print(f"[CRASH] {tb}")
-        return "<p style='text-align:center; color:red; font-size:1.2em;'>Crashed! Check logs.</p>", code
+        return "<p style='text-align:center; color:red; font-size:1.3em;'>Crashed! Check logs.</p>", code
 
 # ────────────────────────────────────────────────
-# GRADIO UI with examples + loading
+# GRADIO UI
 # ────────────────────────────────────────────────
 
 with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
     gr.Markdown("""
     # VATA - Code Soul Scanner & Humanizer 🔥🪬
 
-    Paste code → get soul score + optional Grok-polished version.  
+    Paste code → Analyze → soul score + optional Grok-polished version.  
     Add xAI Grok API key for real humanization (https://console.x.ai).
     """)
 
@@ -189,9 +189,10 @@ with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
                 """function Get-SystemInfo {
     param([string]$ComputerName = $env:COMPUTERNAME)
     Get-ComputerInfo -ComputerName $ComputerName |
-        Select-Object WindowsProductName, OsVersion
-}""",
-                "Clean AI-style PowerShell – expect low soul"
+        Select-Object WindowsProductName, OsVersion, CsManufacturer, CsModel
+}
+Get-SystemInfo""",
+                "Clean AI-style PowerShell"
             ],
             [
                 """# this kills zombie tabs dont @ me
@@ -199,14 +200,14 @@ Get-Process chrome | ? {$_.WorkingSet64 -gt 1GB} | % {
     "Murdering $($_.ProcessName) - $($_.WorkingSet64 / 1MB)MB"
     Stop-Process $_.Id -Force
 }""",
-                "Messy human-style PowerShell – expect higher soul"
+                "Messy human-style PowerShell"
             ],
             [
                 """def factorial(n):
     return 1 if n == 0 else n * factorial(n-1)
 
 print(factorial(6))""",
-                "Short Python – test Grok rewrite"
+                "Short Python recursive"
             ],
         ],
         inputs=gr.Textbox(lines=12, label="Input Code"),
@@ -238,8 +239,7 @@ print(factorial(6))""",
         fn=analyze_soul,
         inputs=[input_code, api_key],
         outputs=[status_output, humanized_output],
-        _js="() => {return []}",  # optional: can add client-side loading if needed
-        loading=True  # shows loading spinner on button
+        loading=True
     )
 
     input_code.submit(
