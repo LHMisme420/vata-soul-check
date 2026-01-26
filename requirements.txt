@@ -7,6 +7,6 @@ tree-sitter-python  # Add for other langs as needed
 transformers
 torch  # For transformers and perplexity
 tqdm
-gradio  # For demo (replaced streamlit for HF compatibility)
+gradio
 nltk  # For comment NLP
 networkx  # For graph features
