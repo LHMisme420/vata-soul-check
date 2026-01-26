@@ -1,11 +1,12 @@
-gradio>=5.0,<6.0
-numpy>=1.26.4
-pandas>=2.2,<3
-xgboost>=2.1,<2.2
-scikit-learn>=1.5,<1.6
-transformers>=4.45,<5
-torch>=2.5.0
-sentencepiece>=0.2.0
-xai-sdk>=1.0.0
-python-dotenv>=1.0.0
-tqdm>=4.66.0
+numpy
+pandas
+scikit-learn
+xgboost
+tree-sitter
+tree-sitter-python  # Add for other langs as needed
+transformers
+torch  # For transformers and perplexity
+tqdm
+gradio  # For demo (replaced streamlit for HF compatibility)
+nltk  # For comment NLP
+networkx  # For graph features
