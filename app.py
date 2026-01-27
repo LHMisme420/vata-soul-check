@@ -124,3 +124,31 @@ with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
     )
 
 demo.launch()
+import subprocess
+import json
+import os
+
+def generate_zk_proof(code_input_padded, threshold):
+    try:
+        # Prepare input.json
+        input_data = {"code_input": code_input_padded, "threshold": threshold}
+        with open("/tmp/input.json", "w") as f:
+            json.dump(input_data, f)
+
+        # Run snarkjs via node (Node is pre-installed on HF Spaces)
+        cmd = [
+            "node", "soul_score_js/soul_score.wasm",  # assume you copied the wasm folder
+            "--input", "/tmp/input.json",
+            "--zkey", "soul.zkey"  # copy to /app
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+        proof = json.loads(result.stdout)  # adjust based on actual output
+
+        # Verify (optional)
+        verify_cmd = ["snarkjs", "groth16", "verify", "verification_key.json", "/tmp/public.json", "proof.json"]
+        # ... etc.
+
+        return "✅ Real Groth16 proof generated via snarkjs!", str(proof)
+    except Exception as e:
+        return f"ZK failed: {str(e)}", ""
