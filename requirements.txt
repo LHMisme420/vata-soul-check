@@ -10,4 +10,3 @@ tqdm
 gradio
 nltk  # For comment NLP
 networkx  # For graph features
-pysnark
