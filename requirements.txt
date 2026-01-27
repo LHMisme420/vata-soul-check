@@ -10,3 +10,5 @@ tqdm
 gradio
 nltk  # For comment NLP
 networkx  # For graph features
+# ... your existing packages ...
+# No extra pip for snarkjs — we use Node
