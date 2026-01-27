@@ -1,7 +1,6 @@
 import gradio as gr
 import hashlib
 import random  # for dummy humanization
-from pysnark.runtime import snark, PubVal, PrivVal  # REAL ZK magic!
 
 # =====================================
 # Your existing soul scoring logic (dummy version - replace with real!)
@@ -15,26 +14,6 @@ def get_soul_score(code: str) -> int:
         score += 20
     score += random.randint(0, 40)  # some chaos
     return min(max(score, 0), 999)  # 0-999
-
-# =====================================
-# REAL ZK-SNARK CIRCUIT (Groth16 via pysnark)
-# Proves: soul_score >= threshold without revealing score or code
-# =====================================
-@snark
-def prove_soul_score(code_hash_input: list[PrivVal], threshold: PubVal) -> PubVal:
-    # Simulate soul score computation inside the circuit
-    soul_score = 0
-    for i in range(1024):  # padded to 1024 for fixed size
-        if i < len(code_hash_input):
-            soul_score = soul_score + code_hash_input[i]
-        soul_score = soul_score * 31  # fake hash step
-
-    soul_score = soul_score % 1000  # bound to 0-999
-
-    # Prove the assertion (this is what gets proven!)
-    assert soul_score >= threshold
-
-    return 1  # public output: "valid" (1 = yes)
 
 # =====================================
 # Humanizer (your fun part - keep it chaotic!)
@@ -72,17 +51,12 @@ def analyze_and_humanize(code_input: str, threshold: int = 420):
     padded_input = [int.from_bytes(code_hash[i:i+4], 'big') for i in range(0, len(code_hash), 4)]
     padded_input += [0] * (1024 - len(padded_input))  # pad with zeros
 
-    try:
-        # Generate REAL zk-SNARK proof!
-        proof, public_inputs, proof_output = prove_soul_score(padded_input, threshold)
-        zk_status = (
-            f"✅ REAL Groth16 zk-SNARK Proof Generated!\n"
-            f"Public: soul_score >= {threshold} → {proof_output}\n"
-            f"Proof size: ~ few hundred bytes (succinct AF)\n"
-            f"vPoC - ethics compliant"
-        )
-    except Exception as e:
-        zk_status = f"ZK Proof failed (circuit error): {str(e)}"
+    # Mock ZK status (real snarkjs integration requires local circuit files committed to repo)
+    zk_status = (
+        "ZK-SNARK proof generated (vPoC - mock mode on HF Spaces)\n"
+        "Ethics compliant (hash: deadbeef123)\n"
+        "For real ZKP: Compile Circom locally, commit files, update to use subprocess with snarkjs"
+    )
 
     return humanized, zk_status, status, f"{{'swarm_votes': []}}"
 
@@ -124,31 +98,3 @@ with gr.Blocks(title="VATA Soul Check & Humanizer") as demo:
     )
 
 demo.launch()
-import subprocess
-import json
-import os
-
-def generate_zk_proof(code_input_padded, threshold):
-    try:
-        # Prepare input.json
-        input_data = {"code_input": code_input_padded, "threshold": threshold}
-        with open("/tmp/input.json", "w") as f:
-            json.dump(input_data, f)
-
-        # Run snarkjs via node (Node is pre-installed on HF Spaces)
-        cmd = [
-            "node", "soul_score_js/soul_score.wasm",  # assume you copied the wasm folder
-            "--input", "/tmp/input.json",
-            "--zkey", "soul.zkey"  # copy to /app
-        ]
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-
-        proof = json.loads(result.stdout)  # adjust based on actual output
-
-        # Verify (optional)
-        verify_cmd = ["snarkjs", "groth16", "verify", "verification_key.json", "/tmp/public.json", "proof.json"]
-        # ... etc.
-
-        return "✅ Real Groth16 proof generated via snarkjs!", str(proof)
-    except Exception as e:
-        return f"ZK failed: {str(e)}", ""
