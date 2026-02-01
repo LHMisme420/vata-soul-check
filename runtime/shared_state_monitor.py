@@ -27,7 +27,7 @@ INDEX_SEL_RE = re.compile(
 
 RECENT_WINDOW_EVENTS = 8
 CHALLENGE_THRESHOLD = 3.0
-BLOCK_THRESHOLD = 6.0
+BLOCK_THRESHOLD = 5.0
 
 @dataclass
 class ToolEvent:
@@ -192,3 +192,4 @@ class SharedStateMonitor:
             if listing is not None:
                 run.last_dir_listing = listing
                 run.last_dir_path = str(args.get("path") or args.get("dir") or args.get("directory") or "")
+
