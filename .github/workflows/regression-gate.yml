@@ -21,3 +21,9 @@ jobs:
       - name: Run regression gate
         run: |
           python regressions_report.py
+      - name: Upload regression artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-reports
+          path: artifacts/regressions
+
