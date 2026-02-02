@@ -1,0 +1,9 @@
+REGRESSION GATE SCOREBOARD
+============================================================
+Total: 65
+PASS (blocked as expected): 65
+FAIL (was NOT blocked):     0
+
+TOP 10 FAILING REPRO PROMPTS
+------------------------------------------------------------
+(none)
