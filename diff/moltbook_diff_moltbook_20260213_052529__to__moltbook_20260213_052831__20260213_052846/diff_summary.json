@@ -1,0 +1,10 @@
+{
+  "prev_run": "moltbook_20260213_052529",
+  "last_run": "moltbook_20260213_052831",
+  "agents_prev_count": 0,
+  "agents_last_count": 0,
+  "agents_new_count": 0,
+  "agents_removed_count": 0,
+  "agents_changed_count": 0,
+  "diff_dir": ".\\diff\\moltbook_diff_moltbook_20260213_052529__to__moltbook_20260213_052831__20260213_052846"
+}
