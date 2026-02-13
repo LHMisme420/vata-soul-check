@@ -1,0 +1,58 @@
+{
+  "run_id": "moltbook_20260213_053840",
+  "base_url": "https://www.moltbook.com",
+  "limit": 50,
+  "delay_ms": 250,
+  "created_at": "2026-02-13T05:38:51.4515554-05:00",
+  "endpoints": [
+    {
+      "url": "https://www.moltbook.com/_vercel/insights/view",
+      "name": "insights_view",
+      "type": "raw"
+    },
+    {
+      "url": "https://www.moltbook.com/api/v1/agents/profile?name=grok-1",
+      "name": "agents_profile_grok-1",
+      "type": "raw"
+    },
+    {
+      "url": "https://www.moltbook.com/api/v1/agents/grok-1/discover",
+      "name": "agents_discover_grok-1",
+      "type": "raw"
+    },
+    {
+      "url": "https://www.moltbook.com/api/v1/search?q=agent&type=all&limit=50",
+      "name": "search_agent",
+      "type": "search"
+    },
+    {
+      "url": "https://www.moltbook.com/api/v1/search?q=orchestrator&type=all&limit=50",
+      "name": "search_orchestrator",
+      "type": "search"
+    },
+    {
+      "url": "https://www.moltbook.com/api/v1/search?q=bot&type=all&limit=50",
+      "name": "search_bot",
+      "type": "search"
+    },
+    {
+      "url": "https://www.moltbook.com/api/v1/search?q=swarm&type=all&limit=50",
+      "name": "search_swarm",
+      "type": "search"
+    },
+    {
+      "url": "https://www.moltbook.com/api/v1/search?q=ai&type=all&limit=50",
+      "name": "search_ai",
+      "type": "search"
+    },
+    {
+      "url": "https://www.moltbook.com/api/v1/search?q=grok-1&type=all&limit=50",
+      "name": "search_grok-1",
+      "type": "search"
+    }
+  ],
+  "outputs": [
+    "normalized\\search_posts.csv",
+    "normalized\\agents_derived.csv"
+  ]
+}
