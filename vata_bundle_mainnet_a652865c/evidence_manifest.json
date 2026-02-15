@@ -1,0 +1,81 @@
+﻿{
+    "schema":  "vata.evidence_bundle.v1",
+    "generated_utc":  "2026-02-15 08:21:03 UTC",
+    "rpc":  "https://rpc.ankr.com/eth_sepolia",
+    "chain_anchor":  {
+                         "tx_hash":  "0xa652865c1d2474890d402547384263f6e8eb04ca11fc504558d994a8a96888ca",
+                         "block":  "24459050",
+                         "contract":  "0x32506a2b5bd991c904ca733CBf6f8FD0183BA6Ce",
+                         "onchain_input":  null,
+                         "expected_input":  "0x564154416a54c7d51f1c3140c23dd06e40985acde8a4c3ca53aabfebc20b314ab83d002b",
+                         "vata_prefix":  "0x56415441"
+                     },
+    "proof":  {
+                  "file":  "forensic_proof.bin",
+                  "bytes":  null,
+                  "sha256":  null,
+                  "proof_hash":  "0x6a54c7d51f1c3140c23dd06e40985acde8a4c3ca53aabfebc20b314ab83d002b"
+              },
+    "evidence_items":  [
+                           {
+                               "name":  "agents.csv",
+                               "bytes":  116,
+                               "sha256":  "5a2ea92c701ac2eb9912dd5f894b2e630c8d5544e5178161dfa8640bc960d1a7"
+                           },
+                           {
+                               "name":  "bursts.csv",
+                               "bytes":  128,
+                               "sha256":  "5a2eaa8b6cdd746ad17d5e584c1bfa5993cf2b9d7b37fcf214f7286e400e2fcc"
+                           },
+                           {
+                               "name":  "har_debug_endpoints.csv",
+                               "bytes":  41576,
+                               "sha256":  "3c6ca98410d7c24e333ee37c2370112396a7a83c4e591ffad021a3283d45f948"
+                           },
+                           {
+                               "name":  "manifest.json",
+                               "bytes":  91,
+                               "sha256":  "e1452c42a3a17e449cbf9b04b1103e8b941485354bf8b1d2d1bf060c8024d249"
+                           },
+                           {
+                               "name":  "network.csv",
+                               "bytes":  154,
+                               "sha256":  "c9176cd68a83b1dce539f33d311f051b705757e3d4f9d54cc70b56ddd88cfbbe"
+                           },
+                           {
+                               "name":  "README.txt",
+                               "bytes":  547,
+                               "sha256":  "0311639396538edb68b82a93712bcd2b87ee68faf96d442c0938579aa70583d2"
+                           },
+                           {
+                               "name":  "search_posts.csv",
+                               "bytes":  274252,
+                               "sha256":  "cb600cc95d85335588d97c299e7fc3054f2f027ea643401db3fed8b99593b179"
+                           },
+                           {
+                               "name":  "summary.csv",
+                               "bytes":  146,
+                               "sha256":  "c6a942cd2af989eb6a076ed62c054cd7fea98e97feccd66f4dfd474c7398b6b7"
+                           },
+                           {
+                               "name":  "suspected_bots.csv",
+                               "bytes":  95085,
+                               "sha256":  "7636fbfceff1d47670e8c375427de11b956bb21ad3e1d7c8a87ba8ca875298de"
+                           },
+                           {
+                               "name":  "top_authors.csv",
+                               "bytes":  767,
+                               "sha256":  "f2da4ce9cc39d3f17b464b99581fc78a37c9d1ff73a1f88f81cb1498b14dbd4a"
+                           },
+                           {
+                               "name":  "top_duplicates.csv",
+                               "bytes":  3852,
+                               "sha256":  "58ff6d53ae278e166e6e9102d3ef35eff541db4522a633ce3dc89cb944789153"
+                           },
+                           {
+                               "name":  "top_submolts.csv",
+                               "bytes":  699,
+                               "sha256":  "c5ecc71010171a1c27641f4e3d2aef950467f8fbb21196f0c48ad54d282e7e39"
+                           }
+                       ]
+}
