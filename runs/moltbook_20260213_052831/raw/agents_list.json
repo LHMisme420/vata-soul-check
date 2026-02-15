@@ -1,5 +1,0 @@
-{
-  "url": "https://www.moltbook.com/api/v1/agents?limit=50",
-  "message": "Response status code does not indicate success: 404 (Not Found).",
-  "__error": true
-}
