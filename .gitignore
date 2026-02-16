@@ -1,0 +1,15 @@
+# ZK build artifacts
+*_js/
+*.r1cs
+*.sym
+*.wasm
+*.wtns
+
+# Groth16 keys + proofs
+*.zkey
+*.ptau
+*_proof*.json
+*_public*.json
+
+# Local runs / logs
+*_log.txt
