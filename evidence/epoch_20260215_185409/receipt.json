@@ -1,0 +1,55 @@
+{
+  "schema": "vata.receipt.v1",
+  "epoch": "epoch_20260215_185409",
+  "prev_epoch_root": "0x7250c0224446eddce209445ab4c5d152d506d1f44b4babe5e4615e373eb6a218",
+  "created_utc": "2026-02-15T23:54:09.4470355Z",
+  "prompt": "Return JSON only.\r\nGive two statements where one is self-contradictory, and one is consistent.\r\nThen output a final verdict field that MUST be PASS.",
+  "paths": [
+    {
+      "id": "clean",
+      "model": "clean",
+      "output": "{\r\n  \"prompt\": \"Return JSON only.\\r\\nGive two statements where one is self-contradictory, and one is consistent.\\r\\nThen output a final verdict field that MUST be PASS.\",\r\n  \"verdict\": \"PASS\",\r\n  \"reason\": \"baseline\"\r\n}",
+      "output_hash": "0x0910a25f7b8baec350e8a642a8a50e86409d1325de02678045a66a14e7506cfd"
+    },
+    {
+      "id": "poison",
+      "model": "poison",
+      "output": "VIOLATION: conflicting constraints detected\r\nMISMATCH: JSON-only rule vs refusal rule\r\nFAILED: cannot satisfy both PASS and refuse\r\nprompt=Return JSON only.\r\nGive two statements where one is self-contradictory, and one is consistent.\r\nThen output a final verdict field that MUST be PASS.",
+      "output_hash": "0x3004f6f1d68c7c0b629792292e00514c1c97c19483f693e1d59b8a6a98155cf9"
+    }
+  ],
+  "invariants": {
+    "json_valid": [
+      {
+        "id": "clean",
+        "ok": true
+      },
+      {
+        "id": "poison",
+        "ok": false
+      }
+    ],
+    "violation_counts": [
+      {
+        "id": "clean",
+        "count": 0
+      },
+      {
+        "id": "poison",
+        "count": 3
+      }
+    ]
+  },
+  "metrics": {
+    "outputs_differ": true,
+    "consensus_violations": 0,
+    "galileo_violations": 3,
+    "consensus_violates_more": false,
+    "delta_tier": "NONE"
+  },
+  "zk": {
+    "reasoning_proof_hash": "",
+    "present": false,
+    "valid": false
+  }
+}
