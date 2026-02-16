@@ -1,4 +1,4 @@
-<# 
+﻿<# 
 verify_anchor.ps1
 Verifies that:
   - SHA256(receipt.json) == first bytes32 in tx.input
@@ -123,9 +123,10 @@ if (-not $Quiet) {
 }
 
 if ($expected_receipt -eq $onchain_receipt -and $expected_merkle -eq $onchain_merkle) {
-  if (-not $Quiet) { Write-Host "✅ PROOF VALID — FILES MATCH MAINNET ANCHOR" }
+  if (-not $Quiet) { Write-Host "âœ… PROOF VALID â€” FILES MATCH MAINNET ANCHOR" }
   exit 0
 } else {
-  if (-not $Quiet) { Write-Host "❌ PROOF INVALID — MISMATCH" }
+  if (-not $Quiet) { Write-Host "âŒ PROOF INVALID â€” MISMATCH" }
   exit 1
 }
+
