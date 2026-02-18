@@ -1,0 +1,1810 @@
+[
+  {
+    "path": "_fresh_merkle\\proof.json",
+    "sha256": "0xe584c1cff73ea49d7a51995f693c99bbed74415187f9bdefd3bd1cabe1db2c24"
+  },
+  {
+    "path": "_fresh_merkle\\public.json",
+    "sha256": "0x36459e1cda88ed4d7d8167f1b517436e867575c9138864b633fd56942634fbe2"
+  },
+  {
+    "path": "_fresh_merkle\\vkey.json",
+    "sha256": "0xf39e6b0704fdbdedf31ec23e941039ac429891a81e349c074a83a6b27b893ce9"
+  },
+  {
+    "path": "agents.csv",
+    "sha256": "0x5a2ea92c701ac2eb9912dd5f894b2e630c8d5544e5178161dfa8640bc960d1a7"
+  },
+  {
+    "path": "anchor-immutable\\anchor_forensics.ps1",
+    "sha256": "0x67cce56a4e96422e1ab700292640dcd90319f2e399ab5501336e2454881387f5"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\call_verifyProof_auto.ps1",
+    "sha256": "0xc2decc08db13663b081e8428009dbe14c3ed048a71d613d4e88b715fd962a399"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\call_verifyProof.ps1",
+    "sha256": "0xe1a97b27bfef9a45dbbde8c18379d897979fa02fcfa8652423299c611dc4b367"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\evidence_items\\item_001.txt",
+    "sha256": "0xe589233e6aa9639a50fce7af1cc54b4c7c36b48b36cb24c358e217c5e68192f1"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\fullprove_verify.ps1",
+    "sha256": "0x92a4dbcff51cb5668c774b7c103518b156caa2dc34e9019cbc5e062a94286420"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\grok_run.ps1",
+    "sha256": "0x373c353a8881c894dc4d307ecc72ef2f5428805e749a0a14e5135ea41eb8a859"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\README.md",
+    "sha256": "0x3fad8e510471bc7ba5c23c1a3e2ba938fb8203cd285869caaa623a1a0f1099fe"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_112548\\run.log",
+    "sha256": "0xefd47e457a56671ee9e1b314f726f411ba570a68abecccb23bcf474d4e239f26"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_114916\\run.log",
+    "sha256": "0xa628053b6563af397fa0e73a295bb97aa6615b0c4e9598e813aae48b29cadf78"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_115235\\run.log",
+    "sha256": "0x27a0c170fe6c21fe4de78ee8956b65175485c51a484cf3974e849d1107112fa2"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_115328\\run.log",
+    "sha256": "0x2759990c507a1162be79d769b73f51ac6a0adf5e53421545bee67b72b7030543"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_115746\\run.log",
+    "sha256": "0xa29171078f9c09bdcc3b5bff650148ba3a2a0edb1296ac1543609039ab1f9319"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_115817\\run.log",
+    "sha256": "0x3a50c03d1638f18ff1a1ceaf1607c4ff4aee2efef9b86bd4074517eeb3850ebf"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_120342\\manifest.json",
+    "sha256": "0xc422a6ce5644f6dcc6378a750d1e225315352dc58fa95a4ae973c925a1159c6e"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_120342\\merkle_root_v2.txt",
+    "sha256": "0xca6a1f606c2c27709f4e7d34bca8a792d5ad438fbfaab315617d2d4230a31400"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_120342\\receipt.json",
+    "sha256": "0x2535b1ab2ba09c5ac500cba4dfba2fc9778462e8d474f05503777f77e5b46b84"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_120342\\run.log",
+    "sha256": "0xabfa4dacfa10962d08beb444797db991f2473b3a7611fd98711aa00d49556f08"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_120446\\manifest.json",
+    "sha256": "0xa4207cb646c946fb4f4a2561ef1b610a248f342563308407b207e999cfe8a4d9"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_120446\\merkle_root_v2.txt",
+    "sha256": "0xca6a1f606c2c27709f4e7d34bca8a792d5ad438fbfaab315617d2d4230a31400"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_120446\\receipt.json",
+    "sha256": "0xc1dad247ca0b297635efc414d0843355b826bf7f378c94fa0d98973faf4c287c"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\runs\\run_20260217_120446\\run.log",
+    "sha256": "0xe92bfd256accd83d76947eb147d3136175962dccee08ff465a5e5a3749296f73"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\script\\Counter.s.sol",
+    "sha256": "0x39115eb4e633a956b6f6d8db94d5477c744452856f8a242f84006cf5510bdbe1"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\src\\AnchorImmutable.sol",
+    "sha256": "0x328921f6694ab1c6d56e22833a111028ce03a965998a7af6e16739252b8b6832"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\src\\Counter.sol",
+    "sha256": "0xfbf8b251913a49ccf66de62a36520cbd557807580018631fe547909f183afde6"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\src\\Groth16Verifier.sol",
+    "sha256": "0x9e90d7c3dbd44b34d27c3286d6e50dbda915a76e0a31ac3a8c554cdd60d9f708"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\test\\Counter.t.sol",
+    "sha256": "0xbf02181f160d31b44ed0f3ba2ccae6e5a792aca4ecc983cf1d75840fc2ff4245"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\verifier.abi.json",
+    "sha256": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\verify_bundle.ps1",
+    "sha256": "0x248e935f6e159d7c03b98d2c7f789405ff6b1f6ecab1c8e1f23c2e46db5740a1"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\verify_verifier.ps1",
+    "sha256": "0x770ac1acf5cc3ada5fceb61a801ee8f28474e8d776b7f708997770f4dde0ef98"
+  },
+  {
+    "path": "anchor-immutable\\anchor-immutable\\verifyProof_call.ps1",
+    "sha256": "0xc8ad62a8f1bbe575cd55ca9b76fe3109d261245997035e3803b4b768bc3b7336"
+  },
+  {
+    "path": "anchor-immutable\\cache\\solidity-files-cache.json",
+    "sha256": "0xf7d1677d5b4833a95b3d128006f0cfb0371165a031384038a8f1df747f5d58de"
+  },
+  {
+    "path": "anchor-immutable\\call_verifyProof_auto.ps1",
+    "sha256": "0xc2decc08db13663b081e8428009dbe14c3ed048a71d613d4e88b715fd962a399"
+  },
+  {
+    "path": "anchor-immutable\\call_verifyProof.ps1",
+    "sha256": "0xe1a97b27bfef9a45dbbde8c18379d897979fa02fcfa8652423299c611dc4b367"
+  },
+  {
+    "path": "anchor-immutable\\evidence_items\\forensics_result_001.json",
+    "sha256": "0x3fa016e835628ad04d3e1c1e9e24bec9adebdd808a3ef2f5b1843a3241cd011a"
+  },
+  {
+    "path": "anchor-immutable\\evidence_items\\grok_output_001.txt",
+    "sha256": "0x8eec5aa614d7078a2a47be38331a8007fbfbe847a0c0b023e868633ffb1c5594"
+  },
+  {
+    "path": "anchor-immutable\\evidence_items\\item_001.txt",
+    "sha256": "0xe589233e6aa9639a50fce7af1cc54b4c7c36b48b36cb24c358e217c5e68192f1"
+  },
+  {
+    "path": "anchor-immutable\\forensics_result.json",
+    "sha256": "0x3fa016e835628ad04d3e1c1e9e24bec9adebdd808a3ef2f5b1843a3241cd011a"
+  },
+  {
+    "path": "anchor-immutable\\forensics_run_output.txt",
+    "sha256": "0x981083eb5a2cf545bba454264d5827e74a06a9c9fd4a2159ba84804afc734d0b"
+  },
+  {
+    "path": "anchor-immutable\\fullprove_verify.ps1",
+    "sha256": "0x2f1fa70de212b54b4149789e152fe65401518b92b8e3cf3a4aa23a04dde2430c"
+  },
+  {
+    "path": "anchor-immutable\\grok_run.ps1",
+    "sha256": "0x373c353a8881c894dc4d307ecc72ef2f5428805e749a0a14e5135ea41eb8a859"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\CONTRIBUTING.md",
+    "sha256": "0x96b3fec5ef52865056d701432dbdf6e4940668943cf9d3e707400269c95b3189"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\package.json",
+    "sha256": "0x4869c8f4fa98fdf4e97da710e93e67cc46c02351921560256cb49ea084ecf6a0"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\README.md",
+    "sha256": "0x754a9daa38ce0f8dfc0fa9b85b62469628c6c1d8b8f95cfdbc4283027dff67b7"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\RELEASE_CHECKLIST.md",
+    "sha256": "0x7478ecd66aeb7c0ce0f5472620a67beeeb15d77bafe603a4e093e48463e04f59"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\Base.sol",
+    "sha256": "0x608b2a4200d4818f616dd767f0689d3dd26b4c87f5abb1950cc38f3424b6caba"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\Config.sol",
+    "sha256": "0xa58e74ad46ee54e9cef51f446f160c6253fde502ce11126c15d4563e5c792934"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\console.sol",
+    "sha256": "0x8d00df4c00184ff0ca57401eeb784590a7c257c1b4bd5c997a7c81363fbbfe85"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\console2.sol",
+    "sha256": "0xa675b2d87278d46a787546099c20133fa5ec191f293d33bab103b6edcb0bd74e"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IERC1155.sol",
+    "sha256": "0x087d996a0740f62b852cde30951e785b636dd874328f0218b2722155075fc574"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IERC165.sol",
+    "sha256": "0xfd0ec8a846600c82af8c2c461961fc978529c28a58b21f2495dfd3144b6278a8"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IERC20.sol",
+    "sha256": "0x0858203cc8704254a8b048d18e4f153b7bbd2f9f7b438a8cdcbec87616b63815"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IERC4626.sol",
+    "sha256": "0x2af54e097b1009bbd4d76b0dcf59e69bf0ef04670f2a147be01e82ffc51336ce"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IERC6909.sol",
+    "sha256": "0xc0d065eb42360bf81482dadf8ff4997184d9354254ea12f802526016e97ca032"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IERC721.sol",
+    "sha256": "0x7f2567fd2661ccd47329472e766db030ec0766b4271f4807bdfa02aadf58f3d1"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IERC7540.sol",
+    "sha256": "0x4086b40babdd6e51cdab57045d19f0bba99e6c8bd170358b2ad5997bea03257d"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IERC7575.sol",
+    "sha256": "0x1ac479d3d830133bd65775be8849e9745e33048958940fe5c42f4fb6d3a2a4ec"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\interfaces\\IMulticall3.sol",
+    "sha256": "0x9f6f91c8678ebc879f822911013b3eab7e5afba915f931659102c42c3e8fb98d"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\LibVariable.sol",
+    "sha256": "0x7c2d2d1a281d9c0b9c4f322abe87882825298d62d0689d9c636d4bef462415dc"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\safeconsole.sol",
+    "sha256": "0x22bb9e3835a13ed2be569f035eb26c915275fd886cf58f1cb1d318a229cb5aff"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\Script.sol",
+    "sha256": "0x58f37252a1765c4e9a1bd727b8321964bae444882009e906a1916178f73c10c3"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdAssertions.sol",
+    "sha256": "0xa8abc9f6c12a732d841be706f763ed72ad6ddac2d13717687b75d80b43167967"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdChains.sol",
+    "sha256": "0x8d2beaf66c4b77a739171a7074d257e2b51e148d143a32c6d8243b0483316303"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdCheats.sol",
+    "sha256": "0xcf7c45a2efe9bd7a153d972163949c1d24f7bc9ce5d0638869208b8ff65045f5"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdConfig.sol",
+    "sha256": "0xdc58a0fa50932980e1ca522b0d0fda1c0cb7d4aac39c26858101f44a8c2b8ae4"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdConstants.sol",
+    "sha256": "0x572e3c3c4d1f9754e3edc7af5157115235d3ade025a31a9bb4e0429d69602551"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdError.sol",
+    "sha256": "0x0c7c0c86d792d1669bfc567d6b44c2a3981f6fa1824f774a67ac66158233ddb4"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdInvariant.sol",
+    "sha256": "0xf76b35b7f19e6f846e4b51f4cd1a562a453bced8d69b9bc15a0a4520d493c78c"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdJson.sol",
+    "sha256": "0x0e4f368d838aacf6c42b336007ffb136a760b99a176f132a45feeabbd9417164"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdMath.sol",
+    "sha256": "0xc814f55759c04dcca0a2bd6fbc7800148aead85d69b7309bb028fbfc9282b434"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdStorage.sol",
+    "sha256": "0xa9eb7c65ca95e79cf49421dfc6950dd38c0f5b4e956633ebc7243d7fbba2664c"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdStyle.sol",
+    "sha256": "0x32dc7c001ebebf0a96a1923d4ef5884acd9b639eb85f8a0757355b86f46ba2b2"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdToml.sol",
+    "sha256": "0x6c87e8cec108c11ccd69ca41ff6d0bab469a595155be993fea6f4b57e12e0414"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\StdUtils.sol",
+    "sha256": "0x550fd416bf8ed05e341de5ddf8bab3538599a9df0184d9c2946940a5b01eb81a"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\Test.sol",
+    "sha256": "0x4e2481d824da48272897c41688af8bc80a13f0de2de59297210335144e36f8db"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\src\\Vm.sol",
+    "sha256": "0xfb31f12677caf424c934a9f69bd95f9b3f1c1d1dcb2496d4f0db59fcc8a12410"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\CommonBase.t.sol",
+    "sha256": "0x2dd534e6cf458a5e704bfcb829241d6f2e66a7b382ff7aa67d89da8bd38d7a0d"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\compilation\\CompilationScript.sol",
+    "sha256": "0x42f271d79355c80fc8054babb402bb82e59342ad57ba7eb9139a9f4f77301ae4"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\compilation\\CompilationScriptBase.sol",
+    "sha256": "0xc280236b37d2b2a50da0a6acc5a3a269899c0eb144a3127105853cee75e925c6"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\compilation\\CompilationTest.sol",
+    "sha256": "0x19766ac86fa83f04e44c44855dccf8fe68177157b7665f5b767dad8f40516a89"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\compilation\\CompilationTestBase.sol",
+    "sha256": "0x198b90b28c6494b03601985d0edfa37d3017d87f1328113981911bac0eb35217"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\Config.t.sol",
+    "sha256": "0xebb9001d1ecd3618dfa54534fea340b81496117c011aec64c59b9d668f969c31"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\fixtures\\broadcast.log.json",
+    "sha256": "0xb00fbfde3288bb2af82d66aca0defab98954b6a73b896b379d02a33d080579b1"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\fixtures\\test.json",
+    "sha256": "0x85a9ab61b49d9a83e896898ae696c09d8185505801d5403c077d9c0b507b2457"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\LibVariable.t.sol",
+    "sha256": "0x62a5f88724763effb047de1e2325538e3fc50088de947557c851c38f8970c619"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdAssertions.t.sol",
+    "sha256": "0x3192ab5b13010c62309d1c3e0b26fec2f2f8a11198e0cb25b5fc9d9d81895985"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdChains.t.sol",
+    "sha256": "0x2b9383f5cc920eade725921019149ff7c1cf462bb0653338217658014bcddddd"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdCheats.t.sol",
+    "sha256": "0x49494b11dfe573939946ad5fbdb4ced5b8a74a18121345718eb9fdb34f4898f9"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdConstants.t.sol",
+    "sha256": "0x7aff5106070ea492867578b6be3641ebfed6062b47591f2dca2df23d7a8f7462"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdError.t.sol",
+    "sha256": "0xd844318d431d2ecd082ebd10dd109b3d81ff433297bce1d5aa11a0b5ec565e86"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdJson.t.sol",
+    "sha256": "0x1b7af5893180b20e6e4489fe356132daf73e481dda15c1e1b47195af7a21b3f9"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdMath.t.sol",
+    "sha256": "0x204b5da37f985d66ebcd1d19bf5666a0c635f5e9a42fa00811ba0c946d5f90e0"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdStorage.t.sol",
+    "sha256": "0x7dac41372c75c450be52d0224772d6883d68d3ffafdf668527e571db4b77b63b"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdStyle.t.sol",
+    "sha256": "0x157727c84fe2363b6ecfd57c261636468eef90a14e2c2486f9bb1dcb62a494de"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdToml.t.sol",
+    "sha256": "0x3118e68a4112fac1f8a136aab315e9ca880cadd0e72f1fbae896b318495aa301"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\StdUtils.t.sol",
+    "sha256": "0x7053cfed035c06ff8cf8ed593f0fcc346bf00f7b3bdd32c73ee646404ae24cce"
+  },
+  {
+    "path": "anchor-immutable\\lib\\forge-std\\test\\Vm.t.sol",
+    "sha256": "0x6da790dff61c17cd117fabe8005b1f5992caeb98641a7dfb5d092def50278381"
+  },
+  {
+    "path": "anchor-immutable\\out\\AnchorImmutable.sol\\AnchorImmutable.json",
+    "sha256": "0x3522effb471a77795d546f3dc137225564f36ebba0f59358d3ee13128042d45f"
+  },
+  {
+    "path": "anchor-immutable\\out\\AnchorImmutable.sol\\IVerifier.json",
+    "sha256": "0x52e3f38f25514f8b4822c679d6a57db30e470ced6de30dce9b79145740eaa11e"
+  },
+  {
+    "path": "anchor-immutable\\out\\Base.sol\\CommonBase.json",
+    "sha256": "0xdc60553757b6bbdd330bc43d49e5e669d8ed86b5d5c4abea067acbc6b6cd1730"
+  },
+  {
+    "path": "anchor-immutable\\out\\Base.sol\\ScriptBase.json",
+    "sha256": "0xdfb9f49d3eaf87f310117af8c64443a79f0dd34668c8d8efd332ac49f971add9"
+  },
+  {
+    "path": "anchor-immutable\\out\\Base.sol\\TestBase.json",
+    "sha256": "0x34d8c0c212451c55b359cdd5fa35689b3ae28d772906cc989d56edc63ae48377"
+  },
+  {
+    "path": "anchor-immutable\\out\\build-info\\1d366cee631b9ba0.json",
+    "sha256": "0x5c34d8c782521be64fd5482a3c83223a2f85697c9dc9d1982ca4d80508462f86"
+  },
+  {
+    "path": "anchor-immutable\\out\\build-info\\2a329fb4ac934d3a.json",
+    "sha256": "0x2d5688ca5ae0247c55cdd44d8d3bdb0629a5720cf0297af9b356f4b0ccd4f7c2"
+  },
+  {
+    "path": "anchor-immutable\\out\\console.sol\\console.json",
+    "sha256": "0x4b57da3c83e948d843e7c4c6e8397b59f67792b7e6268df2ab2be2584824d2d4"
+  },
+  {
+    "path": "anchor-immutable\\out\\Counter.s.sol\\CounterScript.json",
+    "sha256": "0xc126e3c4fb672b4fc62d966b70d9de21c86a5df45047a62246850074cab0b8da"
+  },
+  {
+    "path": "anchor-immutable\\out\\Counter.sol\\Counter.json",
+    "sha256": "0x9bfc3c4b08f6ae191f0403b9da115c18f83ea0a91f79b5ea794f430dd28e8056"
+  },
+  {
+    "path": "anchor-immutable\\out\\Counter.t.sol\\CounterTest.json",
+    "sha256": "0x8148b1424b2ecaaccd4f672f845060f248da0ba33a839a965e152b1e56750df0"
+  },
+  {
+    "path": "anchor-immutable\\out\\Groth16Verifier.sol\\Groth16Verifier.json",
+    "sha256": "0x1c624c1ad495737a22b161835ef81bf7d21714490ab4ed5b688460bab1964194"
+  },
+  {
+    "path": "anchor-immutable\\out\\IMulticall3.sol\\IMulticall3.json",
+    "sha256": "0x3061782f871a570a5ad24ee1382c0a63b9ef60f61a3f1cd3f06576c3521758b0"
+  },
+  {
+    "path": "anchor-immutable\\out\\safeconsole.sol\\safeconsole.json",
+    "sha256": "0xe1796ff1831f2c77634327e4630b1b4f106a1462fbe79343c472e599a0762a6a"
+  },
+  {
+    "path": "anchor-immutable\\out\\Script.sol\\Script.json",
+    "sha256": "0xcd7b20657d7933dfa148247b9e35bee5ca24577399a656cd4ec8360be6c14dc7"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdAssertions.sol\\StdAssertions.json",
+    "sha256": "0x6a4d30fbdcd0d7a031286165a46d5445162aeb43bad10499913ecffde512a9c7"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdChains.sol\\StdChains.json",
+    "sha256": "0xe98c89113050b5fa818b692b9fd9168978d43b93160a93c37146f0f2e1dff00c"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdCheats.sol\\StdCheats.json",
+    "sha256": "0x853a52e5258e995e55e24d03f9befaa605b1eca874ae97084513c44089f522bf"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdCheats.sol\\StdCheatsSafe.json",
+    "sha256": "0xcf0eeeda313257695ff51ac112c1dd6bf2fd88ad44068511f917cb7d22fb3da5"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdConstants.sol\\StdConstants.json",
+    "sha256": "0xa510fbd362e51fb2285dbfd6985d3212a816b4ee47df1c2c1f34ccf0ff49a08c"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdError.sol\\stdError.json",
+    "sha256": "0x1bf1ad2c133a13665424a30c2bc6de18e52ed1a837ad9011843bc9eb201e1ff8"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdInvariant.sol\\StdInvariant.json",
+    "sha256": "0x3c9d1a510cdddcc337e583a786174ddf55bd8a41c49399f7c9386796bf0b0439"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdJson.sol\\stdJson.json",
+    "sha256": "0xa144f5931448a8ec9f5a8c30fa91aa91c27ad19c816a0ffbe2257319c5f0a0d3"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdMath.sol\\stdMath.json",
+    "sha256": "0x8191c97639c99bf46a87424b57dbe01b5bc8f99d0916d45004023b84f22f80c9"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdStorage.sol\\stdStorage.json",
+    "sha256": "0x27af4c2a019a09bcb03a13dfde3f78f307faf54ab37607d270c298ea2b9d71b8"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdStorage.sol\\stdStorageSafe.json",
+    "sha256": "0xcaf525c94f4fe986b8e7e289764e8a318214cd1c499034792a9d1401403915a5"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdStyle.sol\\StdStyle.json",
+    "sha256": "0x732e30b5837628014bc3345b64011324af31e49fd61b61895a892f62fee7c1f8"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdToml.sol\\stdToml.json",
+    "sha256": "0x110f37ab01970478c483a80dbd9ef25c81bbfc85e065e7e986ea185d79497bd2"
+  },
+  {
+    "path": "anchor-immutable\\out\\StdUtils.sol\\StdUtils.json",
+    "sha256": "0xb951b08e617e2322700cd5664628f66211d578d8547df3085378eb180231ae21"
+  },
+  {
+    "path": "anchor-immutable\\out\\Test.sol\\Test.json",
+    "sha256": "0xdd48eae3491eff4e354806b1d2cf5a5ea59401799afcbd5979d7359934de5dcb"
+  },
+  {
+    "path": "anchor-immutable\\out\\Vm.sol\\Vm.json",
+    "sha256": "0xce34d9cbba80ece6926a1cde6d81b93e1f45e4d055b764d2273e488e92b224b7"
+  },
+  {
+    "path": "anchor-immutable\\out\\Vm.sol\\VmSafe.json",
+    "sha256": "0x067dcb241c00df9d6a36620b04f393e6ad6915207dc52446f8df1cccab341e34"
+  },
+  {
+    "path": "anchor-immutable\\README.md",
+    "sha256": "0xf174ce9465760e1097ebcabd8dfbbb1467f549aa6a47ec3ed037e565aa74794d"
+  },
+  {
+    "path": "anchor-immutable\\run_forensics.ps1",
+    "sha256": "0xa370c3392f612d26ed15f867ec698ba281783109d61f2bb5e8af5ae7abb24f1c"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_112548\\run.log",
+    "sha256": "0xefd47e457a56671ee9e1b314f726f411ba570a68abecccb23bcf474d4e239f26"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_114916\\run.log",
+    "sha256": "0xa628053b6563af397fa0e73a295bb97aa6615b0c4e9598e813aae48b29cadf78"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_115235\\run.log",
+    "sha256": "0x27a0c170fe6c21fe4de78ee8956b65175485c51a484cf3974e849d1107112fa2"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_115328\\run.log",
+    "sha256": "0x2759990c507a1162be79d769b73f51ac6a0adf5e53421545bee67b72b7030543"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_115746\\run.log",
+    "sha256": "0xa29171078f9c09bdcc3b5bff650148ba3a2a0edb1296ac1543609039ab1f9319"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_115817\\run.log",
+    "sha256": "0x3a50c03d1638f18ff1a1ceaf1607c4ff4aee2efef9b86bd4074517eeb3850ebf"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_120342\\manifest.json",
+    "sha256": "0xc422a6ce5644f6dcc6378a750d1e225315352dc58fa95a4ae973c925a1159c6e"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_120342\\merkle_root_v2.txt",
+    "sha256": "0xca6a1f606c2c27709f4e7d34bca8a792d5ad438fbfaab315617d2d4230a31400"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_120342\\receipt.json",
+    "sha256": "0x2535b1ab2ba09c5ac500cba4dfba2fc9778462e8d474f05503777f77e5b46b84"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_120342\\run.log",
+    "sha256": "0xabfa4dacfa10962d08beb444797db991f2473b3a7611fd98711aa00d49556f08"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_120446\\manifest.json",
+    "sha256": "0xa4207cb646c946fb4f4a2561ef1b610a248f342563308407b207e999cfe8a4d9"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_120446\\merkle_root_v2.txt",
+    "sha256": "0xca6a1f606c2c27709f4e7d34bca8a792d5ad438fbfaab315617d2d4230a31400"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_120446\\receipt.json",
+    "sha256": "0xc1dad247ca0b297635efc414d0843355b826bf7f378c94fa0d98973faf4c287c"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_120446\\run.log",
+    "sha256": "0xe92bfd256accd83d76947eb147d3136175962dccee08ff465a5e5a3749296f73"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_143211\\manifest.json",
+    "sha256": "0xc3aa6dc85329379649a476aff31625982ba551922f0dec66a95ce11486d87c7b"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_143211\\merkle_root_v2.txt",
+    "sha256": "0xa94d0e13366f9f03768ae2163dcea1ba7babccf3e4a988dc392defd0165805f7"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_143211\\receipt.json",
+    "sha256": "0xfbdd6734728a348d85774783775fc518b0463b9d746e14cd9fc9367f906ab6fe"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_143211\\run.log",
+    "sha256": "0xbafdf67a654b631b5d6ca492ecc3fd462e4fd4fd84b02fa5c56b9dd9a3382163"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_144036\\manifest.json",
+    "sha256": "0xd4bf101338af47509ada6a7a2ab97779046abcfb2a25d8bbe42627eea160d986"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_144036\\merkle_root_v2.txt",
+    "sha256": "0x9a876cd6e06085f264f8e503ea5dc182835a228b2d50f004e936c0e615c709ca"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_144036\\receipt.json",
+    "sha256": "0x3c42430543954e458135ca194f483dcec422435deb05f774b2c036992b7764b2"
+  },
+  {
+    "path": "anchor-immutable\\runs\\run_20260217_144036\\run.log",
+    "sha256": "0x42e8dce07de67e782e2debd71084df36ea00e83ba5b01111dbdacbe1cfae9e51"
+  },
+  {
+    "path": "anchor-immutable\\script\\Counter.s.sol",
+    "sha256": "0x39115eb4e633a956b6f6d8db94d5477c744452856f8a242f84006cf5510bdbe1"
+  },
+  {
+    "path": "anchor-immutable\\src\\AnchorImmutable.sol",
+    "sha256": "0x328921f6694ab1c6d56e22833a111028ce03a965998a7af6e16739252b8b6832"
+  },
+  {
+    "path": "anchor-immutable\\src\\Counter.sol",
+    "sha256": "0xfbf8b251913a49ccf66de62a36520cbd557807580018631fe547909f183afde6"
+  },
+  {
+    "path": "anchor-immutable\\src\\Groth16Verifier.sol",
+    "sha256": "0xbbea7aaf0e7aa5b6ebef7a39eb7f1362e496a3a82266b0baa432f82cf771fd4c"
+  },
+  {
+    "path": "anchor-immutable\\test\\Counter.t.sol",
+    "sha256": "0xbf02181f160d31b44ed0f3ba2ccae6e5a792aca4ecc983cf1d75840fc2ff4245"
+  },
+  {
+    "path": "anchor-immutable\\verifier.abi.json",
+    "sha256": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "anchor-immutable\\verify_bundle.ps1",
+    "sha256": "0x248e935f6e159d7c03b98d2c7f789405ff6b1f6ecab1c8e1f23c2e46db5740a1"
+  },
+  {
+    "path": "anchor-immutable\\verify_verifier.ps1",
+    "sha256": "0x770ac1acf5cc3ada5fceb61a801ee8f28474e8d776b7f708997770f4dde0ef98"
+  },
+  {
+    "path": "anchor-immutable\\verifyProof_call.ps1",
+    "sha256": "0x6dbde2bd9976e0d0b8e877181ce0a882177204e87b151292bacd4d45d21035bc"
+  },
+  {
+    "path": "anchored_root_mainnet.txt",
+    "sha256": "0x1e8bf4ceafd3454c91165e2749091e1d099b6678e0a6f2f73b8a6cb11ee25bd4"
+  },
+  {
+    "path": "anchored_tx_mainnet.txt",
+    "sha256": "0x21536f60c33f993dd64920c2d143a4a64b7d5da02fbb210c9b3081d10eb755cd"
+  },
+  {
+    "path": "audio_ingest_20260215_044759\\file_inventory.csv",
+    "sha256": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "audio_ingest_20260215_044759\\merkle_root.txt",
+    "sha256": "0xb3d510ef04275ca8e698e5b3cbb0ece3949ef9252f0cdc839e9ee347409a2209"
+  },
+  {
+    "path": "audio_ingest_20260215_045707\\file_inventory.csv",
+    "sha256": "0x9a3304a1f51a75eabe43b7c497fc9cd9e961dc6b2675c84356f76c51a8a0187c"
+  },
+  {
+    "path": "audio_ingest_20260215_045707\\forensics_manifest.json",
+    "sha256": "0x369da3dd1a2c95e846caef282ed01af4a8d4f2bcdf82a7fb7ab12e8514b76dcf"
+  },
+  {
+    "path": "audio_ingest_20260215_045707\\signed_forensics_manifest.json",
+    "sha256": "0x993c1a3528b999f1f2bf49d9343f407e26fd1719d28ec689748280e58014da01"
+  },
+  {
+    "path": "build_mmr.js",
+    "sha256": "0x8ed96bd6696c84f05dc94bc6d0da5b5a1f337a6c47a06d5c886011cf6aa0a508"
+  },
+  {
+    "path": "build_tree.js",
+    "sha256": "0x0bc52dd6ecb21726259983004279604805b68aef6da609a708109b8f90c52a3c"
+  },
+  {
+    "path": "bursts.csv",
+    "sha256": "0x5a2eaa8b6cdd746ad17d5e584c1bfa5993cf2b9d7b37fcf214f7286e400e2fcc"
+  },
+  {
+    "path": "calldata_merkle_fixed.json",
+    "sha256": "0xc23a99f3f32be222b04db9f8ed707a98e5c7e281487d82e6ac0137d408b0a3b8"
+  },
+  {
+    "path": "calldata_merkle.txt",
+    "sha256": "0xffea810919017c9b252ad47736908a00dd6fa301554a5bf6e126aa9d3646e57a"
+  },
+  {
+    "path": "calldata_poisoned.txt",
+    "sha256": "0x6edd9584d2a72353736bf57efe0f118296463a2e19402f8c99e400214852e752"
+  },
+  {
+    "path": "calldata.txt",
+    "sha256": "0x6eae03592e7a056478ac117df4eab70f10e4afe85844c418edc9710947ff9128"
+  },
+  {
+    "path": "divergence_epoch.json",
+    "sha256": "0x456d5e9d5d32d331aa90349cd6fb1273e24f4f56c2ade84828a3d73f4f4358f4"
+  },
+  {
+    "path": "divergence_input.json",
+    "sha256": "0x25c3798e2c78801c04887282a7a46045064ab384d8b3a9a219a4601d2a66bb23"
+  },
+  {
+    "path": "divergence_proof.json",
+    "sha256": "0xb7c6f9c34d5de7277ff2de24d459d82025dcf0e73beafd46666efcbb7cb22612"
+  },
+  {
+    "path": "divergence_public.json",
+    "sha256": "0x59d48c477edf8e600e8f21d70407cda10548989e5167f764b6fff85dfd7eaaf2"
+  },
+  {
+    "path": "divergence_witness.wtns",
+    "sha256": "0xfbf5506848a1e0168bfa11184a86411b7233cf178e499ce1d429345be2bf6ed9"
+  },
+  {
+    "path": "divergence-onchain\\cache\\solidity-files-cache.json",
+    "sha256": "0x266fe86555fafe3aa3286976ef849dd831d86777f6ff4e600a02ea5790701886"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\CONTRIBUTING.md",
+    "sha256": "0x27e6aeded7fe7ccc9b380826a6def919aedde21e19f4dfe1aa9f399cb241c890"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\package.json",
+    "sha256": "0xee16f4de62b0c6934357d1320ca5c78054c6131400692849a587c3888dd4d07c"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\README.md",
+    "sha256": "0x392a6bad9c3c3e8bfe65f583dea4cc5921a7c0b0ef6ec9f3c478bec57c716c2a"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\RELEASE_CHECKLIST.md",
+    "sha256": "0xa544b337b8359334687297603e1dd58d70034c55741d8b1a55569583a93b4cdc"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\Base.sol",
+    "sha256": "0x608b2a4200d4818f616dd767f0689d3dd26b4c87f5abb1950cc38f3424b6caba"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\Config.sol",
+    "sha256": "0xa58e74ad46ee54e9cef51f446f160c6253fde502ce11126c15d4563e5c792934"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\console.sol",
+    "sha256": "0x8d00df4c00184ff0ca57401eeb784590a7c257c1b4bd5c997a7c81363fbbfe85"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\console2.sol",
+    "sha256": "0xa675b2d87278d46a787546099c20133fa5ec191f293d33bab103b6edcb0bd74e"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IERC1155.sol",
+    "sha256": "0x087d996a0740f62b852cde30951e785b636dd874328f0218b2722155075fc574"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IERC165.sol",
+    "sha256": "0xfd0ec8a846600c82af8c2c461961fc978529c28a58b21f2495dfd3144b6278a8"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IERC20.sol",
+    "sha256": "0x0858203cc8704254a8b048d18e4f153b7bbd2f9f7b438a8cdcbec87616b63815"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IERC4626.sol",
+    "sha256": "0xaa7abfa37d2fea5b78c6dafdce2b3765c8c5f9630fe070022eb9d3f2552d7c65"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IERC6909.sol",
+    "sha256": "0xc0d065eb42360bf81482dadf8ff4997184d9354254ea12f802526016e97ca032"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IERC721.sol",
+    "sha256": "0x7f2567fd2661ccd47329472e766db030ec0766b4271f4807bdfa02aadf58f3d1"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IERC7540.sol",
+    "sha256": "0x5a94dc352967509d43051b65c69820d50fbc56ec4849ae9c552a6a07929af920"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IERC7575.sol",
+    "sha256": "0xdd51f1c288c27d72f971ef1473e70b460190f1e4a63d8ba58ee771aeb66bda4c"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\interfaces\\IMulticall3.sol",
+    "sha256": "0x9f6f91c8678ebc879f822911013b3eab7e5afba915f931659102c42c3e8fb98d"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\LibVariable.sol",
+    "sha256": "0x7c2d2d1a281d9c0b9c4f322abe87882825298d62d0689d9c636d4bef462415dc"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\safeconsole.sol",
+    "sha256": "0x22bb9e3835a13ed2be569f035eb26c915275fd886cf58f1cb1d318a229cb5aff"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\Script.sol",
+    "sha256": "0x58f37252a1765c4e9a1bd727b8321964bae444882009e906a1916178f73c10c3"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdAssertions.sol",
+    "sha256": "0xa8abc9f6c12a732d841be706f763ed72ad6ddac2d13717687b75d80b43167967"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdChains.sol",
+    "sha256": "0x3ad474edc08901fd1ad32847132c0a1338a6c4afa3fd5ce1bd496306b7ae99f3"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdCheats.sol",
+    "sha256": "0x9a5937f6974894a4e3c0af619f6c57184352ea879641e963b0c6ff06f2156013"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdConfig.sol",
+    "sha256": "0x273a4c4efc89afbc964beb0c8b764a6b4471ef8f357251baa82d93af552a189a"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdConstants.sol",
+    "sha256": "0x572e3c3c4d1f9754e3edc7af5157115235d3ade025a31a9bb4e0429d69602551"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdError.sol",
+    "sha256": "0x0c7c0c86d792d1669bfc567d6b44c2a3981f6fa1824f774a67ac66158233ddb4"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdInvariant.sol",
+    "sha256": "0xe3ef8920368590987d717ac09748a3c4672baf5ec1bc36e3c78dcdc900461ea4"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdJson.sol",
+    "sha256": "0x0e4f368d838aacf6c42b336007ffb136a760b99a176f132a45feeabbd9417164"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdMath.sol",
+    "sha256": "0xc814f55759c04dcca0a2bd6fbc7800148aead85d69b7309bb028fbfc9282b434"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdStorage.sol",
+    "sha256": "0xa4ab3408067ed7afbd425cd302dd774aaaeb5996b2e23f542a196d154d2abc85"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdStyle.sol",
+    "sha256": "0x32dc7c001ebebf0a96a1923d4ef5884acd9b639eb85f8a0757355b86f46ba2b2"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdToml.sol",
+    "sha256": "0xbb5d0d38c815d332c9778dd1d8d441ab3dd2ce629bb7d05745deb049eba493c1"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\StdUtils.sol",
+    "sha256": "0x4acebdbd45eb30e7ffcd8758af3ebb4cf0ff2067bceb9276d4b46c8148070dc1"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\Test.sol",
+    "sha256": "0x4e2481d824da48272897c41688af8bc80a13f0de2de59297210335144e36f8db"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\src\\Vm.sol",
+    "sha256": "0x86d07d4b3162d3f5cdaab1cf41dad056f15b2380c7c95ca39b9102ea6389cf07"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\CommonBase.t.sol",
+    "sha256": "0x2dd534e6cf458a5e704bfcb829241d6f2e66a7b382ff7aa67d89da8bd38d7a0d"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\compilation\\CompilationScript.sol",
+    "sha256": "0x42f271d79355c80fc8054babb402bb82e59342ad57ba7eb9139a9f4f77301ae4"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\compilation\\CompilationScriptBase.sol",
+    "sha256": "0xc280236b37d2b2a50da0a6acc5a3a269899c0eb144a3127105853cee75e925c6"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\compilation\\CompilationTest.sol",
+    "sha256": "0x19766ac86fa83f04e44c44855dccf8fe68177157b7665f5b767dad8f40516a89"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\compilation\\CompilationTestBase.sol",
+    "sha256": "0x198b90b28c6494b03601985d0edfa37d3017d87f1328113981911bac0eb35217"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\Config.t.sol",
+    "sha256": "0x8d1706fb3fea7ecaddb43814d0bd1e9cee7b7bcc732f70bdc2887306226adace"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\fixtures\\broadcast.log.json",
+    "sha256": "0xb00fbfde3288bb2af82d66aca0defab98954b6a73b896b379d02a33d080579b1"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\fixtures\\test.json",
+    "sha256": "0x85a9ab61b49d9a83e896898ae696c09d8185505801d5403c077d9c0b507b2457"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\LibVariable.t.sol",
+    "sha256": "0x62a5f88724763effb047de1e2325538e3fc50088de947557c851c38f8970c619"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdAssertions.t.sol",
+    "sha256": "0x3192ab5b13010c62309d1c3e0b26fec2f2f8a11198e0cb25b5fc9d9d81895985"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdChains.t.sol",
+    "sha256": "0xce7fd19676117e8ced08fcb0ecf577ebb1f2a404c92800c5daaf351959db663e"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdCheats.t.sol",
+    "sha256": "0x49494b11dfe573939946ad5fbdb4ced5b8a74a18121345718eb9fdb34f4898f9"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdConstants.t.sol",
+    "sha256": "0x7aff5106070ea492867578b6be3641ebfed6062b47591f2dca2df23d7a8f7462"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdError.t.sol",
+    "sha256": "0xd844318d431d2ecd082ebd10dd109b3d81ff433297bce1d5aa11a0b5ec565e86"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdJson.t.sol",
+    "sha256": "0x1b7af5893180b20e6e4489fe356132daf73e481dda15c1e1b47195af7a21b3f9"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdMath.t.sol",
+    "sha256": "0x204b5da37f985d66ebcd1d19bf5666a0c635f5e9a42fa00811ba0c946d5f90e0"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdStorage.t.sol",
+    "sha256": "0x7dac41372c75c450be52d0224772d6883d68d3ffafdf668527e571db4b77b63b"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdStyle.t.sol",
+    "sha256": "0x157727c84fe2363b6ecfd57c261636468eef90a14e2c2486f9bb1dcb62a494de"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdToml.t.sol",
+    "sha256": "0x3118e68a4112fac1f8a136aab315e9ca880cadd0e72f1fbae896b318495aa301"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\StdUtils.t.sol",
+    "sha256": "0x7053cfed035c06ff8cf8ed593f0fcc346bf00f7b3bdd32c73ee646404ae24cce"
+  },
+  {
+    "path": "divergence-onchain\\lib\\forge-std\\test\\Vm.t.sol",
+    "sha256": "0x2e096fb912927632bfbc0e10785cbf0b8e949edf07f247f135dd6c2f5ef9f32e"
+  },
+  {
+    "path": "divergence-onchain\\out\\Base.sol\\CommonBase.json",
+    "sha256": "0xd5d3b36a77e896da338a6238e667e3e9553304b75b79590a8c416efa9e7a2f2a"
+  },
+  {
+    "path": "divergence-onchain\\out\\Base.sol\\ScriptBase.json",
+    "sha256": "0x7bd8f78ae1cfc4a6e35ecf22ddf00768b90eda52d997a9d5a45be8a7e9f4f499"
+  },
+  {
+    "path": "divergence-onchain\\out\\Base.sol\\TestBase.json",
+    "sha256": "0x208093e7d3bfc03daf0825e24473747ce6f385d8ebd1b7a88adce225930e0421"
+  },
+  {
+    "path": "divergence-onchain\\out\\build-info\\3a9d54212b1b127c.json",
+    "sha256": "0x7be127e537b11684c2672857c4c322abfa038d7f96e1f337af500a8cc738988d"
+  },
+  {
+    "path": "divergence-onchain\\out\\console.sol\\console.json",
+    "sha256": "0x4b57da3c83e948d843e7c4c6e8397b59f67792b7e6268df2ab2be2584824d2d4"
+  },
+  {
+    "path": "divergence-onchain\\out\\Counter.s.sol\\CounterScript.json",
+    "sha256": "0x9aa86ea3adf3bf3e95f3299107d3a96d98e03238eefe43fde6a6c2714e2b9603"
+  },
+  {
+    "path": "divergence-onchain\\out\\Counter.sol\\Counter.json",
+    "sha256": "0x357a42459bf17b09b186f194794b19872325b7fc959c0572aea71a68c1234e44"
+  },
+  {
+    "path": "divergence-onchain\\out\\Counter.t.sol\\CounterTest.json",
+    "sha256": "0x813ca9f8e9ccf5c9b32cdd34e1e6433badc83222af7debe3be88bdc40c7f6763"
+  },
+  {
+    "path": "divergence-onchain\\out\\IMulticall3.sol\\IMulticall3.json",
+    "sha256": "0x3061782f871a570a5ad24ee1382c0a63b9ef60f61a3f1cd3f06576c3521758b0"
+  },
+  {
+    "path": "divergence-onchain\\out\\safeconsole.sol\\safeconsole.json",
+    "sha256": "0xe1796ff1831f2c77634327e4630b1b4f106a1462fbe79343c472e599a0762a6a"
+  },
+  {
+    "path": "divergence-onchain\\out\\Script.sol\\Script.json",
+    "sha256": "0x879d082ac052df0864c4625cd3c1153ee86cc81b93cc937db16a252db5b271c5"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdAssertions.sol\\StdAssertions.json",
+    "sha256": "0xac3d2598fc6c8c895ebcb958bb3899f1d7e440eee36d4e0012630bd35da8eddb"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdChains.sol\\StdChains.json",
+    "sha256": "0x49c0c7e7e2067042e99e2e57c6f53f8b97e689c76d55e848f0d166789b4677f0"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdCheats.sol\\StdCheats.json",
+    "sha256": "0xe01ae8954862e782ac4318011c39a02855f4b982a67f141b07562952e5f35b0c"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdCheats.sol\\StdCheatsSafe.json",
+    "sha256": "0x5c83b1e4430ae5683b489e8c6370315acccf2026b6ed1ed83f39612c30170553"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdConstants.sol\\StdConstants.json",
+    "sha256": "0x216df5fdf8d1f8488aca1facaccb5043b4d46578e5e6b0c65f059d6ae2ac1f3c"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdError.sol\\stdError.json",
+    "sha256": "0xa9bb02f352a1c63576ea1159549f82221ee7959f401385506c4b30ed0c082184"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdInvariant.sol\\StdInvariant.json",
+    "sha256": "0xcf13f730d545d25a763db229b253468ce8a55e7d55589758046a05e80f8ad9ef"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdJson.sol\\stdJson.json",
+    "sha256": "0x9419402bfa2868d621887c31ec3d80221bf57d859b6954e401d5abc050fd5496"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdMath.sol\\stdMath.json",
+    "sha256": "0x8191c97639c99bf46a87424b57dbe01b5bc8f99d0916d45004023b84f22f80c9"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdStorage.sol\\stdStorage.json",
+    "sha256": "0x88752b3e0330bc4927f2e5e24b43ea8ee88c823d425876fb1ade13701e5f15be"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdStorage.sol\\stdStorageSafe.json",
+    "sha256": "0x7f45f499ff2d2ab3f07fb8086136673cb60314ba26313349d4d1d6e113a5d17f"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdStyle.sol\\StdStyle.json",
+    "sha256": "0x1adff0afacd2716d27109a1fffa96b903ddd71658545db9b3d7c15d0e16c4ad9"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdToml.sol\\stdToml.json",
+    "sha256": "0xbde7077287de4e2e8da660d0abf46af841cf5fb3bb85a66b09ba98947ca81010"
+  },
+  {
+    "path": "divergence-onchain\\out\\StdUtils.sol\\StdUtils.json",
+    "sha256": "0xcf2ae9a0944f6a717a0039d75a4a0d1691e63f9a2f504885d8cb3ea921c9712e"
+  },
+  {
+    "path": "divergence-onchain\\out\\Test.sol\\Test.json",
+    "sha256": "0xaf18cd5673cde1700725525fbe99512261ab42af10e2a9983cf06cbe0b8e6e07"
+  },
+  {
+    "path": "divergence-onchain\\out\\Verifier.sol\\Groth16Verifier.json",
+    "sha256": "0x4e58306d21e319fe9bb68cfc708665f3a9269c3a010e548c5ac6bb7cd1048b83"
+  },
+  {
+    "path": "divergence-onchain\\out\\Vm.sol\\Vm.json",
+    "sha256": "0xb32cc2e2cf3876aa284c7396cf660f36c6c8ea7d602fa69ec520fe5856d70eb9"
+  },
+  {
+    "path": "divergence-onchain\\out\\Vm.sol\\VmSafe.json",
+    "sha256": "0xd00bcbe0c5f8fabec34ff39252434adc0c52849c88b952f9aea7a457ef52ecf2"
+  },
+  {
+    "path": "divergence-onchain\\README.md",
+    "sha256": "0xc56fdb42b6cd258f5f9f2de675b0a35aecfd564c38550e807b92ff1c911f646b"
+  },
+  {
+    "path": "divergence-onchain\\script\\Counter.s.sol",
+    "sha256": "0x39115eb4e633a956b6f6d8db94d5477c744452856f8a242f84006cf5510bdbe1"
+  },
+  {
+    "path": "divergence-onchain\\src\\Counter.sol",
+    "sha256": "0xfbf8b251913a49ccf66de62a36520cbd557807580018631fe547909f183afde6"
+  },
+  {
+    "path": "divergence-onchain\\src\\Verifier.sol",
+    "sha256": "0xa19d4ff9f87b864c0023ff4f995df36533116a9f71eeff50c17d01c2b947705d"
+  },
+  {
+    "path": "divergence-onchain\\test\\Counter.t.sol",
+    "sha256": "0xbf02181f160d31b44ed0f3ba2ccae6e5a792aca4ecc983cf1d75840fc2ff4245"
+  },
+  {
+    "path": "epoch_evidence_manifest.json",
+    "sha256": "0xcccd0fd6487e613cb59ce93bec7af0b2a79a6b7c1e704992aa32d1e0ca0bbe0a"
+  },
+  {
+    "path": "evidence_anchor.ps1",
+    "sha256": "0x34b4e3ac32d55f9903e4576f855244db79e0ebf038930feb91463e449c66e096"
+  },
+  {
+    "path": "evidence_manifest.json",
+    "sha256": "0x8542ddc45037d26793622ba72ef4a8620a92307eddcdd38c2e5e99674cca4f82"
+  },
+  {
+    "path": "evidence.txt",
+    "sha256": "0x0d9fe612a4f83ffb3be9a7758a7857bbb8af6a615d54ded2857e33cec24ef3ed"
+  },
+  {
+    "path": "galileo_epoch_receipt.json",
+    "sha256": "0xd8ae40fa7a50f25e293125ac1ff4443eae6f54e4e23d6eeb20966a6ad62bb938"
+  },
+  {
+    "path": "galileo_epoch.json",
+    "sha256": "0x8547452358b147bfe18cd7283f50777c10983a895c324b75751a563a429aef89"
+  },
+  {
+    "path": "galileo_input.json",
+    "sha256": "0xf0651ee9bd2c39ee15be5c2ac32538875b6cad82b47d8d5ba53987c83f313c3e"
+  },
+  {
+    "path": "galileo_proof.json",
+    "sha256": "0x936ed3c1e2d5591ff1a6b8249930aba200904c0646a356561a1c27e940ae7f2c"
+  },
+  {
+    "path": "galileo_public.json",
+    "sha256": "0xeafc39598f1a133a37668c54e35faaec9d975ac50f36df73f7739197a17c07c9"
+  },
+  {
+    "path": "galileo_witness.wtns",
+    "sha256": "0x05a2196747bb55ef03431c0274b30a69e86fe47f7d24d6cda412f2c277632efa"
+  },
+  {
+    "path": "Groth16Verifier.sol",
+    "sha256": "0x93a9e21bb074cf46057adbc20a136561e1492ef430a320079e8829032fec6e49"
+  },
+  {
+    "path": "har_debug_endpoints.csv",
+    "sha256": "0x3c6ca98410d7c24e333ee37c2370112396a7a83c4e591ffad021a3283d45f948"
+  },
+  {
+    "path": "input.json",
+    "sha256": "0x734b5e8e40afd7559b4bc341aec7045c0cf31c66c8000aac36e4b582e0a84324"
+  },
+  {
+    "path": "manifest.json",
+    "sha256": "0xe1452c42a3a17e449cbf9b04b1103e8b941485354bf8b1d2d1bf060c8024d249"
+  },
+  {
+    "path": "merkle_0000.zkey",
+    "sha256": "0x2b133171d62fbf23182bea3e2eaef188585a03f6111f8f2d1e1216258f717378"
+  },
+  {
+    "path": "merkle_files.json",
+    "sha256": "0x8331356a515a34131403dfb3dfd503b795d16dc15e0b87fe6b02985951855712"
+  },
+  {
+    "path": "merkle_final.zkey",
+    "sha256": "0xeb0775df150dcee047212ba123ea909bf8e9ccc738c9f73005fdc37e34fef1c6"
+  },
+  {
+    "path": "merkle_inclusion_js\\generate_witness.js",
+    "sha256": "0x4995a2e6b01432f76182abec6a831fdaf7f840384035072002ccaa43101b14d4"
+  },
+  {
+    "path": "merkle_inclusion_js\\witness_calculator.js",
+    "sha256": "0xcc2d37b2cff2a589dd86f8636f1a1dc9fe4a854550b021aa0cea2e235d14e942"
+  },
+  {
+    "path": "merkle_inclusion_js\\witness.wtns",
+    "sha256": "0xb883444769698d4db97292f5a547722d4c4273f6aea7d79f039e1ade2c0333b9"
+  },
+  {
+    "path": "merkle_inclusion.circom",
+    "sha256": "0x04b4aacbbbed2268ec7557b36a0e508bbe6a796cc6056cdec6036a698b943bfd"
+  },
+  {
+    "path": "merkle_inclusion.r1cs",
+    "sha256": "0x51160c078021eb1349ba19b4aced5b9af502a0e01825907582a557544acbd180"
+  },
+  {
+    "path": "merkle_inclusion.sym",
+    "sha256": "0xdf8f975f99bc7d687efaffc2c30eec3659c3c72a9d1fc2b9b262129ae1f50ed7"
+  },
+  {
+    "path": "merkle_input.json",
+    "sha256": "0x734b5e8e40afd7559b4bc341aec7045c0cf31c66c8000aac36e4b582e0a84324"
+  },
+  {
+    "path": "merkle_proof_zk.json",
+    "sha256": "0x67118184be573a838ab1d40a34866274de698f8718a89412992e41475f7ea27b"
+  },
+  {
+    "path": "merkle_proof.json",
+    "sha256": "0x60ad90856d44b33584d52a99c1dad48f33de8d214c243fa1420a30baa4d3470d"
+  },
+  {
+    "path": "merkle_public.json",
+    "sha256": "0x94aeb2d1f95b0496a43379e486d9aaa8fb6e26b3780f69fda4cfe4d0c3c34747"
+  },
+  {
+    "path": "merkle_root.json",
+    "sha256": "0xaf4441057e4da68896d5026a59bfe47417f7f6208ffcd39d81f7c1080b9b7dab"
+  },
+  {
+    "path": "merkle_vk.json",
+    "sha256": "0x779e61c079cf60c2e4ce831d9252534ec55c4c6921493b49283285d5ee52e526"
+  },
+  {
+    "path": "merkle_witness_log.txt",
+    "sha256": "0x8c99b2b30f36cb8c733df1d86d8260bf4b10a9cb7dd5ebc717bd193977655ca0"
+  },
+  {
+    "path": "merkle_witness.wtns",
+    "sha256": "0xced7a65bdce8040b1e257e7fb013bf834ad9d07235b02e2786c64849751a4aea"
+  },
+  {
+    "path": "MerkleGroth16Verifier.sol",
+    "sha256": "0xb9eee8951140e6d5934f4a0f35707b485b49dc1f7cb717bd4717101325815885"
+  },
+  {
+    "path": "MerkleVerifier.sol",
+    "sha256": "0xbbea7aaf0e7aa5b6ebef7a39eb7f1362e496a3a82266b0baa432f82cf771fd4c"
+  },
+  {
+    "path": "mmr.js",
+    "sha256": "0xe668d9afe633700953911e8ef1ba9e60f4bca1a29209d02704883385f9413b89"
+  },
+  {
+    "path": "network.csv",
+    "sha256": "0xc9176cd68a83b1dce539f33d311f051b705757e3d4f9d54cc70b56ddd88cfbbe"
+  },
+  {
+    "path": "package-lock.json",
+    "sha256": "0xded4c7d29bb94ff2e2b61791acea899fd565619097976627bfbfb8bf2834bcfa"
+  },
+  {
+    "path": "package.json",
+    "sha256": "0xd9126cbe44098c27fe4bac5b5b447fb5c1bce8dbc6188d9f04d488b07c301afa"
+  },
+  {
+    "path": "pipeline_20260215_071344\\hashes.txt",
+    "sha256": "0x91eb5e4ecf7ad3afe69ad80bd96c71351d19df6cd841910134eb314ffa52c145"
+  },
+  {
+    "path": "pipeline_20260215_071344\\manifest_root.txt",
+    "sha256": "0x4aefab2c1fe940baa87de3acfa08a0ec64589b02cce0037971b15d85edc13365"
+  },
+  {
+    "path": "pipeline_20260215_071344\\RUNLOG.txt",
+    "sha256": "0xef631ff53d4e0170c8f84096af225967245d06dac2500ebc327b5d4b99bdd64b"
+  },
+  {
+    "path": "pipeline_20260215_071348\\hashes.txt",
+    "sha256": "0xfc13c073f42fe5fa8e4a39d8e515c9f80452993b66c763ca7a977748b186aa1d"
+  },
+  {
+    "path": "pipeline_20260215_071348\\manifest_root.txt",
+    "sha256": "0x67cd79f4096781291e91dcc9770eac855b236b2f1ebf256b63ae1546e3232650"
+  },
+  {
+    "path": "pipeline_20260215_071348\\RUNLOG.txt",
+    "sha256": "0x5af816754bf1a3ee489da304c7322df3300596c5b5361559ddbf401c34e7b461"
+  },
+  {
+    "path": "pipeline_20260215_071719\\memory\\windows.info.txt",
+    "sha256": "0xb76bc712a4b63528eaecc5af63f59be3ee366dbc304abf02443aa388747bd9e4"
+  },
+  {
+    "path": "pipeline_20260215_071719\\RUNLOG.txt",
+    "sha256": "0xa6b6288f2b794e34cba593de0003ebfe9ea29a8188cfea2428b41e8463a97afa"
+  },
+  {
+    "path": "pipeline_20260215_072210\\info.txt",
+    "sha256": "0x655df1e23706312cfb9f36da2cac46339e83acca966b344187b2a80f1bacf49e"
+  },
+  {
+    "path": "pipeline_20260215_072210\\pslist.txt",
+    "sha256": "0x9021fddb2a04b63621702f1a9636f796cbcd18afe20b1558186c6aef1b47c0bf"
+  },
+  {
+    "path": "pipeline_20260215_072210\\psscan.txt",
+    "sha256": "0xa7b6e7618494a4e2d54f3a4fb7ed6a20da40005506066add34ee097b3db54dd6"
+  },
+  {
+    "path": "poisoned_ai_output.txt",
+    "sha256": "0xe5b7f570f4b284ebaa66bf76700158e44037675ecc481f1dcdc31086a4ebe472"
+  },
+  {
+    "path": "poisoned_epoch.json",
+    "sha256": "0x07e7f1619d52fcce16d184b909bdd4d91fbbec3ea8f202baee544e0dfb4f8285"
+  },
+  {
+    "path": "poisoned_input.json",
+    "sha256": "0xbecaa12ce8e3a94ac03529071eacaa6e969163f3735cd668f4542f468feeca87"
+  },
+  {
+    "path": "poisoned_proof.json",
+    "sha256": "0xc1d85ee14aef5c0ddd81ffcc2e3558655e6481a632649f93e466634de8a9bc76"
+  },
+  {
+    "path": "poisoned_public.json",
+    "sha256": "0x7c59c805c788e02c7780e0d2dfbff1629ba7fc4db2bfb53a07a5842dcb90aa80"
+  },
+  {
+    "path": "poisoned_witness.wtns",
+    "sha256": "0x0f12140e96c849f075c1b00c852b6c2c844f6c85403a515a70c9044850b9da0c"
+  },
+  {
+    "path": "proof_clean.json",
+    "sha256": "0x53eaac0d13b9d9688b427cab66cb0ce0fdc538c6785de78028a1d52b3a03f4da"
+  },
+  {
+    "path": "proof_poisoned.json",
+    "sha256": "0x69881b11a585557b8277561353a70cc3ea88a3a2090d434822011bc27f896df9"
+  },
+  {
+    "path": "proof.json",
+    "sha256": "0x7d6c55cf2b8c0d5c696af3a212eb5647135349d764a94769a7766e7d59a9ec5b"
+  },
+  {
+    "path": "prove.ps1",
+    "sha256": "0x5d2c2eb7889f521a0cfbd2d3d1e0e7e12e49f92e2d7f63d388fac06644e44dbf"
+  },
+  {
+    "path": "public_clean.json",
+    "sha256": "0xe32a9bdf058b798021144ec3e3151fb47474753ab4feb413167bf2f316d25edb"
+  },
+  {
+    "path": "public_poisoned.json",
+    "sha256": "0x94aeb2d1f95b0496a43379e486d9aaa8fb6e26b3780f69fda4cfe4d0c3c34747"
+  },
+  {
+    "path": "public.json",
+    "sha256": "0xe32a9bdf058b798021144ec3e3151fb47474753ab4feb413167bf2f316d25edb"
+  },
+  {
+    "path": "README.txt",
+    "sha256": "0x0311639396538edb68b82a93712bcd2b87ee68faf96d442c0938579aa70583d2"
+  },
+  {
+    "path": "search_posts.csv",
+    "sha256": "0xcb600cc95d85335588d97c299e7fc3054f2f027ea643401db3fed8b99593b179"
+  },
+  {
+    "path": "soul_score_0000.zkey",
+    "sha256": "0x876bc4fdf3fbfd47638eb097038f89841b6a7cb7dcdeea2af80feab74e528684"
+  },
+  {
+    "path": "soul_score_final.zkey",
+    "sha256": "0xee12eb21f913083c6bf57f2b4d4659b76ab40eb67c616968eb136b8f8c2e7fc3"
+  },
+  {
+    "path": "soul_score_js\\generate_witness.js",
+    "sha256": "0x4995a2e6b01432f76182abec6a831fdaf7f840384035072002ccaa43101b14d4"
+  },
+  {
+    "path": "soul_score_js\\witness_calculator.js",
+    "sha256": "0xcc2d37b2cff2a589dd86f8636f1a1dc9fe4a854550b021aa0cea2e235d14e942"
+  },
+  {
+    "path": "soul_score.circom",
+    "sha256": "0xb605d956925f628815ba9c3ea6d2c67c018747270de9250af50fd365d2f6af86"
+  },
+  {
+    "path": "soul_score.r1cs",
+    "sha256": "0x1f0552fbbcf37d757839fad3fe2f7c37bdfd2ed049bf602bb5f709aec408fd4b"
+  },
+  {
+    "path": "soul_score.sym",
+    "sha256": "0x4523f7a6f3f665a5aa508e16219618681cce15ae129cf50186baa72b0af717d9"
+  },
+  {
+    "path": "soul-circuit\\build_hashes.txt",
+    "sha256": "0x06b330487364eba3897735781d413ef9a39b21612fa7cbde9c4dd7caed3d3183"
+  },
+  {
+    "path": "soul-circuit\\calc_root_poseidon.js",
+    "sha256": "0x32cb5ea3f639e4802b0d96f7227a28e50ac86fbb910888c9a95755dfac1ab736"
+  },
+  {
+    "path": "soul-circuit\\ForceBuildVerifier.ps1",
+    "sha256": "0x648eb887113a783658663e84d5851d97be886e395d4caf722e9bd6b0b1157ea8"
+  },
+  {
+    "path": "soul-circuit\\input_poisoned_fixed.json",
+    "sha256": "0xa47b8e06c868be8db2695c2ed51b9fcd3d88c27eff5890b99e4f392aac0e0024"
+  },
+  {
+    "path": "soul-circuit\\input_poisoned_norm.json",
+    "sha256": "0x04dabd8f934d620d57cff3c59af55d26141951dc8159b4c31bcaf372f39de180"
+  },
+  {
+    "path": "soul-circuit\\input_poisoned_scalar.json",
+    "sha256": "0xd03fbd62edd3ab98f8d9076d0dbaa421d8a0f9bdf4241478e47987dcd9ec0df1"
+  },
+  {
+    "path": "soul-circuit\\input_poisoned.json",
+    "sha256": "0x710356e4306786fc434a1175c26674ceabfa0996b022e89fa34f4e63985c5f4b"
+  },
+  {
+    "path": "soul-circuit\\package-lock.json",
+    "sha256": "0x447136de8a057ecac82a25df355e4a0aa00bc6750d48eb29d5eb988ee8152566"
+  },
+  {
+    "path": "soul-circuit\\package.json",
+    "sha256": "0x4e2d59ce3a916f33543495151f703f93dc75b3e54e2da4f667389519e1d830dd"
+  },
+  {
+    "path": "soul-circuit\\poisoned_failure_20260216_1214\\input_poisoned.json",
+    "sha256": "0xa7ebcba269a70b3fab6dcfa59df3960bd1fd78f8c5a0d19948b3ce5e4b7a00bf"
+  },
+  {
+    "path": "soul-circuit\\poisoned_failure_20260216-122552\\input_poisoned.json",
+    "sha256": "0xa7ebcba269a70b3fab6dcfa59df3960bd1fd78f8c5a0d19948b3ce5e4b7a00bf"
+  },
+  {
+    "path": "soul-circuit\\poisoned_failure_20260216-122640\\input_poisoned.json",
+    "sha256": "0xac9b1c4178a08b2731fc8054a2fc324a84e0ab584874693cbfda11747ae88919"
+  },
+  {
+    "path": "soul-circuit\\poisoned_failure_20260216-132929\\input_poisoned.json",
+    "sha256": "0x8112438a3f544700b0a36f6a953fe7b8979941104b0fc37c4fdbd5ebb0f69fe5"
+  },
+  {
+    "path": "soul-circuit\\proof_poisoned.json",
+    "sha256": "0x85614b65bf6f229ca7bf810d0588b35b791be38173a359d8f07b06bbb4787b6c"
+  },
+  {
+    "path": "soul-circuit\\ProvePoisonedSoulFailure.ps1",
+    "sha256": "0xa6a17d46cc31ffb96fb1a534a7e052196cf4108217336c23f932d76493c9056d"
+  },
+  {
+    "path": "soul-circuit\\public_poisoned.json",
+    "sha256": "0x94aeb2d1f95b0496a43379e486d9aaa8fb6e26b3780f69fda4cfe4d0c3c34747"
+  },
+  {
+    "path": "soul-circuit\\script DeployVerifier.s.sol",
+    "sha256": "0x0022200e6b015cf4f94d65c5357042bc8e07f5ecb405397fea0e6da2cd997748"
+  },
+  {
+    "path": "soul-circuit\\soul_score.circom",
+    "sha256": "0xf4256406de71901089f7eb90f9f89f97fb04ef88af08dfa008a825fb7c50a7b0"
+  },
+  {
+    "path": "soul-circuit\\witness_poisoned.wtns",
+    "sha256": "0xddfb481c4d8f6ffd02068109b9b7e6c4175f4a844ec95bea5ceb0c6f814f86ef"
+  },
+  {
+    "path": "src\\RootAnchor.sol",
+    "sha256": "0x1a29f0e736245bef9de3c71b539b65534c909780390fa288d1b3f134935fa336"
+  },
+  {
+    "path": "summary.csv",
+    "sha256": "0xc6a942cd2af989eb6a076ed62c054cd7fea98e97feccd66f4dfd474c7398b6b7"
+  },
+  {
+    "path": "suspected_bots.csv",
+    "sha256": "0x7636fbfceff1d47670e8c375427de11b956bb21ad3e1d7c8a87ba8ca875298de"
+  },
+  {
+    "path": "top_authors.csv",
+    "sha256": "0xf2da4ce9cc39d3f17b464b99581fc78a37c9d1ff73a1f88f81cb1498b14dbd4a"
+  },
+  {
+    "path": "top_duplicates.csv",
+    "sha256": "0x58ff6d53ae278e166e6e9102d3ef35eff541db4522a633ce3dc89cb944789153"
+  },
+  {
+    "path": "top_submolts.csv",
+    "sha256": "0xc5ecc71010171a1c27641f4e3d2aef950467f8fbb21196f0c48ad54d282e7e39"
+  },
+  {
+    "path": "verification_key.json",
+    "sha256": "0xf39e6b0704fdbdedf31ec23e941039ac429891a81e349c074a83a6b27b893ce9"
+  },
+  {
+    "path": "verifier_04_deploy_receipt.json",
+    "sha256": "0x4c3a778bfb43f0d3f8e3d8b177a0f6e510ccd813033752295f73f96ca52e8729"
+  },
+  {
+    "path": "Verifier.sol",
+    "sha256": "0xbbea7aaf0e7aa5b6ebef7a39eb7f1362e496a3a82266b0baa432f82cf771fd4c"
+  },
+  {
+    "path": "verifier\\DeployVerifier.sol",
+    "sha256": "0x454be0619a7cb01370e3dd7841d8f39fb3c116dcdc85c4f76fa3e6fbb2433003"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\CONTRIBUTING.md",
+    "sha256": "0x96b3fec5ef52865056d701432dbdf6e4940668943cf9d3e707400269c95b3189"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\package.json",
+    "sha256": "0x4869c8f4fa98fdf4e97da710e93e67cc46c02351921560256cb49ea084ecf6a0"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\README.md",
+    "sha256": "0x754a9daa38ce0f8dfc0fa9b85b62469628c6c1d8b8f95cfdbc4283027dff67b7"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\RELEASE_CHECKLIST.md",
+    "sha256": "0x7478ecd66aeb7c0ce0f5472620a67beeeb15d77bafe603a4e093e48463e04f59"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\Base.sol",
+    "sha256": "0x608b2a4200d4818f616dd767f0689d3dd26b4c87f5abb1950cc38f3424b6caba"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\Config.sol",
+    "sha256": "0xa58e74ad46ee54e9cef51f446f160c6253fde502ce11126c15d4563e5c792934"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\console.sol",
+    "sha256": "0x8d00df4c00184ff0ca57401eeb784590a7c257c1b4bd5c997a7c81363fbbfe85"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\console2.sol",
+    "sha256": "0xa675b2d87278d46a787546099c20133fa5ec191f293d33bab103b6edcb0bd74e"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IERC1155.sol",
+    "sha256": "0x087d996a0740f62b852cde30951e785b636dd874328f0218b2722155075fc574"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IERC165.sol",
+    "sha256": "0xfd0ec8a846600c82af8c2c461961fc978529c28a58b21f2495dfd3144b6278a8"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IERC20.sol",
+    "sha256": "0x0858203cc8704254a8b048d18e4f153b7bbd2f9f7b438a8cdcbec87616b63815"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IERC4626.sol",
+    "sha256": "0x2af54e097b1009bbd4d76b0dcf59e69bf0ef04670f2a147be01e82ffc51336ce"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IERC6909.sol",
+    "sha256": "0xc0d065eb42360bf81482dadf8ff4997184d9354254ea12f802526016e97ca032"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IERC721.sol",
+    "sha256": "0x7f2567fd2661ccd47329472e766db030ec0766b4271f4807bdfa02aadf58f3d1"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IERC7540.sol",
+    "sha256": "0x4086b40babdd6e51cdab57045d19f0bba99e6c8bd170358b2ad5997bea03257d"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IERC7575.sol",
+    "sha256": "0x1ac479d3d830133bd65775be8849e9745e33048958940fe5c42f4fb6d3a2a4ec"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\interfaces\\IMulticall3.sol",
+    "sha256": "0x9f6f91c8678ebc879f822911013b3eab7e5afba915f931659102c42c3e8fb98d"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\LibVariable.sol",
+    "sha256": "0x7c2d2d1a281d9c0b9c4f322abe87882825298d62d0689d9c636d4bef462415dc"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\safeconsole.sol",
+    "sha256": "0x22bb9e3835a13ed2be569f035eb26c915275fd886cf58f1cb1d318a229cb5aff"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\Script.sol",
+    "sha256": "0x58f37252a1765c4e9a1bd727b8321964bae444882009e906a1916178f73c10c3"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdAssertions.sol",
+    "sha256": "0xa8abc9f6c12a732d841be706f763ed72ad6ddac2d13717687b75d80b43167967"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdChains.sol",
+    "sha256": "0x8d2beaf66c4b77a739171a7074d257e2b51e148d143a32c6d8243b0483316303"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdCheats.sol",
+    "sha256": "0xcf7c45a2efe9bd7a153d972163949c1d24f7bc9ce5d0638869208b8ff65045f5"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdConfig.sol",
+    "sha256": "0xdc58a0fa50932980e1ca522b0d0fda1c0cb7d4aac39c26858101f44a8c2b8ae4"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdConstants.sol",
+    "sha256": "0x572e3c3c4d1f9754e3edc7af5157115235d3ade025a31a9bb4e0429d69602551"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdError.sol",
+    "sha256": "0x0c7c0c86d792d1669bfc567d6b44c2a3981f6fa1824f774a67ac66158233ddb4"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdInvariant.sol",
+    "sha256": "0xf76b35b7f19e6f846e4b51f4cd1a562a453bced8d69b9bc15a0a4520d493c78c"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdJson.sol",
+    "sha256": "0x0e4f368d838aacf6c42b336007ffb136a760b99a176f132a45feeabbd9417164"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdMath.sol",
+    "sha256": "0xc814f55759c04dcca0a2bd6fbc7800148aead85d69b7309bb028fbfc9282b434"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdStorage.sol",
+    "sha256": "0xa9eb7c65ca95e79cf49421dfc6950dd38c0f5b4e956633ebc7243d7fbba2664c"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdStyle.sol",
+    "sha256": "0x32dc7c001ebebf0a96a1923d4ef5884acd9b639eb85f8a0757355b86f46ba2b2"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdToml.sol",
+    "sha256": "0x6c87e8cec108c11ccd69ca41ff6d0bab469a595155be993fea6f4b57e12e0414"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\StdUtils.sol",
+    "sha256": "0x550fd416bf8ed05e341de5ddf8bab3538599a9df0184d9c2946940a5b01eb81a"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\Test.sol",
+    "sha256": "0x4e2481d824da48272897c41688af8bc80a13f0de2de59297210335144e36f8db"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\src\\Vm.sol",
+    "sha256": "0xfb31f12677caf424c934a9f69bd95f9b3f1c1d1dcb2496d4f0db59fcc8a12410"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\CommonBase.t.sol",
+    "sha256": "0x2dd534e6cf458a5e704bfcb829241d6f2e66a7b382ff7aa67d89da8bd38d7a0d"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\compilation\\CompilationScript.sol",
+    "sha256": "0x42f271d79355c80fc8054babb402bb82e59342ad57ba7eb9139a9f4f77301ae4"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\compilation\\CompilationScriptBase.sol",
+    "sha256": "0xc280236b37d2b2a50da0a6acc5a3a269899c0eb144a3127105853cee75e925c6"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\compilation\\CompilationTest.sol",
+    "sha256": "0x19766ac86fa83f04e44c44855dccf8fe68177157b7665f5b767dad8f40516a89"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\compilation\\CompilationTestBase.sol",
+    "sha256": "0x198b90b28c6494b03601985d0edfa37d3017d87f1328113981911bac0eb35217"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\Config.t.sol",
+    "sha256": "0xebb9001d1ecd3618dfa54534fea340b81496117c011aec64c59b9d668f969c31"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\fixtures\\broadcast.log.json",
+    "sha256": "0xb00fbfde3288bb2af82d66aca0defab98954b6a73b896b379d02a33d080579b1"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\fixtures\\test.json",
+    "sha256": "0x85a9ab61b49d9a83e896898ae696c09d8185505801d5403c077d9c0b507b2457"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\LibVariable.t.sol",
+    "sha256": "0x62a5f88724763effb047de1e2325538e3fc50088de947557c851c38f8970c619"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdAssertions.t.sol",
+    "sha256": "0x3192ab5b13010c62309d1c3e0b26fec2f2f8a11198e0cb25b5fc9d9d81895985"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdChains.t.sol",
+    "sha256": "0x2b9383f5cc920eade725921019149ff7c1cf462bb0653338217658014bcddddd"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdCheats.t.sol",
+    "sha256": "0x49494b11dfe573939946ad5fbdb4ced5b8a74a18121345718eb9fdb34f4898f9"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdConstants.t.sol",
+    "sha256": "0x7aff5106070ea492867578b6be3641ebfed6062b47591f2dca2df23d7a8f7462"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdError.t.sol",
+    "sha256": "0xd844318d431d2ecd082ebd10dd109b3d81ff433297bce1d5aa11a0b5ec565e86"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdJson.t.sol",
+    "sha256": "0x1b7af5893180b20e6e4489fe356132daf73e481dda15c1e1b47195af7a21b3f9"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdMath.t.sol",
+    "sha256": "0x204b5da37f985d66ebcd1d19bf5666a0c635f5e9a42fa00811ba0c946d5f90e0"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdStorage.t.sol",
+    "sha256": "0x7dac41372c75c450be52d0224772d6883d68d3ffafdf668527e571db4b77b63b"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdStyle.t.sol",
+    "sha256": "0x157727c84fe2363b6ecfd57c261636468eef90a14e2c2486f9bb1dcb62a494de"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdToml.t.sol",
+    "sha256": "0x3118e68a4112fac1f8a136aab315e9ca880cadd0e72f1fbae896b318495aa301"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\StdUtils.t.sol",
+    "sha256": "0x7053cfed035c06ff8cf8ed593f0fcc346bf00f7b3bdd32c73ee646404ae24cce"
+  },
+  {
+    "path": "verifier\\lib\\forge-std\\test\\Vm.t.sol",
+    "sha256": "0x6da790dff61c17cd117fabe8005b1f5992caeb98641a7dfb5d092def50278381"
+  },
+  {
+    "path": "verifier\\make_real_input.js",
+    "sha256": "0xb36a18b94a74c7954acca98c122945c8f31c0f7f421de5b7222498ef53588c8d"
+  },
+  {
+    "path": "verifier\\package-lock.json",
+    "sha256": "0x7b20e6151f810acb370d1fc22d85943b4822d7e2da82875a4c014f95b9628377"
+  },
+  {
+    "path": "verifier\\package.json",
+    "sha256": "0xe51c5dbe9f0e2603e75029183766ae0fcef41793b357bb848116787dcfde3c1b"
+  },
+  {
+    "path": "verifier\\poseidon_root.circom",
+    "sha256": "0x24c5bf6c425d523da1ad266f4bd93fbbc66444351a6a151b506fc1614b4f5edd"
+  },
+  {
+    "path": "verifier\\prove_and_verify.ps1",
+    "sha256": "0xc47baf8efc1450bff6db3160aba26090a52e115af82b5a5b4b623ef2e90cabf5"
+  },
+  {
+    "path": "verifier\\publish_leaves_and_prove.js",
+    "sha256": "0xd917aa1350f1e29e4827075fdf112fafc1c3a98d3f38f7e463a3b0657b813173"
+  },
+  {
+    "path": "verifier\\README.md",
+    "sha256": "0xc56fdb42b6cd258f5f9f2de675b0a35aecfd564c38550e807b92ff1c911f646b"
+  },
+  {
+    "path": "verifier\\real_leaves_build.js",
+    "sha256": "0xe07a4774799297bdeeca68dcb8e8c59a99b92edbf6ce4d2597f15e8cd755c51f"
+  },
+  {
+    "path": "verifier\\script\\Counter.s.sol",
+    "sha256": "0x39115eb4e633a956b6f6d8db94d5477c744452856f8a242f84006cf5510bdbe1"
+  },
+  {
+    "path": "verifier\\src\\Counter.sol",
+    "sha256": "0xfbf8b251913a49ccf66de62a36520cbd557807580018631fe547909f183afde6"
+  },
+  {
+    "path": "verifier\\src\\Groth16PoseidonVerifier.sol",
+    "sha256": "0x670239da98130f60e04f5837601708e4dc0a40dd10a1af14462d68da1384587a"
+  },
+  {
+    "path": "verifier\\src\\MerkleVerifier.sol",
+    "sha256": "0xa273c01ad2326e987bcb9c71c824140f6cec6b01a7e484873a3d9b971d6526ba"
+  },
+  {
+    "path": "verifier\\src\\MerkleVerifier1.sol",
+    "sha256": "0x0173853939372ccb0603ca13c709832e80dae1595123e4f67cace0a285bb6438"
+  },
+  {
+    "path": "verifier\\test\\Counter.t.sol",
+    "sha256": "0xbf02181f160d31b44ed0f3ba2ccae6e5a792aca4ecc983cf1d75840fc2ff4245"
+  },
+  {
+    "path": "verify_mainnet.ps1",
+    "sha256": "0xa99eda5151d076dd4bf63171cb989c4c02f8a14b11d0d3229251b232499e4aaf"
+  },
+  {
+    "path": "verify_merkle_onchain.ps1",
+    "sha256": "0x7f9b42ca28ce06afed23fc8644cddb7919a4730832ef58d4c4ea1e2248d75441"
+  },
+  {
+    "path": "verify_onchain.ps1",
+    "sha256": "0x0a13a39d1a2b75e10a3172b6a9de532e3f8bbce3eba05e6f467fa47b4ab24b08"
+  },
+  {
+    "path": "verify_receipt.json",
+    "sha256": "0xcf38f98e11e2897aaea41d764d081d12394e794e4db4edcce53c3ccc39145385"
+  },
+  {
+    "path": "vk_merkle.json",
+    "sha256": "0xf39e6b0704fdbdedf31ec23e941039ac429891a81e349c074a83a6b27b893ce9"
+  },
+  {
+    "path": "vk_soul.json",
+    "sha256": "0xf22c8dc65c2cad0f0f2120b969587166fae92cd47ca92c1f32b021b91ef01870"
+  },
+  {
+    "path": "witness.json",
+    "sha256": "0x8b3b19d3a5aa1cb2b77178e201bb26caf001eeb10352d99f6159634a975fab1d"
+  },
+  {
+    "path": "witness.wtns",
+    "sha256": "0x1169b69325e01074576529f31e0ca1fad5fd43486e0819be92b279dc8ab3968d"
+  }
+]
