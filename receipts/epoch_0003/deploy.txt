@@ -1,0 +1,9 @@
+VATA Protocol v2
+Epoch: 0003
+
+Contract: <PUT CONTRACT NAME>
+Address: 0xd304E00113DDF477Ed36d30EE892e01Ba50EA6e0
+Deployer: 0x32506a2b5bd991c904ca733CBf6f8FD0183BA6Ce
+TxHash: 0xb8f43fbec7cd097d8077a6a84cdf630386064e542777dffb5e24471015de6e45
+Network RPC: $env:RPC
+Timestamp: <optional>
