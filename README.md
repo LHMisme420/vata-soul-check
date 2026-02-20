@@ -1,19 +1,71 @@
-## Verify (epoch2 v2)
+## Foundry
 
-Tx (mainnet): 0x0af11aa299ab9ae3e527d73ce252c78a5044fcecc3e881c8680663915a7ff6c0  
-Manifest SHA-256: 0x9e517e034425eaab3a9dceb8fb95e30537529ede6c41d1081e6a779138506379
+**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
-```powershell
-$RPC="https://ethereum-rpc.publicnode.com"
-$TX="0x0af11aa299ab9ae3e527d73ce252c78a5044fcecc3e881c8680663915a7ff6c0"
-.\bundles\epoch2\verify_anchor.ps1 -Manifest .\bundles\epoch2\evidence_manifest.json -Tx $TX -Rpc $RPC
+Foundry consists of:
 
+- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
+- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
+- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
+- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
 
-Then:
-```powershell
-git add README.md
-git commit -m "Document epoch2 v2 verification"
-git push
+## Documentation
 
-git tag -a v0.1.4 -m "Publish epoch2 v2 verification artifacts"
-git push origin v0.1.4
+https://book.getfoundry.sh/
+
+## Usage
+
+### Build
+
+```shell
+$ forge build
+```
+
+### Test
+
+```shell
+$ forge test
+```
+
+### Format
+
+```shell
+$ forge fmt
+```
+
+### Gas Snapshots
+
+```shell
+$ forge snapshot
+```
+
+### Anvil
+
+```shell
+$ anvil
+```
+
+### Deploy
+
+```shell
+$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```
+
+### Cast
+
+```shell
+$ cast <subcommand>
+```
+
+### Help
+
+```shell
+$ forge --help
+$ anvil --help
+$ cast --help
+```
+
+## Onchain proof verification (Sepolia)
+- Chain ID: 11155111
+- Verifier: 0x33aB39409f01981dc77f1B1a184a3EBd1488047b
+- Receipt: receipts_verify_onchain.txt
