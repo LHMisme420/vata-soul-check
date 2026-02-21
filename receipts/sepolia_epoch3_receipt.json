@@ -1,0 +1,8 @@
+cast : Error: server returned an error response: error code -32602: missing value for required argument 0
+At line:1 char:9
++ $rcpt = cast rpc --rpc-url $env:RPC eth_getTransactionReceipt $TX 2>& ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: server r...ired argument 0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
