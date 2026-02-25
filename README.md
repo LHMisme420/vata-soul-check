@@ -1,71 +1,16 @@
-## Foundry
+# VATA ? Verifiable AI Truth Architecture
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Reproducible, cryptographically verifiable computation artifacts (Circom + Groth16 + Solidity verifier) and supporting tooling.
 
-Foundry consists of:
+## Included proof pack (Score30 demo)
+Location:
+evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/release
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Verify on Windows PowerShell:
+powershell -ExecutionPolicy Bypass -File .\evidence\vata-benchmark-zk\vata_bench\vata_bench\vata_zk_score\release\REPRO.ps1
 
-## Documentation
+Expected:
+snarkJS: OK!
 
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
-
-## Onchain proof verification (Sepolia)
-- Chain ID: 11155111
-- Verifier: 0x33aB39409f01981dc77f1B1a184a3EBd1488047b
-- Receipt: receipts_verify_onchain.txt
+Author: Leroy H. Mason
+License: Apache-2.0

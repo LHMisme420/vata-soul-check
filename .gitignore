@@ -1,15 +1,17 @@
-# ZK build artifacts
-*_js/
-*.r1cs
-*.sym
-*.wasm
-*.wtns
+# Secrets / keys
+.env
+**/*secret*
+**/*private*
+**/*key*
+**/*keys*/**    # keep if you KNOW it's safe; remove this line if you intend to publish keys
 
-# Groth16 keys + proofs
+# Node / Python / Rust
+node_modules/
+__pycache__/
+*.pyc
+target/
+
+# Large / generated artifacts (keep if you want; remove lines you want tracked)
+*.wtns
 *.zkey
 *.ptau
-*_proof*.json
-*_public*.json
-
-# Local runs / logs
-*_log.txt
