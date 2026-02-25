@@ -1,6 +1,6 @@
 ﻿---
 title: VATA — Verifiable AI Truth Architecture
-emoji: ??
+emoji: 🔐
 colorFrom: gray
 colorTo: gray
 sdk: static
