@@ -1,8 +1,8 @@
 ﻿---
 title: VATA — Verifiable AI Truth Architecture
-emoji: 🔐
+emoji: ??
 colorFrom: gray
-colorTo: black
+colorTo: gray
 sdk: static
 pinned: false
 ---
@@ -22,20 +22,20 @@ This repository contains:
 
 ---
 
-## 🔍 Proof Pack (Score30)
+## ?? Proof Pack (Score30)
 
-📦 Browse files:
+?? Browse files:
 https://huggingface.co/spaces/Lhmisme/vata-soul-check/tree/main/proofpack/score30
 
-📄 Manifest (SHA256 hashes):
+?? Manifest (SHA256 hashes):
 https://huggingface.co/spaces/Lhmisme/vata-soul-check/blob/main/proofpack/score30/MANIFEST.txt
 
-▶️ One-command verification:
+?? One-command verification:
 https://huggingface.co/spaces/Lhmisme/vata-soul-check/blob/main/proofpack/score30/REPRO.ps1
 
 ---
 
-## ✅ Verify Locally (Windows PowerShell)
+## ? Verify Locally (Windows PowerShell)
 
 powershell -ExecutionPolicy Bypass -File proofpack\score30\REPRO.ps1
 
@@ -45,7 +45,7 @@ snarkJS: OK!
 
 ---
 
-## ⛓ On-Chain Anchor (Sepolia)
+## ? On-Chain Anchor (Sepolia)
 
 Transaction:
 0x7369b194ec8ed858b22437bbd824d6f8b2948f9ade5b11c13bd24fe0778a9fd5
