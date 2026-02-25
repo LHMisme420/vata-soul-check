@@ -4,6 +4,7 @@ emoji: 🔐
 colorFrom: gray
 colorTo: gray
 sdk: static
+app_file: index.html
 pinned: false
 ---
 
