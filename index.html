@@ -2,114 +2,149 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VATA — Verifiable AI Truth Architecture</title>
   <style>
     :root{
-      --bg:#0b0d12; --card:#121624; --text:#e9eefc; --muted:#a9b4d6;
-      --accent:#7c5cff; --accent2:#2ee9a6; --line:#222842;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --bg:#0b0d10; --panel:#11151b; --text:#e8eef6; --muted:#a8b3c4;
+      --line:#222a36; --accent:#c7d2fe; --ok:#9ae6b4;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:var(--sans);background:radial-gradient(1200px 600px at 15% 10%, rgba(124,92,255,.25), transparent 60%),
-                                      radial-gradient(900px 500px at 85% 30%, rgba(46,233,166,.18), transparent 55%),
-                                      var(--bg);color:var(--text)}
-    a{color:var(--text)}
-    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 54px}
-    .hero{padding:22px 18px 8px}
-    .tag{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--line);
-         background:rgba(18,22,36,.7);border-radius:999px;color:var(--muted);font-size:13px}
-    .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2))}
-    h1{margin:14px 0 6px;font-size:38px;letter-spacing:.2px}
-    .sub{color:var(--muted);font-size:16px;line-height:1.45;max-width:760px}
-    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
-    @media (min-width:900px){.grid{grid-template-columns:1.25fr .75fr}}
-    .card{border:1px solid var(--line);background:rgba(18,22,36,.78);border-radius:16px;padding:18px}
-    .card h2{margin:0 0 8px;font-size:18px}
-    .card p{margin:0;color:var(--muted);line-height:1.5}
-    .mono{font-family:var(--mono)}
-    pre{margin:12px 0 0;padding:14px 14px;border-radius:12px;border:1px solid var(--line);
-        background:rgba(8,10,16,.85);overflow:auto;color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.4}
-    .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-    .btn{display:inline-flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid var(--line);
-         background:linear-gradient(135deg, rgba(124,92,255,.18), rgba(46,233,166,.10));
-         text-decoration:none;color:var(--text);font-weight:600;font-size:14px}
-    .btn:hover{transform:translateY(-1px)}
-    .k{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px}
-    .list{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.6}
-    footer{margin-top:18px;color:var(--muted);font-size:12px}
-    .hr{height:1px;background:var(--line);margin:14px 0}
+    html,body{height:100%}
+    body{
+      margin:0; background:linear-gradient(180deg,#07090c 0%, #0b0d10 40%, #07090c 100%);
+      color:var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:34px 18px 60px;}
+    .top{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+      border:1px solid var(--line); background:rgba(17,21,27,.85); border-radius:16px; padding:18px 18px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    h1{margin:0; font-size:22px; letter-spacing:.2px}
+    .sub{margin:8px 0 0; color:var(--muted); line-height:1.45; max-width:70ch}
+    .badge{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12px; padding:8px 10px; border:1px solid var(--line); border-radius:12px; color:var(--muted);
+      background:rgba(0,0,0,.25);
+    }
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px;}
+    @media (max-width: 860px){ .grid{grid-template-columns:1fr;} .sub{max-width:unset;} }
+    .card{
+      border:1px solid var(--line); background:rgba(17,21,27,.75); border-radius:16px; padding:16px;
+    }
+    .card h2{margin:0 0 10px; font-size:15px; color:var(--accent); letter-spacing:.2px}
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    a.btn{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--line); background:rgba(0,0,0,.25);
+      color:var(--text); text-decoration:none; padding:10px 12px; border-radius:12px;
+      font-size:13px;
+    }
+    a.btn:hover{border-color:#364154; background:rgba(0,0,0,.35)}
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12px; color:var(--muted); line-height:1.5;
+      background:rgba(0,0,0,.28); border:1px solid var(--line); border-radius:12px; padding:12px;
+      overflow:auto;
+    }
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:10px 0 0;}
+    button.copy{
+      cursor:pointer; border:1px solid var(--line); background:rgba(0,0,0,.25);
+      color:var(--text); border-radius:10px; padding:7px 10px; font-size:12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    button.copy:hover{border-color:#364154}
+    .ok{color:var(--ok)}
+    footer{margin-top:16px; color:var(--muted); font-size:12px; text-align:center}
+    .small{font-size:12px; color:var(--muted); margin-top:8px}
   </style>
 </head>
-
 <body>
   <div class="wrap">
-    <div class="hero">
-      <div class="tag"><span class="dot"></span><span>PUBLIC VERIFIABILITY DROP • ZK Proof • Reproducible Artifacts</span></div>
-      <h1>VATA — Verifiable AI Truth Architecture</h1>
-      <div class="sub">
-        This Space hosts a reproducible, cryptographically verifiable computation artifact.
-        Anyone can independently verify the proof without trusting the author, the machine, or screenshots.
+    <div class="top">
+      <div>
+        <h1>🔐 VATA — Verifiable AI Truth Architecture</h1>
+        <p class="sub">
+          Reproducible zero-knowledge proof drop demonstrating verifiable computation for AI pipelines.
+          Don’t trust. Verify.
+        </p>
       </div>
+      <div class="badge">Proof Pack: <span class="ok">score30</span> • Static Space</div>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2>✅ One-Command Verification</h2>
-        <p>Run this from the repo root on Windows PowerShell. Expected output includes <span class="mono">snarkJS: OK!</span></p>
-        <pre>powershell -ExecutionPolicy Bypass -File evidence/vata-benchmark-zk\vata_bench\vata_bench\vata_zk_score\release\REPRO.ps1</pre>
+        <h2>Verify (Windows PowerShell)</h2>
+        <div class="mono">powershell -ExecutionPolicy Bypass -File proofpack\score30\REPRO.ps1</div>
 
-        <div class="hr"></div>
+        <div class="btns">
+          <!-- Use resolve for direct/raw downloads -->
+          <a class="btn" target="_blank" rel="noopener"
+             href="https://huggingface.co/spaces/Lhmisme/vata-soul-check/resolve/main/proofpack/score30/REPRO.ps1">▶ Download REPRO.ps1</a>
 
-        <h2>📦 Proof Pack Location</h2>
-        <p class="mono">proofpack/score30
+          <a class="btn" target="_blank" rel="noopener"
+             href="https://huggingface.co/spaces/Lhmisme/vata-soul-check/blob/main/proofpack/score30/REPRO.ps1">View script</a>
 
-        <ul class="list">
-          <li><span class="k">Circuit</span> <span class="mono">vata_score30.circom</span></li>
-          <li><span class="k">Artifacts</span> <span class="mono">.r1cs</span>, <span class="mono">.wasm</span></li>
-          <li><span class="k">Proof</span> <span class="mono">proof.json</span> + <span class="mono">public.json</span></li>
-          <li><span class="k">Key</span> <span class="mono">vkey.json</span></li>
-          <li><span class="k">Onchain</span> <span class="mono">Verifier.sol</span> + <span class="mono">soliditycalldata.txt</span></li>
-          <li><span class="k">Integrity</span> <span class="mono">MANIFEST.txt</span> (SHA256 list)</li>
-        </ul>
-
-        <div class="btnrow">
-          <a class="btn" href="https://huggingface.co/spaces/Lhmisme/vata-soul-check/tree/main/proofpack/score30">Browse release/</a>
-          <a class="btn" href="https://huggingface.co/spaces/Lhmisme/vata-soul-check/blob/main/proofpack/score30">View MANIFEST</a>
-          <a class="btn" href="https://huggingface.co/spaces/Lhmisme/vata-soul-check/blob/main/proofpack/score30">View REPRO.ps1</a>
+          <a class="btn" target="_blank" rel="noopener"
+             href="https://huggingface.co/spaces/Lhmisme/vata-soul-check/tree/main/proofpack/score30">Browse proof pack</a>
         </div>
+
+        <p class="small">
+          If a button ever 404s, it’s because the link is relative to <code>hf.space</code>.
+          This portal uses absolute <code>huggingface.co</code> links to prevent that.
+        </p>
       </div>
 
       <div class="card">
-        <h2>🔥 Public Challenge</h2>
-        <p>
-          If you claim a model, benchmark, or safety system is trustworthy:
-          publish a reproducible cryptographic proof of your computation.
-        </p>
-        <div class="hr"></div>
-        <p><strong>Principle:</strong> Don’t trust. Verify.</p>
+        <h2>Manifest + Anchor</h2>
 
-        <div class="hr"></div>
+        <div class="mono" id="anchorBlock">
+Transaction: 0x7369b194ec8ed858b22437bbd824d6f8b2948f9ade5b11c13bd24fe0778a9fd5
+Block:       10334791
+Address:     0xF230c3221F83840d31A8c34f7d6dbB6Be2Af1069
+ZIP SHA256:  6D7186760636DE5F0F306D089B7D21AF64EEECEACC2D049BF3B9BFFEDF0AB495
+        </div>
 
-        <h2>ZIP SHA256</h2>
-        <pre class="mono">6D7186760636DE5F0F306D089B7D21AF64EEECEACC2D049BF3B9BFFEDF0AB495</pre>
+        <div class="row">
+          <button class="copy" data-copy="0x7369b194ec8ed858b22437bbd824d6f8b2948f9ade5b11c13bd24fe0778a9fd5">Copy TX</button>
+          <button class="copy" data-copy="0xF230c3221F83840d31A8c34f7d6dbB6Be2Af1069">Copy Address</button>
+          <button class="copy" data-copy="6D7186760636DE5F0F306D089B7D21AF64EEECEACC2D049BF3B9BFFEDF0AB495">Copy ZIP SHA</button>
+        </div>
 
-        <footer>
-          Author: Leroy H. Mason • License: Apache-2.0
-        </footer>
+        <div class="btns" style="margin-top:12px;">
+          <a class="btn" target="_blank" rel="noopener"
+             href="https://huggingface.co/spaces/Lhmisme/vata-soul-check/blob/main/proofpack/score30/MANIFEST.txt">📄 View MANIFEST</a>
+
+          <a class="btn" target="_blank" rel="noopener"
+             href="https://huggingface.co/spaces/Lhmisme/vata-soul-check/resolve/main/proofpack/score30/MANIFEST.txt">Download MANIFEST</a>
+        </div>
       </div>
     </div>
 
-    <footer style="margin-top:18px">
-      Tip: If the Space shows a “configuration” error, ensure the top of README.md contains the required YAML block (already set for this repo).
+    <footer>
+      Canonical source: repository commits • Immutable artifacts: manifest + on-chain anchor
     </footer>
   </div>
+
+  <script>
+    // Copy buttons
+    document.querySelectorAll('button.copy').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const text = btn.getAttribute('data-copy') || '';
+        try {
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(() => btn.textContent = old, 900);
+        } catch(e) {
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta);
+          ta.select(); document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
-
-
-
-
-
-
