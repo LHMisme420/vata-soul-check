@@ -1,8 +1,109 @@
 ﻿<!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>VATA</title></head>
-  <body>
-    <h1>VATA — Verifiable AI Truth Architecture</h1>
-    <p>Repo published. Proof pack is under evidence/vata-benchmark-zk/.../vata_zk_score/release.</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VATA — Verifiable AI Truth Architecture</title>
+  <style>
+    :root{
+      --bg:#0b0d12; --card:#121624; --text:#e9eefc; --muted:#a9b4d6;
+      --accent:#7c5cff; --accent2:#2ee9a6; --line:#222842;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--sans);background:radial-gradient(1200px 600px at 15% 10%, rgba(124,92,255,.25), transparent 60%),
+                                      radial-gradient(900px 500px at 85% 30%, rgba(46,233,166,.18), transparent 55%),
+                                      var(--bg);color:var(--text)}
+    a{color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 54px}
+    .hero{padding:22px 18px 8px}
+    .tag{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--line);
+         background:rgba(18,22,36,.7);border-radius:999px;color:var(--muted);font-size:13px}
+    .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+    h1{margin:14px 0 6px;font-size:38px;letter-spacing:.2px}
+    .sub{color:var(--muted);font-size:16px;line-height:1.45;max-width:760px}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+    @media (min-width:900px){.grid{grid-template-columns:1.25fr .75fr}}
+    .card{border:1px solid var(--line);background:rgba(18,22,36,.78);border-radius:16px;padding:18px}
+    .card h2{margin:0 0 8px;font-size:18px}
+    .card p{margin:0;color:var(--muted);line-height:1.5}
+    .mono{font-family:var(--mono)}
+    pre{margin:12px 0 0;padding:14px 14px;border-radius:12px;border:1px solid var(--line);
+        background:rgba(8,10,16,.85);overflow:auto;color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.4}
+    .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .btn{display:inline-flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+         background:linear-gradient(135deg, rgba(124,92,255,.18), rgba(46,233,166,.10));
+         text-decoration:none;color:var(--text);font-weight:600;font-size:14px}
+    .btn:hover{transform:translateY(-1px)}
+    .k{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px}
+    .list{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.6}
+    footer{margin-top:18px;color:var(--muted);font-size:12px}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="tag"><span class="dot"></span><span>PUBLIC VERIFIABILITY DROP • ZK Proof • Reproducible Artifacts</span></div>
+      <h1>VATA — Verifiable AI Truth Architecture</h1>
+      <div class="sub">
+        This Space hosts a reproducible, cryptographically verifiable computation artifact.
+        Anyone can independently verify the proof without trusting the author, the machine, or screenshots.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>✅ One-Command Verification</h2>
+        <p>Run this from the repo root on Windows PowerShell. Expected output includes <span class="mono">snarkJS: OK!</span></p>
+        <pre>powershell -ExecutionPolicy Bypass -File evidence/vata-benchmark-zk\vata_bench\vata_bench\vata_zk_score\release\REPRO.ps1</pre>
+
+        <div class="hr"></div>
+
+        <h2>📦 Proof Pack Location</h2>
+        <p class="mono">evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/release</p>
+
+        <ul class="list">
+          <li><span class="k">Circuit</span> <span class="mono">vata_score30.circom</span></li>
+          <li><span class="k">Artifacts</span> <span class="mono">.r1cs</span>, <span class="mono">.wasm</span></li>
+          <li><span class="k">Proof</span> <span class="mono">proof.json</span> + <span class="mono">public.json</span></li>
+          <li><span class="k">Key</span> <span class="mono">vkey.json</span></li>
+          <li><span class="k">Onchain</span> <span class="mono">Verifier.sol</span> + <span class="mono">soliditycalldata.txt</span></li>
+          <li><span class="k">Integrity</span> <span class="mono">MANIFEST.txt</span> (SHA256 list)</li>
+        </ul>
+
+        <div class="btnrow">
+          <a class="btn" href="./tree/main/evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/release">Browse release/</a>
+          <a class="btn" href="./blob/main/evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/release/MANIFEST.txt">View MANIFEST</a>
+          <a class="btn" href="./blob/main/evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/release/REPRO.ps1">View REPRO.ps1</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔥 Public Challenge</h2>
+        <p>
+          If you claim a model, benchmark, or safety system is trustworthy:
+          publish a reproducible cryptographic proof of your computation.
+        </p>
+        <div class="hr"></div>
+        <p><strong>Principle:</strong> Don’t trust. Verify.</p>
+
+        <div class="hr"></div>
+
+        <h2>ZIP SHA256</h2>
+        <pre class="mono">6D7186760636DE5F0F306D089B7D21AF64EEECEACC2D049BF3B9BFFEDF0AB495</pre>
+
+        <footer>
+          Author: Leroy H. Mason • License: Apache-2.0
+        </footer>
+      </div>
+    </div>
+
+    <footer style="margin-top:18px">
+      Tip: If the Space shows a “configuration” error, ensure the top of README.md contains the required YAML block (already set for this repo).
+    </footer>
+  </div>
+</body>
 </html>
