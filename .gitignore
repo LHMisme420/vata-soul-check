@@ -1,22 +1,21 @@
-# Secrets / keys
-.env
-**/*secret*
-**/*private*
-**/*key*
-**/*keys*/**    # keep if you KNOW it's safe; remove this line if you intend to publish keys
-
-# Node / Python / Rust
+﻿# node / cache
 node_modules/
-__pycache__/
-*.pyc
-target/
+cache/
+out/
+foundry.lock
+package-lock.json
 
-# Large / generated artifacts (keep if you want; remove lines you want tracked)
-*.wtns
-*.zkey
-*.ptau
+# circom build outputs (keep receipts + manifest only)
+score31_poseidon_double.r1cs
+score31_poseidon_double.sym
+score31_poseidon_double_js/
+score31_poseidon_double_cpp/
+proofpack/score31/*.r1cs
+proofpack/score31/*.sym
+proofpack/score31/*_js/
+proofpack/score31/*_cpp/
 
-# --- allow the Score30 repro pack ---
-!evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/
-!evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/**
-
+# proofs/witness (optional)
+proofpack/**/witness.wtns
+proofpack/**/proof.json
+proofpack/**/public.json
