@@ -15,3 +15,8 @@ target/
 *.wtns
 *.zkey
 *.ptau
+
+# --- allow the Score30 repro pack ---
+!evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/
+!evidence/vata-benchmark-zk/vata_bench/vata_bench/vata_zk_score/**
+
