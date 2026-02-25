@@ -8,6 +8,16 @@ app_file: index.html
 pinned: false
 ---
 
+---
+title: VATA Soul Check
+emoji: "🔥"
+colorFrom: purple
+colorTo: blue
+sdk: static
+app_file: index.html
+pinned: false
+---
+
 # VATA ? Verifiable AI Truth Architecture
 
 Reproducible, cryptographically verifiable computation artifacts (Circom + Groth16 + Solidity verifier) and supporting tooling.
@@ -24,4 +34,5 @@ snarkJS: OK!
 
 Author: Leroy H. Mason
 License: Apache-2.0
+
 
