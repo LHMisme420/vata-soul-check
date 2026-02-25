@@ -1,5 +1,7 @@
 ﻿---
 title: VATA — Verifiable AI Truth Architecture
+**Live Proof Portal:** https://huggingface.co/spaces/Lhmisme/vata-soul-check  
+**GitHub Mirror:** https://github.com/LHMisme420/vata-soul-check
 emoji: 🔐
 colorFrom: gray
 colorTo: gray
