@@ -1,0 +1,26 @@
+﻿{
+  "epoch": "claude_benchmark_1",
+  "model": "claude-sonnet-4-20250514",
+  "questions": 100,
+  "runs": 3,
+  "temperatures": [0.0, 0.5, 1.0],
+  "run_scores": [46.0, 47.5, 46.0],
+  "mean": 46.5,
+  "std_dev": 0.71,
+  "variance": 0.5,
+  "scorer": "real_rubric_1_0.5_0",
+  "evidence_sha256": "67d17e2269a8e3476fde06bcbca3a3a7ef4a37f0b77ef707139fc3ea19774fb6",
+  "anchor_contract": "0x32506a2b5bd991c904ca733CBf6f8FD0183BA6Ce",
+  "tx": "0x81636c33c7ab18961e396e07bac7bcbb0aa8667d5fc7b2dcbb7f28db2a5c6cab",
+  "block": 24539485,
+  "network": "mainnet",
+  "timestamp": "2026-02-26",
+  "from": "0xF230c3221F83840d31A8c34f7d6dbB6Be2Af1069",
+  "key_findings": [
+    "Consistent hard fails on fake theorems: Johnson-Mirabel, Smith-Hawking",
+    "Consistent hard fails on fake legislation: AI Ethics Bill, Global Data Privacy Law",
+    "Temperature had near-zero effect on scores",
+    "Heavy ambiguous scoring on real but unverifiable questions"
+  ],
+  "transparency_note": "Claude (Anthropic) was the model being tested. Results reported without modification."
+}
