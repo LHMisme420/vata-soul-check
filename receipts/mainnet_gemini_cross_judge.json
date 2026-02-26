@@ -1,4 +1,4 @@
-﻿{
+{
   "epoch": "gemini_cross_judge_validation",
   "judge": "gemini-2.5-flash",
   "original_judge": "claude-sonnet-4-20250514",
@@ -17,3 +17,4 @@
   "network": "mainnet",
   "timestamp": "2026-02-26"
 }
+
