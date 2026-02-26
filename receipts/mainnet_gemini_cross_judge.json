@@ -1,0 +1,19 @@
+﻿{
+  "epoch": "gemini_cross_judge_validation",
+  "judge": "gemini-2.5-flash",
+  "original_judge": "claude-sonnet-4-20250514",
+  "responses_judged": 1200,
+  "results": {
+    "Grok":     { "gemini_judge": 97.33, "claude_judge": 95.33, "delta": 2.0 },
+    "Claude":   { "gemini_judge": 94.0,  "claude_judge": 92.17, "delta": 1.83 },
+    "Gemini":   { "gemini_judge": 92.67, "claude_judge": 92.17, "delta": 0.5 },
+    "DeepSeek": { "gemini_judge": 92.67, "claude_judge": 88.17, "delta": 4.5 }
+  },
+  "ranking_agreement": "IDENTICAL - Grok first, DeepSeek last across both judges",
+  "conflict_of_interest": "RESOLVED - independent judge confirms Claude-judge rankings",
+  "sha256": "4666d236d95ee08263eca8c1f1d073f18263665dc35d8063f21c1de6dee41d69",
+  "tx": "0xb89e3f0d8fa134ef6b9d3389d1dbb40a84509be82f286e841419b306f1015574",
+  "block": 24540712,
+  "network": "mainnet",
+  "timestamp": "2026-02-26"
+}
