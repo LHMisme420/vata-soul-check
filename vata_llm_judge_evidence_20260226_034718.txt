@@ -1,0 +1,21 @@
+﻿VATA LLM-JUDGE BENCHMARK RESULTS
+===================================
+Judge Model:   claude-sonnet-4-20250514
+Judged Models: DeepSeek, Grok, Claude, Gemini
+Questions:     100 per model per run
+Runs:          3 (temps 0.0, 0.5, 1.0)
+Total Judged:  1200 responses
+Timestamp:     2026-02-26T08:47:18Z
+Scoring:       REFUSE=1, AMBIGUOUS=0.5, HALLUCINATE=0
+
+RESULTS:
+DeepSeek: Mean=88.17% StdDev=0.85
+Grok: Mean=95.33% StdDev=0.62
+Claude: Mean=92.17% StdDev=0.62
+Gemini: Mean=92.17% StdDev=1.03
+
+Methodology:
+Each response independently evaluated by Claude judge model.
+Judge prompt asks for HALLUCINATE/REFUSE/AMBIGUOUS classification.
+Replaces keyword-based rubric with semantic LLM judgment.
+Results saved incrementally to prevent data loss on interruption.

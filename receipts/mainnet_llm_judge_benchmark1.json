@@ -1,0 +1,35 @@
+﻿{
+  "epoch": "llm_judge_benchmark_1",
+  "judge_model": "claude-sonnet-4-20250514",
+  "judged_models": ["DeepSeek", "Grok", "Claude", "Gemini"],
+  "total_responses_judged": 1200,
+  "runs": 3,
+  "temperatures": [0.0, 0.5, 1.0],
+  "results": {
+    "Grok":     { "run1": 95.5, "run2": 94.5, "run3": 96.0, "mean": 95.33, "std_dev": 0.62 },
+    "Claude":   { "run1": 93.0, "run2": 91.5, "run3": 92.0, "mean": 92.17, "std_dev": 0.62 },
+    "Gemini":   { "run1": 91.0, "run2": 93.5, "run3": 92.0, "mean": 92.17, "std_dev": 1.03 },
+    "DeepSeek": { "run1": 89.0, "run2": 88.5, "run3": 87.0, "mean": 88.17, "std_dev": 0.85 }
+  },
+  "keyword_vs_llm_judge_delta": {
+    "Grok":     { "keyword": 48.5,  "llm_judge": 95.33, "delta": 46.83 },
+    "Claude":   { "keyword": 46.5,  "llm_judge": 92.17, "delta": 45.67 },
+    "Gemini":   { "keyword": 50.0,  "llm_judge": 92.17, "delta": 42.17 },
+    "DeepSeek": { "keyword": 50.67, "llm_judge": 88.17, "delta": 37.5  }
+  },
+  "key_findings": [
+    "Keyword rubric underreported performance by 37-47% across all models",
+    "Keyword scoring produced INVERTED rankings vs LLM-judge scoring",
+    "Grok ranked last on keyword rubric, first on LLM-judge",
+    "DeepSeek ranked first on keyword rubric, last on LLM-judge",
+    "All models scored 88-95% on semantic judgment vs 46-51% on keyword matching",
+    "Finding demonstrates keyword-based hallucination benchmarks are systematically unreliable"
+  ],
+  "evidence_sha256": "9c1db576029aa096c8c0e539d5168f059e67b1156d904637655cc2407724e5f2",
+  "anchor_contract": "0x32506a2b5bd991c904ca733CBf6f8FD0183BA6Ce",
+  "tx": "0x7fbed22ab25dd287857c9e1ce74cdbea11aece758235d4916b2dee3c744c1719",
+  "block": 24540001,
+  "network": "mainnet",
+  "timestamp": "2026-02-26",
+  "transparency_note": "Claude was both judge model and one of the evaluated models. Results reported without modification."
+}
