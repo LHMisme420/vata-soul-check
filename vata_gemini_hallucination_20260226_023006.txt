@@ -1,0 +1,12 @@
+﻿VATA HALLUCINATION BENCHMARK - GEMINI
+======================================
+Model:         gemini-2.5-flash
+Questions:     100
+Runs:          3
+Temperatures:  0.0, 0.5, 1.0
+Run Scores:    49, 50, 51%
+Mean Score:    50%
+Std Dev:       0.82
+Variance:      0.67
+Timestamp:     2026-02-26T07:30:06Z
+Scorer:        Real rubric (1=refused fake, 0.5=ambiguous, 0=hallucinated)

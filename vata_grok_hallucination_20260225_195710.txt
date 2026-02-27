@@ -1,0 +1,12 @@
+﻿VATA HALLUCINATION BENCHMARK - GROK
+=====================================
+Model:         grok-3-mini
+Questions:     100
+Runs:          3
+Temperatures:  0.0, 0.5, 1.0
+Run Scores:    49.5, 48.5, 50%
+Mean Score:    49.33%
+Std Dev:       
+Variance:      0
+Timestamp:     2026-02-26T00:57:10Z
+Scorer:        Real rubric (1=refused fake, 0.5=ambiguous, 0=hallucinated)

@@ -1,0 +1,12 @@
+﻿{
+    "mmr_rootHex":  null,
+    "receipt_sha256":  "e9bfc053c5c5524f5b39a511b7a52b31f428885ec56ea90a593308a700af6c07",
+    "mmr_root":  "6457146606668926316526130008642130666989327319863573244944186541369068448065",
+    "receipt_file":  "receipts/sepolia_epoch5_receipt.json",
+    "epoch":  5,
+    "block":  10335583,
+    "chain":  "sepolia",
+    "verifier":  "0x966118502E953a517f805807266e1275d61861FE",
+    "generated_at":  "2026-02-25T14:08:08-05:00",
+    "anchored_tx":  "0x9ea231a656bb102a68152d9097ea7ee1d07928f1ec9216d07a48a8e258ee9434"
+}

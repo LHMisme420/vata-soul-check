@@ -1,0 +1,7 @@
+﻿VATA CROSS-JUDGE VALIDATION
+=============================
+Judge 1:    claude-sonnet-4-20250514
+Judge 2:    gemini-1.5-pro
+Responses:  1200
+Timestamp:  2026-02-26T10:05:28Z
+Purpose:    Validates Claude-judge results against independent Gemini-judge

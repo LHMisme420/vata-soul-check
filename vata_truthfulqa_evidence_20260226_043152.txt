@@ -1,0 +1,10 @@
+﻿VATA TRUTHFULQA VALIDATION
+============================
+Dataset:    TruthfulQA (50 questions)
+Judge:      claude-sonnet-4-20250514
+Timestamp:  2026-02-26T09:31:52Z
+
+DeepSeek: TruthfulQA=100% LLM-Judge=88.17%
+Grok: TruthfulQA=100% LLM-Judge=95.33%
+Claude: TruthfulQA=100% LLM-Judge=92.17%
+Gemini: TruthfulQA=100% LLM-Judge=92.17%

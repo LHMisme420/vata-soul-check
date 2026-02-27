@@ -1,0 +1,12 @@
+﻿{
+  "epoch": 5,
+  "score": 31,
+  "circuit": "score31_poseidon_double",
+  "verifier": "0x966118502E953a517f805807266e1275d61861FE",
+  "tx": "0x9ea231a656bb102a68152d9097ea7ee1d07928f1ec9216d07a48a8e258ee9434",
+  "block": 10335583,
+  "network": "sepolia",
+  "timestamp": "2026-02-25",
+  "from": "0xF230c3221F83840d31A8c34f7d6dbB6Be2Af1069",
+  "proof_valid_onchain": true
+}
