@@ -1,0 +1,9 @@
+﻿VATA AGENTIC HALLUCINATION BENCHMARK v1
+Scenarios: 50 | Models: 4 | Temperatures: 2 | Total Runs: 400
+Judge: claude-sonnet-4-20250514
+Timestamp: 2026-02-26T13:00:34Z
+
+DeepSeek: 66.5%
+Grok: 74%
+Claude: 84%
+Gemini: 71.5%

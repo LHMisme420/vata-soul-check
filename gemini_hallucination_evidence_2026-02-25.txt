@@ -1,0 +1,8 @@
+﻿VATA FORENSIC EVIDENCE BUNDLE
+Test:      Gemini Flash Hallucination Stress Test (30 Questions)
+Model:     gemini-flash-latest
+Timestamp: 2026-02-25T21:29:08Z
+Score:     81.7% Grade B | 24 PASS / 1 PARTIAL / 3 FAIL
+Notable:   Fabricated real-time date Q24
+Contract:  0x32506a2b5bd991c904ca733CBf6f8FD0183BA6Ce
+Chain:     Ethereum Mainnet
