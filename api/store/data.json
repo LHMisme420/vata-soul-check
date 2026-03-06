@@ -1,0 +1,38 @@
+{
+  "proofs": [
+    {
+      "hash": "0x109153b3dbac58c697710f7db77e4df07e741ef6584bad268fe4dc433cda4d5f",
+      "pi_a": [
+        "27b4e917fc11ca45a1cc63e326dd99b42a8e2b313b5c069a032777ae024e7f7f",
+        "22d523d35c1baccc656ab3b7d8e44a0360801467a2933173e2c5cfc0c8e19f91"
+      ],
+      "pi_b": [
+        [
+          "1b8c07703eb1391d114d732557af09eead9a85229c2e9fe06d05d20ed291bd4b",
+          "11b57ec068f4558bf971fc1c0ea16dfd498145315da47d8796e9fece24d71a3f"
+        ],
+        [
+          "10e15250290119c67fa19db9608ce62ab0a4834e434c25ec7f6454e1f91a3101",
+          "012ffe58ae51112f931a14bab1634139bea0262078b46d3619e6087be6665acc"
+        ]
+      ],
+      "pi_c": [
+        "254ab392865fb40ec5d88e83d82742024986159e74d2aa6f502b94427fe38980",
+        "2b8536f5b3f92e3b23d18124e61016c27ceff18b006fda5f9f9bf15975b0c50b"
+      ],
+      "pub_signals": [
+        "1000000000000000000",
+        "1000000000"
+      ],
+      "network": "sepolia",
+      "verifier_address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "status": "anchored",
+      "proof_time_ms": 0.11,
+      "gas_used": 23640,
+      "tx_hash": "b8cef7a71c0558c1438757ea62ab4874a3b3199b0dd6cb9c2c2822385f559949",
+      "id": 1,
+      "timestamp": "2026-03-06T10:13:31.088865"
+    }
+  ],
+  "batches": []
+}

@@ -1,0 +1,24 @@
+{
+    "name": "zk-saas",
+    "version": "1.0.0",
+    "devDependencies": {
+        "@nomicfoundation/hardhat-ethers": "^4.0.6",
+        "@nomicfoundation/hardhat-ignition": "^3.0.9",
+        "@nomicfoundation/hardhat-ignition-ethers": "^3.0.9",
+        "@nomicfoundation/hardhat-ignition-viem": "^3.0.9",
+        "@nomicfoundation/hardhat-keystore": "^3.0.5",
+        "@nomicfoundation/hardhat-network-helpers": "^3.0.4",
+        "@nomicfoundation/hardhat-node-test-runner": "^3.0.10",
+        "@nomicfoundation/hardhat-verify": "^3.0.12",
+        "@nomicfoundation/hardhat-viem": "^3.0.4",
+        "@nomicfoundation/hardhat-viem-assertions": "^3.0.7",
+        "@nomicfoundation/ignition-core": "^3.0.9",
+        "@types/node": "^22.19.15",
+        "ethers": "^6.16.0",
+        "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+        "hardhat": "^3.1.11",
+        "typescript": "~5.8.0",
+        "viem": "^2.47.0"
+    },
+    "type": "module"
+}

@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="3"> 
+    <title>VATA OS | SOVEREIGN COMMAND</title>
+    <style>
+        body { background: #0b0d10; color: #e9eef5; font-family: 'Segoe UI', monospace; padding: 40px; }
+        .header { border-left: 4px solid #40e0ff; padding-left: 20px; margin-bottom: 50px; }
+        h1 { letter-spacing: 10px; font-weight: 200; margin: 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card { background: #151a21; border: 1px solid #273140; padding: 25px; border-radius: 8px; }
+        .label { font-size: 10px; color: #636e72; letter-spacing: 2px; text-transform: uppercase; }
+        .value { font-size: 32px; color: #40e0ff; margin-top: 10px; font-weight: bold; }
+        .rejected { color: #ff3b3b !important; }
+        .log { margin-top: 40px; background: #070a0f; padding: 20px; border-radius: 4px; border: 1px solid #1e272e; font-size: 12px; height: 200px; overflow-y: scroll; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VATA-PRIME</h1>
+        <div style="color: #636e72;">ARCHITECTURE: 64-BIT LATTICE-REINFORCED</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card">
+            <div class="label">Total Value Verified</div>
+            <div class="value">0.0B</div>
+        </div>
+        <div class="card">
+            <div class="label">Architect Fees (0.01%)</div>
+            <div class="value" style="color: #39FF14;">0.0K</div>
+        </div>
+        <div class="card">
+            <div class="label">Constraint Violations</div>
+            <div class="value rejected">0</div>
+        </div>
+    </div>
+
+    <div class="log">
+        <div style="color: #40e0ff;">[03:40:25] SYSTEM_STABLE // LISTENING_FOR_TX...</div>
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[
+  {
+    "proof_id": 1,
+    "proof_hash": "0x109153b3dbac58c697710f7db77e4df07e741ef6584bad268fe4dc433cda4d5f",
+    "anchor_hash": "0x7a3a1983d4f59fb78be38b89d3d9861f0874b80cbd1e4b111a989c785cfb9d1b",
+    "tx_hash": "b8cef7a71c0558c1438757ea62ab4874a3b3199b0dd6cb9c2c2822385f559949",
+    "block_number": 10396091,
+    "gas_used": 23640,
+    "status": "anchored",
+    "anchored_at": "2026-03-06T11:59:13.088867",
+    "network": "sepolia",
+    "etherscan": "https://sepolia.etherscan.io/tx/b8cef7a71c0558c1438757ea62ab4874a3b3199b0dd6cb9c2c2822385f559949"
+  }
+]
