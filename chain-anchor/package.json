@@ -1,0 +1,16 @@
+{
+  "name": "chain-anchor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "anchor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ethers": "^6.16.0"
+  }
+}

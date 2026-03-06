@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+﻿from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 from store.db import get_all_proofs, add_proof
+from guardian import guardian_check
 import hashlib, json, time
 
 router = APIRouter()
@@ -20,6 +21,18 @@ def list_proofs():
 
 @router.post("/submit")
 def submit_proof(body: ProofSubmission):
+    # Guardian PII check
+    guard = guardian_check(body.pub_signals)
+    if guard["blocked"]:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "GUARDIAN_BLOCKED",
+                "message": "PII detected in public signals",
+                "findings": guard["findings"]
+            }
+        )
+
     start = time.time()
     proof_json = json.dumps({
         "pi_a": body.pi_a,
@@ -42,8 +55,9 @@ def submit_proof(body: ProofSubmission):
         "proof_time_ms": elapsed,
         "gas_used": None,
         "tx_hash": None,
+        "guardian": "PASS"
     })
-    return {"success": True, "proof": record}
+    return {"success": True, "proof": record, "guardian": guard}
 
 @router.get("/{proof_id}")
 def get_proof(proof_id: int):

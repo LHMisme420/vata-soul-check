@@ -1,0 +1,38 @@
+﻿{
+    "project":  "VATA Proof Pack",
+    "epoch":  4,
+    "chainId":  11155111,
+    "contract":  "0x8e61443DFEBa41D4B0DDEBE574E2abbC028d9Ea2",
+    "tx":  {
+
+           },
+    "epoch_file":  "epoch4.txt",
+    "epoch_file_sha256":  "e177e0a9d4990125b7372e51dd18be9f374bd703a8e153926e2882e416e11aa1",
+    "git_commit":  "09ad2308c598ceb34d75b30d5916af211c82f13e",
+    "artifacts":  [
+                      {
+                          "path":  ".\\receipts\\sepolia_epoch2_receipt.json",
+                          "sha256":  "1fefeb079d69e785679dcedf054506e9f06da650b2841081ed0e29e6b1d979ac"
+                      },
+                      {
+                          "path":  ".\\receipts\\sepolia_epoch2_receipt.md",
+                          "sha256":  "1eea9c9acec75c242bb1ac43f695f1f638ddb44c3d401497fc6559017e25dedf"
+                      },
+                      {
+                          "path":  ".\\receipts\\sepolia_epoch3_receipt.json",
+                          "sha256":  "d610615ec24bafc8513f3975dc7a420825b9f3dc65b1498cc5a5a52c787d0b2b"
+                      },
+                      {
+                          "path":  ".\\receipts\\sepolia_epoch3_receipt.md",
+                          "sha256":  "7576d9b32eb8fe36c71ea22d7de5406331e34245dda38ccd38722eb3e89fdc69"
+                      },
+                      {
+                          "path":  ".\\src\\ProofAnchor.sol",
+                          "sha256":  "20826921819347dc6b8da46f2aac742322006b4dae80a278fd0e79b6b9da4848"
+                      },
+                      {
+                          "path":  ".\\epoch4.txt",
+                          "sha256":  "e177e0a9d4990125b7372e51dd18be9f374bd703a8e153926e2882e416e11aa1"
+                      }
+                  ]
+}

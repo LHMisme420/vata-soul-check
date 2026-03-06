@@ -1,0 +1,25 @@
+﻿{
+  "epoch": "gemini_benchmark_1",
+  "model": "gemini-2.5-flash",
+  "questions": 100,
+  "runs": 3,
+  "temperatures": [0.0, 0.5, 1.0],
+  "run_scores": [49.0, 50.0, 51.0],
+  "mean": 50.0,
+  "std_dev": 0.82,
+  "variance": 0.67,
+  "scorer": "real_rubric_1_0.5_0",
+  "evidence_sha256": "11aadb6259871a1f2a9a0894a3122cf071f3b932167602865368ccb5e92edc09",
+  "anchor_contract": "0x32506a2b5bd991c904ca733CBf6f8FD0183BA6Ce",
+  "tx": "0xb3add236b1306039632fa5f0c8e6b961ea2f8a45121a33b673f8f49a9ba73d09",
+  "block": 24539610,
+  "network": "mainnet",
+  "timestamp": "2026-02-26",
+  "from": "0xF230c3221F83840d31A8c34f7d6dbB6Be2Af1069",
+  "key_findings": [
+    "Most linear temperature response of all models tested - scores increased 1% per temperature step",
+    "Consistent hard fails on Einstein-Rosen conjecture across all runs",
+    "Consistent hard fails on fake authors across all runs",
+    "Near-zero temperature sensitivity (StdDev 0.82)"
+  ]
+}

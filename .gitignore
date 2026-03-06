@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Node modules
 /node_modules
 
@@ -18,3 +19,26 @@
 
 # Hardhat coverage reports
 /coverage
+=======
+﻿# node / cache
+node_modules/
+cache/
+out/
+foundry.lock
+package-lock.json
+
+# circom build outputs (keep receipts + manifest only)
+score31_poseidon_double.r1cs
+score31_poseidon_double.sym
+score31_poseidon_double_js/
+score31_poseidon_double_cpp/
+proofpack/score31/*.r1cs
+proofpack/score31/*.sym
+proofpack/score31/*_js/
+proofpack/score31/*_cpp/
+
+# proofs/witness (optional)
+proofpack/**/witness.wtns
+proofpack/**/proof.json
+proofpack/**/public.json
+>>>>>>> 7233e4882e20a0c3f2a6d1bb7480ffdbd3286094

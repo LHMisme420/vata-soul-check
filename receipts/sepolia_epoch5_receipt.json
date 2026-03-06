@@ -1,0 +1,15 @@
+﻿{
+  "epoch": 5,
+  "type": "zip_anchor",
+  "zip": "evidence/epoch5_release.zip",
+  "zip_sha256": "7344603FF956879442E227E67673C0702F274ACA1B573E18CD9C16CD980E6E1D",
+  "bytes32": "0x7344603ff956879442e227e67673c0702f274aca1b573e18cd9c16cd980e6e1d",
+  "anchor_contract": "0xd304E00113DDF477Ed36d30EE892e01Ba50EA6e0",
+  "verifier_contract": "0x966118502E953a517f805807266e1275d61861FE",
+  "proof_tx": "0x9ea231a656bb102a68152d9097ea7ee1d07928f1ec9216d07a48a8e258ee9434",
+  "zip_anchor_tx": "0x0d9941a43f9240fca7622fccf3dd6eaffb9f14b6278cdee52bb450f53ddc5f86",
+  "block": 10335665,
+  "network": "sepolia",
+  "timestamp": "2026-02-25",
+  "from": "0xF230c3221F83840d31A8c34f7d6dbB6Be2Af1069"
+}

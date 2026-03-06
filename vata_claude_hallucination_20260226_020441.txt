@@ -1,0 +1,12 @@
+﻿VATA HALLUCINATION BENCHMARK - CLAUDE
+======================================
+Model:         claude-sonnet-4-20250514
+Questions:     100
+Runs:          3
+Temperatures:  0.0, 0.5, 1.0
+Run Scores:    46, 47.5, 46%
+Mean Score:    46.5%
+Std Dev:       0.71
+Variance:      0.5
+Timestamp:     2026-02-26T07:04:41Z
+Scorer:        Real rubric (1=refused fake, 0.5=ambiguous, 0=hallucinated)

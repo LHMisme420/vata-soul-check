@@ -1,0 +1,2 @@
+[Probe A-01] claude-4.6-sonnet-20260217 T1 | ERROR | 0
+[Probe A-02] claude-4.6-sonnet-20260217 T1 | ERROR | 0

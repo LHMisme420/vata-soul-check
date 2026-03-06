@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VATA — Forensic Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060810;
+    --surface: #0b0f1a;
+    --surface2: #111827;
+    --border: #1e2d45;
+    --accent: #00f5c4;
+    --accent2: #0066ff;
+    --invalid: #ff3c6e;
+    --text: #e2eaf5;
+    --muted: #4a5f7a;
+    --valid: #00f5c4;
+    --pending: #f5a623;
+    --mono: 'Share Tech Mono', monospace;
+    --display: 'Bebas Neue', sans-serif;
+    --body: 'DM Sans', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--body); min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,245,196,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,196,0.025) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+  .orb { position:fixed; border-radius:50%; filter:blur(120px); pointer-events:none; z-index:0; }
+  .orb-1 { width:700px; height:700px; background:rgba(0,102,255,0.07); top:-300px; left:-200px; }
+  .orb-2 { width:500px; height:500px; background:rgba(0,245,196,0.05); bottom:-200px; right:-100px; }
+  .container { position:relative; z-index:1; max-width:1440px; margin:0 auto; padding:0 28px; }
+
+  /* HEADER */
+  header { border-bottom:1px solid var(--border); padding:18px 0; position:sticky; top:0; background:rgba(6,8,16,0.94); backdrop-filter:blur(24px); z-index:100; }
+  .header-inner { display:flex; align-items:center; justify-content:space-between; }
+  .logo { display:flex; align-items:center; gap:14px; }
+  .logo-mark { width:38px; height:38px; border:1.5px solid var(--accent); border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-size:20px; color:var(--accent); position:relative; }
+  .logo-mark::after { content:''; position:absolute; inset:0; background:rgba(0,245,196,0.06); border-radius:7px; }
+  .logo-text { font-family:var(--display); font-size:24px; letter-spacing:4px; }
+  .logo-sub { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:2px; margin-top:2px; }
+  .header-right { display:flex; align-items:center; gap:14px; }
+  .api-pill { display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10px; padding:5px 12px; border-radius:20px; border:1px solid var(--border); transition:all 0.3s; }
+  .api-pill.online { border-color:rgba(0,245,196,0.3); background:rgba(0,245,196,0.06); color:var(--accent); }
+  .api-pill.offline { border-color:rgba(255,60,110,0.3); background:rgba(255,60,110,0.06); color:var(--invalid); }
+  .dot { width:7px; height:7px; border-radius:50%; }
+  .dot-on { background:var(--accent); box-shadow:0 0 8px var(--accent); animation:blink 2s ease infinite; }
+  .dot-off { background:var(--invalid); }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+  .chain-tag { font-family:var(--mono); font-size:10px; color:var(--accent2); background:rgba(0,102,255,0.1); border:1px solid rgba(0,102,255,0.25); padding:5px 12px; border-radius:4px; }
+
+  main { padding:36px 0 100px; }
+
+  /* TITLE */
+  .page-title { margin-bottom:36px; animation:fadeUp 0.5s ease both; }
+  .page-title h1 { font-family:var(--display); font-size:clamp(44px,6vw,80px); letter-spacing:5px; line-height:0.95; background:linear-gradient(135deg,var(--text) 30%,var(--accent) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .page-title p { font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:3px; margin-top:10px; text-transform:uppercase; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
+
+  /* STATS */
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; animation:fadeUp 0.5s 0.1s ease both; }
+  @media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+  .stat { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 22px; position:relative; overflow:hidden; cursor:default; transition:border-color 0.2s; }
+  .stat:hover { border-color:var(--c,var(--accent)); }
+  .stat::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--c,var(--accent)); }
+  .stat-label { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+  .stat-num { font-family:var(--display); font-size:46px; line-height:1; color:var(--c,var(--accent)); transition:color 0.3s; }
+  .stat-sub { font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:5px; }
+
+  /* GRID */
+  .grid { display:grid; grid-template-columns:1fr 360px; gap:20px; animation:fadeUp 0.5s 0.15s ease both; }
+  @media(max-width:1100px){.grid{grid-template-columns:1fr}}
+
+  /* PANEL */
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .panel + .panel { margin-top:20px; }
+  .ph { display:flex; align-items:center; justify-content:space-between; padding:14px 22px; border-bottom:1px solid var(--border); }
+  .ph-title { font-family:var(--mono); font-size:10px; letter-spacing:2px; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+  .ph-title::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+  .ph-right { display:flex; align-items:center; gap:8px; }
+  .badge { font-family:var(--mono); font-size:9px; background:rgba(0,245,196,0.08); border:1px solid rgba(0,245,196,0.2); color:var(--accent); padding:2px 8px; border-radius:4px; }
+  .icon-btn { font-family:var(--mono); font-size:9px; color:var(--muted); background:none; border:1px solid var(--border); padding:4px 10px; border-radius:4px; cursor:pointer; transition:all 0.15s; letter-spacing:1px; }
+  .icon-btn:hover { color:var(--accent); border-color:var(--accent); }
+
+  /* PROOF TABLE */
+  .tbl-head { display:grid; grid-template-columns:44px 1fr 130px 90px 90px; gap:14px; align-items:center; padding:9px 22px; background:rgba(0,0,0,0.25); font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; }
+  .tbl-row { display:grid; grid-template-columns:44px 1fr 130px 90px 90px; gap:14px; align-items:center; padding:13px 22px; border-bottom:1px solid rgba(30,45,69,0.4); transition:background 0.12s; cursor:pointer; }
+  .tbl-row:hover { background:rgba(0,245,196,0.025); }
+  .tbl-row:last-child { border-bottom:none; }
+  .cell-mono { font-family:var(--mono); font-size:11px; }
+  .cell-muted { color:var(--muted); }
+  .tx-link { font-family:var(--mono); font-size:10px; color:var(--accent2); text-decoration:none; }
+  .tx-link:hover { color:var(--accent); }
+  .status-badge { display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:3px 7px; border-radius:3px; }
+  .s-anchored { background:rgba(0,245,196,0.08); border:1px solid rgba(0,245,196,0.2); color:var(--valid); }
+  .s-submitted { background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.2); color:var(--pending); }
+  .s-invalid { background:rgba(255,60,110,0.08); border:1px solid rgba(255,60,110,0.2); color:var(--invalid); }
+  .empty { padding:36px 22px; text-align:center; font-family:var(--mono); font-size:10px; color:var(--muted); }
+
+  /* FORM */
+  .form-body { padding:18px 22px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field.full { grid-column:1/-1; }
+  .field label { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; }
+  .field input, .field textarea, .field select { background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:9px 13px; font-family:var(--mono); font-size:11px; color:var(--text); outline:none; transition:border-color 0.15s; width:100%; resize:vertical; }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color:var(--accent); }
+  .field input::placeholder, .field textarea::placeholder { color:var(--muted); }
+  .form-foot { padding:14px 22px; border-top:1px solid var(--border); display:flex; gap:10px; align-items:center; }
+  .btn { font-family:var(--mono); font-size:10px; letter-spacing:1.5px; text-transform:uppercase; padding:9px 18px; border-radius:5px; border:none; cursor:pointer; transition:all 0.15s; }
+  .btn-primary { background:var(--accent); color:var(--bg); font-weight:700; }
+  .btn-primary:hover { background:#00ddb0; transform:translateY(-1px); box-shadow:0 4px 20px rgba(0,245,196,0.25); }
+  .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+  .guardian-result { margin-left:auto; font-family:var(--mono); font-size:10px; padding:5px 12px; border-radius:4px; }
+  .g-pass { background:rgba(0,245,196,0.1); border:1px solid rgba(0,245,196,0.2); color:var(--accent); }
+  .g-block { background:rgba(255,60,110,0.1); border:1px solid rgba(255,60,110,0.2); color:var(--invalid); }
+
+  /* METRICS */
+  .metrics-body { padding:16px 22px; display:flex; flex-direction:column; gap:14px; }
+  .m-row { display:flex; flex-direction:column; gap:5px; }
+  .m-top { display:flex; justify-content:space-between; align-items:center; }
+  .m-label { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; }
+  .m-val { font-family:var(--mono); font-size:11px; }
+  .m-bar-bg { height:2px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .m-bar { height:100%; background:linear-gradient(90deg,var(--accent2),var(--accent)); border-radius:2px; transition:width 0.8s ease; }
+  .divider { height:1px; background:var(--border); margin:4px 0; }
+  .m-kv { display:flex; justify-content:space-between; }
+  .m-kv-label { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+  .m-kv-val { font-family:var(--mono); font-size:10px; color:var(--accent); }
+
+  /* ANCHORS */
+  .anchors-body { padding:10px 22px; }
+  .anchor-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid rgba(30,45,69,0.4); }
+  .anchor-row:last-child { border-bottom:none; }
+  .anchor-info { display:flex; flex-direction:column; gap:3px; }
+  .anchor-name { font-family:var(--mono); font-size:10px; }
+  .anchor-addr { font-family:var(--mono); font-size:9px; color:var(--muted); }
+  .etherscan-btn { font-family:var(--mono); font-size:9px; color:var(--accent2); background:rgba(0,102,255,0.08); border:1px solid rgba(0,102,255,0.2); padding:4px 9px; border-radius:3px; text-decoration:none; transition:all 0.15s; }
+  .etherscan-btn:hover { background:rgba(0,102,255,0.16); color:var(--accent); }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:22px; right:22px; font-family:var(--mono); font-size:10px; padding:11px 18px; border-radius:7px; z-index:500; animation:tin 0.2s ease; pointer-events:none; }
+  .toast-ok { background:rgba(0,245,196,0.12); border:1px solid rgba(0,245,196,0.3); color:var(--accent); }
+  .toast-err { background:rgba(255,60,110,0.12); border:1px solid rgba(255,60,110,0.3); color:var(--invalid); }
+  @keyframes tin { from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)} }
+
+  /* AUTO-REFRESH indicator */
+  .refresh-ring { width:10px; height:10px; border:1.5px solid var(--muted); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite; display:none; }
+  .refresh-ring.active { display:block; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-mark">V</div>
+        <div>
+          <div class="logo-text">VATA</div>
+          <div class="logo-sub">Verification of Authentic Thought Architecture</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="refresh-ring" id="ring"></div>
+        <div class="api-pill offline" id="api-pill">
+          <div class="dot dot-off" id="api-dot"></div>
+          <span id="api-label">CONNECTING</span>
+        </div>
+        <div class="chain-tag">SEPOLIA</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="page-title">
+      <h1>FORENSIC<br>DASHBOARD</h1>
+      <p>RU∞X Sovereign Architecture &nbsp;//&nbsp; ZK Proof Registry &nbsp;//&nbsp; On-Chain Anchored</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat" style="--c:var(--accent)">
+        <div class="stat-label">Total Proofs</div>
+        <div class="stat-num" id="s-total">—</div>
+        <div class="stat-sub">in registry</div>
+      </div>
+      <div class="stat" style="--c:var(--valid)">
+        <div class="stat-label">Anchored</div>
+        <div class="stat-num" id="s-anchored">—</div>
+        <div class="stat-sub">on-chain</div>
+      </div>
+      <div class="stat" style="--c:#0066ff">
+        <div class="stat-label">Avg Gas</div>
+        <div class="stat-num" id="s-gas">—</div>
+        <div class="stat-sub">per proof</div>
+      </div>
+      <div class="stat" style="--c:var(--pending)">
+        <div class="stat-label">Pending</div>
+        <div class="stat-num" id="s-pending">—</div>
+        <div class="stat-sub">awaiting anchor</div>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- LEFT -->
+      <div>
+        <div class="panel">
+          <div class="ph">
+            <div class="ph-title">Proof Registry</div>
+            <div class="ph-right">
+              <div class="badge" id="proof-count-badge">— PROOFS</div>
+              <button class="icon-btn" onclick="loadAll()">REFRESH</button>
+            </div>
+          </div>
+          <div class="tbl-head">
+            <div>#</div><div>Hash</div><div>TX</div><div>Gas</div><div>Status</div>
+          </div>
+          <div id="proof-rows"><div class="empty">Loading from API...</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="ph">
+            <div class="ph-title">Submit Proof</div>
+            <div class="badge">GROTH16 + GUARDIAN</div>
+          </div>
+          <div class="form-body">
+            <div class="field full">
+              <label>Public Signals (comma separated)</label>
+              <input id="f-signals" placeholder="1000000000000000000,1000000000" value="1000000000000000000,1000000000">
+            </div>
+            <div class="field full">
+              <label>Proof JSON — paste proof.json contents</label>
+              <textarea id="f-proof" rows="5" placeholder='{"pi_a":[...],"pi_b":[[...],[...]],"pi_c":[...]}'></textarea>
+            </div>
+            <div class="field">
+              <label>Network</label>
+              <select id="f-network">
+                <option value="sepolia">Sepolia Testnet</option>
+                <option value="mainnet">Ethereum Mainnet</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Verifier Address</label>
+              <input id="f-verifier" value="0x5FbDB2315678afecb367f032d93F642f64180aa3">
+            </div>
+          </div>
+          <div class="form-foot">
+            <button class="btn btn-primary" onclick="submitProof()">SUBMIT TO API</button>
+            <button class="btn btn-ghost" onclick="loadAll()">REFRESH</button>
+            <div id="guardian-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div>
+        <div class="panel">
+          <div class="ph"><div class="ph-title">ZK Metrics</div></div>
+          <div class="metrics-body" id="metrics-body">
+            <div class="empty">Loading...</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="ph"><div class="ph-title">On-Chain Anchors</div></div>
+          <div class="anchors-body">
+            <div class="anchor-row">
+              <div class="anchor-info">
+                <div class="anchor-name">Groth16Verifier</div>
+                <div class="anchor-addr">0x5FbDB231...aa3 — Sepolia</div>
+              </div>
+              <a class="etherscan-btn" href="https://sepolia.etherscan.io/address/0x5FbDB2315678afecb367f032d93F642f64180aa3" target="_blank">ETHERSCAN ↗</a>
+            </div>
+            <div class="anchor-row">
+              <div class="anchor-info">
+                <div class="anchor-name">VATABatchVerifier</div>
+                <div class="anchor-addr">0xe7f172...0512 — Sepolia</div>
+              </div>
+              <a class="etherscan-btn" href="https://sepolia.etherscan.io/address/0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512" target="_blank">ETHERSCAN ↗</a>
+            </div>
+            <div class="anchor-row">
+              <div class="anchor-info">
+                <div class="anchor-name">AuditTrail Circuit</div>
+                <div class="anchor-addr">8-event Poseidon chain — Groth16</div>
+              </div>
+              <span class="etherscan-btn" style="cursor:default;color:var(--accent)">VERIFIED ✓</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="ph"><div class="ph-title">Guardian PII Filter</div></div>
+          <div class="metrics-body">
+            <div class="m-row">
+              <div class="m-top"><div class="m-label">Status</div><div class="m-val" style="color:var(--accent)">ACTIVE</div></div>
+            </div>
+            <div class="divider"></div>
+            <div class="m-kv"><div class="m-kv-label">SSN</div><div class="m-kv-val">BLOCKED</div></div>
+            <div class="m-kv"><div class="m-kv-label">Email</div><div class="m-kv-val">BLOCKED</div></div>
+            <div class="m-kv"><div class="m-kv-label">Phone</div><div class="m-kv-val">BLOCKED</div></div>
+            <div class="m-kv"><div class="m-kv-label">Credit Card</div><div class="m-kv-val">BLOCKED</div></div>
+            <div class="m-kv"><div class="m-kv-label">Passport</div><div class="m-kv-val">BLOCKED</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+const API = 'http://127.0.0.1:8000';
+
+async function checkApi() {
+  try {
+    const r = await fetch(`${API}/`, { signal: AbortSignal.timeout(3000) });
+    const d = await r.json();
+    document.getElementById('api-pill').className = 'api-pill online';
+    document.getElementById('api-dot').className = 'dot dot-on';
+    document.getElementById('api-label').textContent = `ONLINE — v${d.version}`;
+    return true;
+  } catch {
+    document.getElementById('api-pill').className = 'api-pill offline';
+    document.getElementById('api-dot').className = 'dot dot-off';
+    document.getElementById('api-label').textContent = 'OFFLINE';
+    return false;
+  }
+}
+
+async function loadMetrics() {
+  try {
+    const r = await fetch(`${API}/metrics/`);
+    const d = await r.json();
+    document.getElementById('s-total').textContent = d.total_proofs;
+    document.getElementById('s-gas').textContent = d.avg_gas ? Math.round(d.avg_gas / 1000) + 'K' : '—';
+    document.getElementById('s-pending').textContent = d.pending_proofs;
+
+    const rate = d.success_rate || 0;
+    document.getElementById('metrics-body').innerHTML = `
+      <div class="m-row">
+        <div class="m-top"><div class="m-label">Total Proofs</div><div class="m-val" style="color:var(--accent)">${d.total_proofs}</div></div>
+        <div class="m-bar-bg"><div class="m-bar" style="width:100%"></div></div>
+      </div>
+      <div class="m-row">
+        <div class="m-top"><div class="m-label">Success Rate</div><div class="m-val" style="color:var(--valid)">${rate}%</div></div>
+        <div class="m-bar-bg"><div class="m-bar" style="width:${rate}%"></div></div>
+      </div>
+      <div class="m-row">
+        <div class="m-top"><div class="m-label">Avg Gas</div><div class="m-val">${d.avg_gas ? d.avg_gas.toLocaleString() : '—'}</div></div>
+        <div class="m-bar-bg"><div class="m-bar" style="width:${Math.min((d.avg_gas||0)/200000*100,100)}%"></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="m-kv"><div class="m-kv-label">Protocol</div><div class="m-kv-val">${d.protocol}</div></div>
+      <div class="m-kv" style="margin-top:8px"><div class="m-kv-label">Curve</div><div class="m-kv-val">${d.curve}</div></div>
+      <div class="m-kv" style="margin-top:8px"><div class="m-kv-label">Circuit</div><div class="m-kv-val">${d.circuit}</div></div>
+      <div class="m-kv" style="margin-top:8px"><div class="m-kv-label">Batches</div><div class="m-kv-val">${d.total_batches}</div></div>
+    `;
+  } catch {
+    document.getElementById('metrics-body').innerHTML = '<div class="empty">API offline</div>';
+  }
+}
+
+async function loadProofs() {
+  try {
+    const r = await fetch(`${API}/proofs/`);
+    const d = await r.json();
+    const proofs = (d.proofs || []).slice().reverse();
+    const anchored = proofs.filter(p => p.status === 'anchored').length;
+
+    document.getElementById('s-anchored').textContent = anchored;
+    document.getElementById('proof-count-badge').textContent = `${proofs.length} PROOF${proofs.length !== 1 ? 'S' : ''}`;
+
+    if (!proofs.length) {
+      document.getElementById('proof-rows').innerHTML = '<div class="empty">No proofs yet — submit one below</div>';
+      return;
+    }
+
+    document.getElementById('proof-rows').innerHTML = proofs.map(p => {
+      const statusClass = p.status === 'anchored' ? 's-anchored' : p.status === 'submitted' ? 's-submitted' : 's-invalid';
+      const statusLabel = p.status === 'anchored' ? '✓ ANCHORED' : p.status === 'submitted' ? '⟳ PENDING' : '✗ ' + p.status.toUpperCase();
+      const txCell = p.tx_hash
+        ? `<a class="tx-link" href="https://sepolia.etherscan.io/tx/${p.tx_hash}" target="_blank">${p.tx_hash.slice(0,8)}... ↗</a>`
+        : `<span class="cell-mono cell-muted">—</span>`;
+      return `
+        <div class="tbl-row">
+          <div class="cell-mono cell-muted">#${String(p.id).padStart(3,'0')}</div>
+          <div class="cell-mono">${p.hash.slice(0,10)}<span style="color:var(--muted)">...${p.hash.slice(-6)}</span></div>
+          <div>${txCell}</div>
+          <div class="cell-mono cell-muted">${p.gas_used ? p.gas_used.toLocaleString() : '—'}</div>
+          <div><span class="status-badge ${statusClass}">${statusLabel}</span></div>
+        </div>`;
+    }).join('');
+  } catch {
+    document.getElementById('proof-rows').innerHTML = '<div class="empty">Could not load proofs</div>';
+  }
+}
+
+async function loadAll() {
+  document.getElementById('ring').classList.add('active');
+  await checkApi();
+  await Promise.all([loadMetrics(), loadProofs()]);
+  document.getElementById('ring').classList.remove('active');
+}
+
+async function submitProof() {
+  const signalsRaw = document.getElementById('f-signals').value.trim();
+  const proofRaw = document.getElementById('f-proof').value.trim();
+  const network = document.getElementById('f-network').value;
+  const verifier = document.getElementById('f-verifier').value.trim();
+  const grEl = document.getElementById('guardian-result');
+
+  if (!proofRaw) { toast('Paste proof.json contents first', 'err'); return; }
+
+  let proof;
+  try { proof = JSON.parse(proofRaw); }
+  catch { toast('Invalid proof JSON', 'err'); return; }
+
+  const pub_signals = signalsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+  try {
+    const r = await fetch(`${API}/proofs/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pi_a: proof.pi_a, pi_b: proof.pi_b, pi_c: proof.pi_c, pub_signals, network, verifier_address: verifier })
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      const findings = d.detail?.findings?.join(', ') || 'PII detected';
+      grEl.className = 'guardian-result g-block';
+      grEl.textContent = `GUARDIAN: ${findings}`;
+      toast(`Blocked — ${findings}`, 'err');
+    } else {
+      grEl.className = 'guardian-result g-pass';
+      grEl.textContent = 'GUARDIAN: PASS';
+      toast(`Proof #${d.proof.id} submitted`, 'ok');
+      await loadAll();
+    }
+  } catch {
+    toast('API connection failed', 'err');
+  }
+}
+
+function toast(msg, type) {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+loadAll();
+setInterval(loadAll, 15000);
+</script>
+</body>
+</html>

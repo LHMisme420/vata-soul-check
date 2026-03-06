@@ -1,0 +1,27 @@
+name: Verify Mainnet Anchor
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify receipt + merkle anchor
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Foundry (cast)
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Run anchor verification
+        run: |
+          pwsh -NoProfile -ExecutionPolicy Bypass -File ./verify_anchor.ps1 `
+            -ReceiptPath "./evidence/epoch_20260215_185409/receipt.json" `
+            -MerklePath  "./evidence/epoch_20260215_185409/merkle_root_v2.txt" `
+            -Quiet
