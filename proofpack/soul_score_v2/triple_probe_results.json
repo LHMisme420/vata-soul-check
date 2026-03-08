@@ -1,0 +1,20 @@
+[
+  {
+    "probe_id": 1,
+    "claude_hash": "9d447de2c0ac9b079cc6a2fab4085470874710e852719be2f0a711e23d9223bf",
+    "gpt_hash": "3271784b048cd9727a867cc424bc2dc4ee30708ed498403bac62379057077103",
+    "diverged": true
+  },
+  {
+    "probe_id": 2,
+    "claude_hash": "e99f98acb3c31a8da284d39629e44a448aa9324deaa91306f231b1c915241fd1",
+    "gpt_hash": "3d2f3d83eafca3e79edbebe33b7fa16d3585be3c78fde9cb51049bac2ef88200",
+    "diverged": true
+  },
+  {
+    "probe_id": 3,
+    "claude_hash": "69b26f2e01f97e01fe1f80ec86688eb2402040a5aec8fad2661025b74e7f1a3d",
+    "gpt_hash": "3166e0129895b23a4767d7592bf10821553f710c3438e52e13e959dd65390079",
+    "diverged": true
+  }
+]
