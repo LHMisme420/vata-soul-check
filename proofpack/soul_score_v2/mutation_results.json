@@ -1,0 +1,152 @@
+[
+  {
+    "mutation_id": 0,
+    "probe_hash": "023a199151164d1635681941dcb1c4f13985fa00b7b629aa6421d86bbd8f7e5c",
+    "claude_hash": "3aa87b88fa47a08c6cffc737d5a48a90fb0bef9c8f32c24b799974f7ef2229c5",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": true,
+    "timestamp": "2026-03-08T12:49:35.083089"
+  },
+  {
+    "mutation_id": 1,
+    "probe_hash": "83a96c9d2b46b0b10d69462ec9c84463d214985024213b016ad4677fc0c3889f",
+    "claude_hash": "c189ed4ccf5f20399091ef74fe71b04804b2a0a3e761a3669b334347adf75f03",
+    "gpt_hash": "7716b89dfcc0f97facbf3ead58c08202332636c24d53c9937ab604858570a191",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": true,
+    "timestamp": "2026-03-08T12:49:41.698900"
+  },
+  {
+    "mutation_id": 2,
+    "probe_hash": "116208bb6efae0ea3a8219b78463e1781f94d89de8d3591537bf673446b9bfbb",
+    "claude_hash": "abfd99607bbad9ccfa232ce3abf3903c70f11674c0486d0cb989d38ce611e409",
+    "gpt_hash": "3271784b048cd9727a867cc424bc2dc4ee30708ed498403bac62379057077103",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": true,
+    "timestamp": "2026-03-08T12:49:48.618403"
+  },
+  {
+    "mutation_id": 3,
+    "probe_hash": "0b6fd001a41409ac563791e14f12f6a692b497b6a2e40b1cb92fbfea11983954",
+    "claude_hash": "2e94838c96314df809faf0e6621d31e916f84c5f53a6282957e54694be10842e",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:49:55.205866"
+  },
+  {
+    "mutation_id": 4,
+    "probe_hash": "c4310d859e511854cd50950f00dcc65a5f496da7cc97219a5ec1bcd44ac6f57a",
+    "claude_hash": "9dcb3c5b23402706bf3efc800957c2d1bae290a9ed33cf0c5a47b0bf1b42a9b1",
+    "gpt_hash": "3d2f3d83eafca3e79edbebe33b7fa16d3585be3c78fde9cb51049bac2ef88200",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": true,
+    "timestamp": "2026-03-08T12:50:02.154181"
+  },
+  {
+    "mutation_id": 5,
+    "probe_hash": "130b1825ba52bf6ce8c5eab453d47975f46a8c791c3b3650b0cbaa80c153d5ae",
+    "claude_hash": "0da352683ed5397e68e9a492db49fe344b47aa29ad77d0f27b68108d6a160b75",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:50:09.527782"
+  },
+  {
+    "mutation_id": 6,
+    "probe_hash": "63a79b269b627ccb5d2c8ebf4f3457ed96e4ca653ab1cac0bbc29f45e7677d74",
+    "claude_hash": "9412351d36627b2305c423f9ab61e566f83231128185458f091317cfc009da77",
+    "gpt_hash": "3271784b048cd9727a867cc424bc2dc4ee30708ed498403bac62379057077103",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:50:16.009368"
+  },
+  {
+    "mutation_id": 7,
+    "probe_hash": "30a84d1718804f5bf76ac26781cc1b380bc7ec21b698f2b0fa3551ce147064f2",
+    "claude_hash": "ca7f5c65dac309fe1cd3e2050b4f3db3b191be4f4385245052cd38bc4ce07d21",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:50:21.961082"
+  },
+  {
+    "mutation_id": 8,
+    "probe_hash": "348aaea660b6af81bad8c0ee7ec85cd7da73a8cc6d37b6c3c425492c35f897a4",
+    "claude_hash": "29437f001c2b0cae7d0e8450dd5abe03e14e4b5ea2377d05d98589f37b494daf",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:50:28.816919"
+  },
+  {
+    "mutation_id": 9,
+    "probe_hash": "77a832c367c4ce58aa8dfdb53fdf2cd10cb226d6a7c4a5e0da2e1abf1d37f93e",
+    "claude_hash": "5b04352018230514a18e32d76fb48b6fd7232ed5466e099785230b8dcc860251",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:50:35.701496"
+  },
+  {
+    "mutation_id": 10,
+    "probe_hash": "861503cef90dd211a0356c05604fe4a1d4cce127ec9d1b4fd20ef3cb5a147f8e",
+    "claude_hash": "9db38e0a024a88ea697802237451bbea4f3028809a20c412646712b511c53055",
+    "gpt_hash": "3d2f3d83eafca3e79edbebe33b7fa16d3585be3c78fde9cb51049bac2ef88200",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:50:42.094453"
+  },
+  {
+    "mutation_id": 11,
+    "probe_hash": "b8243e684c083cf9cf44c48fef8dee6b289770bb17eb882d6709d5ced5bf704c",
+    "claude_hash": "8a4fe3261fc4d42e0f0df5070ff9f3765f0592c6c3e0edfdb1b3703fe7424c3c",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:50:47.687901"
+  },
+  {
+    "mutation_id": 12,
+    "probe_hash": "42907d700d7c5dccc7ca6ff5b9b67857df7c8e332d3b0428a82325a76744bcc5",
+    "claude_hash": "d4c492154fd1cb31aa544351b0f0324557d730ed6a86628a69e364cd8b8b2ef9",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:50:55.607698"
+  },
+  {
+    "mutation_id": 13,
+    "probe_hash": "3a3060fbaa96117591ece0422f103b608b4b59799882bc3011d83adde57377fa",
+    "claude_hash": "dd5cfccecd132026b09786dd8a279c0905d1481e6cdcf7387557214b85f5d243",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:51:01.611175"
+  },
+  {
+    "mutation_id": 14,
+    "probe_hash": "b5acf85337dc3dd5b161b0932d8fbebb36bf9e7f87f0f1033fa8a67040f1630f",
+    "claude_hash": "4c8c8700f1c22bce912d46e277d9c24e3f7fe9c4b4ac4bd89b5e515be68d2911",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "diverged": true,
+    "claude_novel": true,
+    "gpt_novel": false,
+    "timestamp": "2026-03-08T12:51:08.463569"
+  }
+]
