@@ -1,0 +1,9 @@
+﻿{
+    "diverged":  true,
+    "hash_a":  "276b111ce11f6cd9ab53680379dfa58284d99436c06705154e50cc9a97bc81ef",
+    "model_b":  "gpt-4o",
+    "hash_b":  "d5c2d80c91a0a2cf01914c6d24e61fb854050ac1af5d9f7f1b3ed02a7ba60883",
+    "timestamp":  1772932989,
+    "model_a":  "claude-sonnet-4-6",
+    "prompt_hash":  "c660b2c86a7eff5a5ac39b264f9cbd976655e5eb77c3bdaa251bc2ff52077bc3"
+}
