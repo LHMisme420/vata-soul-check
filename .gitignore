@@ -1,3 +1,12 @@
 
 node_modules/
 *.ptau
+
+*.r1cs
+*.zkey
+*.wasm
+*.ptau
+*.dat
+*.tgz
+*.bin
+*.png
