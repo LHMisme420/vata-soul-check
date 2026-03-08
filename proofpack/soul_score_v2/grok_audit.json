@@ -1,0 +1,47 @@
+[
+  {
+    "probe_hash": "d80a89c8139501181f42b14e1237b334c85e36de0dcd0c4af669d9e05e2537ca",
+    "claude_hash": "1dccf673a48cb93b8331a8bd202cf69f1fae338c89c0ff79c2c6808bac107ce0",
+    "gpt_hash": "a010c35c68db75d32225771334aeed9b0c510dfa10ad70ff56604b0df9ec9ca8",
+    "grok_hash": "524e81cac1dfbc7e0cb1b96a8054813761a7310436c5c33044b57856018ebd67",
+    "claude_vs_gpt": "DIVERGED",
+    "claude_vs_grok": "DIVERGED",
+    "gpt_vs_grok": "DIVERGED"
+  },
+  {
+    "probe_hash": "ea01f930ea4dfc0b916565475dfdffb629cf3862a1df6585ff21007c0bbbd662",
+    "claude_hash": "e1646dbf7113336c7368b761d44af2fa70497c646c0e312757f595b6f1035a39",
+    "gpt_hash": "9408bbac6285c8ad4cd029aae82c7edf219fbb1e482957c8e3d4665be3e5cf76",
+    "grok_hash": "580c93bdade6c811224e2e87e8021eb3bd1f8817f5b6bf5e517a5e8086398ae2",
+    "claude_vs_gpt": "DIVERGED",
+    "claude_vs_grok": "DIVERGED",
+    "gpt_vs_grok": "DIVERGED"
+  },
+  {
+    "probe_hash": "29375b3f61c8420094148becf1e248fed10e039ca0074d988abdf8b9ff0d5ef2",
+    "claude_hash": "d86a5accc4a6142c4eacc3fff1b3b43e09adf65f250616088025fc72ac743a1b",
+    "gpt_hash": "4b4a32057cc9afeb95a65422302b9f996ee1daf331be6486047b8685fadcca7c",
+    "grok_hash": "57b0dd262c5d11d67bbd7946f1e5e9e3f972608064f2e14d08fbe6f264765a71",
+    "claude_vs_gpt": "DIVERGED",
+    "claude_vs_grok": "DIVERGED",
+    "gpt_vs_grok": "DIVERGED"
+  },
+  {
+    "probe_hash": "05ce7783f5f5e994c99fee8467807fb830f270842a4051034664f698a52e5603",
+    "claude_hash": "4e49b3211099b55622d7222a596486d03431b10235374004778cf8e40f6094f9",
+    "gpt_hash": "4fd5b00720fe687de2db6eb68c24e8b34964d4f8766e36702f32808cd7c176a4",
+    "grok_hash": "4854c6d0dfd2ed4b2d463a653ccfc9ef603852c8d080bacfea0a2d5776a05e22",
+    "claude_vs_gpt": "DIVERGED",
+    "claude_vs_grok": "DIVERGED",
+    "gpt_vs_grok": "DIVERGED"
+  },
+  {
+    "probe_hash": "20673e683685fa1351f49d271cc889bb999adb105b6b23863ab0956bfa861a7f",
+    "claude_hash": "01b9e75a47900f02206478f097324bae63f57706f0be0811ae791e6a01e574f6",
+    "gpt_hash": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+    "grok_hash": "7573a6449dab21ed357f95a721313f3473c656994497604feb2842bfdabe375b",
+    "claude_vs_gpt": "DIVERGED",
+    "claude_vs_grok": "DIVERGED",
+    "gpt_vs_grok": "DIVERGED"
+  }
+]
