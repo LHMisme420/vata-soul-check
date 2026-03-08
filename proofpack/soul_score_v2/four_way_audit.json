@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "probe_hash": "d80a89c8139501181f42b14e1237b334c85e36de0dcd0c4af669d9e05e2537ca",
+      "claude": "7e94458ef2010ac476619eccd84a73cf5dfa8ba65e1261db1ed347835666745f",
+      "gpt4o": "a010c35c68db75d32225771334aeed9b0c510dfa10ad70ff56604b0df9ec9ca8",
+      "gpt54": "ef70d767d9a796410a6d68e4ce0366572e3cb07eb164d8703d211fbed36af9ab",
+      "grok": "8d08615717ccc01180c609962950e2e7ba0dcbde22b06b40632578d39d8c4810"
+    },
+    {
+      "probe_hash": "ea01f930ea4dfc0b916565475dfdffb629cf3862a1df6585ff21007c0bbbd662",
+      "claude": "33f182cd6367bdc6ca793e1948bece235cc57b33ae554d125e989cd48034ef9e",
+      "gpt4o": "91a7d7d68647edd742d8ccdb122bbbb5a0c169a29313888dab95646d1373b925",
+      "gpt54": "405b1f75a041ba90aafab48ad4dd74b882c1105b0775ba8351eedfd8e1be9ecd",
+      "grok": "44d68e1ac103f3e0ca535d08d6958384139176f5976c6ff03fc8c430855954cc"
+    },
+    {
+      "probe_hash": "29375b3f61c8420094148becf1e248fed10e039ca0074d988abdf8b9ff0d5ef2",
+      "claude": "3b0611277be95679f4e2b52044eb3faac3e2078a1bbabbd9c86b8a761c6eef4c",
+      "gpt4o": "401a711e087e2b175158e90c32a556eeb88a20fe76c6ca3de9e48b74d349861c",
+      "gpt54": "ae2746ca23dc21f7407c383fd9db1a7c88c84af744b57c10888c0c19cb90c6cc",
+      "grok": "e40bc3cc2a12224b015e1132934d43e7e3429fe4c6c401247fbcd4f31dbb5dbb"
+    },
+    {
+      "probe_hash": "05ce7783f5f5e994c99fee8467807fb830f270842a4051034664f698a52e5603",
+      "claude": "ca7b5cb42db8abcc96b837bebf7dfaa2a34505019d9976453dc72b6afe4b3107",
+      "gpt4o": "7e0fc1128e82cfd8dc2366b36b5a6a6adab42347eb36cf212d1f354bb56cde7e",
+      "gpt54": "88d4c798229ef837b8d4208d2511f45d40198bba3b283019e72030d1090549a1",
+      "grok": "4a7b6a460a9d81c08738e640cf8d22ccc6701c2b2fef966ff462282a9e72eca7"
+    },
+    {
+      "probe_hash": "20673e683685fa1351f49d271cc889bb999adb105b6b23863ab0956bfa861a7f",
+      "claude": "29748196d563087e8d018556b145241f9aac91663291fde9f73ac20a2378f7a7",
+      "gpt4o": "e2e74117a0712d86e2cfe13971bab0e89b84a42c33fa4a32833e0add56adf400",
+      "gpt54": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "grok": "36e08c40da7cf0a9657ad01c0e4d2427b0c10fab3cba89fd5cd6b2c3366de3f8"
+    }
+  ],
+  "refusals": {
+    "claude": 2,
+    "gpt4o": 4,
+    "gpt54": 1,
+    "grok": 5
+  },
+  "timestamp": "2026-03-08T20:03:05.874896"
+}
