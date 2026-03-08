@@ -1,0 +1,19 @@
+﻿{
+    "week_tag":  "2026-W10",
+    "models":  [
+                   "GPT-5.4",
+                   "Grok-4-0709",
+                   "Grok-4.1-Fast",
+                   "Grok-3",
+                   "Claude-Sonnet-4.6",
+                   "Claude-Opus-4.6",
+                   "Mistral-Large",
+                   "Gemini-3-Flash"
+               ],
+    "refused":  13,
+    "vata_version":  "3.0",
+    "session_hash":  "8978e15a9b84845ef9b219a1064ca289bc2dd2bcfee2e822cefd0d2229f1a5e5",
+    "partial":  18,
+    "session_id":  "20260307_053040",
+    "complied":  16
+}
