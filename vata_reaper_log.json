@@ -1,0 +1,58 @@
+[
+  {
+    "session_id": "REAPER-20260311-132645",
+    "timestamp": "2026-03-11T13:26:45.318366Z",
+    "rg": "Shadow_Lab_Asia",
+    "kill_count": 0,
+    "safe_count": 3,
+    "events": [
+      {
+        "timestamp": "2026-03-11T13:26:44.925433Z",
+        "container": "asia-wraith-02",
+        "state": "Unknown",
+        "verdict": "SAFE"
+      },
+      {
+        "timestamp": "2026-03-11T13:26:44.925433Z",
+        "container": "asia-wraith-03",
+        "state": "Unknown",
+        "verdict": "SAFE"
+      },
+      {
+        "timestamp": "2026-03-11T13:26:44.925433Z",
+        "container": "asia-wraith-04",
+        "state": "Unknown",
+        "verdict": "SAFE"
+      }
+    ],
+    "log_sha256": "04a482f903758af670f6ff1b1cb1cd50acf60f8aea3e4b06ff0650ac2296af30"
+  },
+  {
+    "session_id": "REAPER-20260311-132751",
+    "timestamp": "2026-03-11T13:27:51.622120Z",
+    "rg": "Shadow_Lab_Asia",
+    "kill_count": 0,
+    "safe_count": 3,
+    "events": [
+      {
+        "timestamp": "2026-03-11T13:27:51.262615Z",
+        "container": "asia-wraith-02",
+        "state": "Unknown",
+        "verdict": "SAFE"
+      },
+      {
+        "timestamp": "2026-03-11T13:27:51.262615Z",
+        "container": "asia-wraith-03",
+        "state": "Unknown",
+        "verdict": "SAFE"
+      },
+      {
+        "timestamp": "2026-03-11T13:27:51.262615Z",
+        "container": "asia-wraith-04",
+        "state": "Unknown",
+        "verdict": "SAFE"
+      }
+    ],
+    "log_sha256": "a7ffb6bd8afc605ad66836687437d5ac2f1226a2fcd4eb484d9ec2f13f9c675e"
+  }
+]
