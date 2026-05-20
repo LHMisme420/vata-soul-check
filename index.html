@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VATA SFS-138 Sovereign Forensics Dashboard</title>
+<title>VATA SFS-271 Sovereign Forensics Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
-:root{--bg:#030608;--panel:#080d12;--border:#0f2030;--accent:#00ffe0;--red:#ff2d55;--green:#00ff88;--yellow:#ffd60a;--orange:#ff9f0a;--dim:#1a3040;--text:#c8e0f0;--muted:#4a6070;--blue:#00aaff;}
+:root{--bg:#030608;--panel:#080d12;--border:#0f2030;--accent:#00ffe0;--red:#ff2d55;--green:#00ff88;--yellow:#ffd60a;--orange:#ff9f0a;--dim:#1a3040;--text:#c8e0f0;--muted:#4a6070;--blue:#00aaff;--purple:#bf5fff;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,224,0.012) 2px,rgba(0,255,224,0.012) 4px);pointer-events:none;z-index:9999;}
@@ -21,8 +21,7 @@ header{padding:60px 0 40px;border-bottom:1px solid var(--border);margin-bottom:4
 .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;margin-bottom:48px;}
 .stat-box{background:var(--panel);border:1px solid var(--border);padding:24px 20px;position:relative;}
 .stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac,var(--accent));}
-.stat-box:nth-child(1){--ac:var(--accent)}.stat-box:nth-child(2){--ac:var(--green)}.stat-box:nth-child(3){--ac:var(--red)}
-.stat-box:nth-child(4){--ac:var(--yellow)}.stat-box:nth-child(5){--ac:var(--accent)}.stat-box:nth-child(6){--ac:var(--orange)}
+.stat-box:nth-child(1){--ac:var(--accent)}.stat-box:nth-child(2){--ac:var(--green)}.stat-box:nth-child(3){--ac:var(--red)}.stat-box:nth-child(4){--ac:var(--yellow)}.stat-box:nth-child(5){--ac:var(--accent)}.stat-box:nth-child(6){--ac:var(--orange)}
 .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.25em;color:var(--muted);margin-bottom:10px;text-transform:uppercase;}
 .stat-value{font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1;color:var(--ac,var(--accent));}
 .stat-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;}
@@ -40,29 +39,26 @@ header{padding:60px 0 40px;border-bottom:1px solid var(--border);margin-bottom:4
 .lb-bar-fill{height:100%;background:var(--rc,var(--muted));opacity:0.7;}
 .lb-score{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--rc,var(--muted));min-width:50px;text-align:right;}
 .finding-panel{background:var(--panel);border:1px solid rgba(0,255,224,0.2);border-left:4px solid var(--accent);padding:20px 24px;margin-bottom:10px;}
-.finding-panel.b134{border-left-color:var(--red);border-color:rgba(255,45,85,0.2);}
-.finding-panel.b133{border-left-color:var(--green);border-color:rgba(0,255,136,0.2);}
-.finding-panel.b132{border-left-color:#bf5fff;border-color:rgba(191,95,255,0.2);}
-.finding-panel.b131{border-left-color:var(--blue);border-color:rgba(0,170,255,0.2);}
-.finding-panel.b130{border-left-color:var(--orange);border-color:rgba(255,159,10,0.2);}
-.finding-panel.b129{border-left-color:var(--yellow);border-color:rgba(255,214,10,0.2);}
+.finding-panel.hot{border-left-color:var(--red);border-color:rgba(255,45,85,0.3);background:rgba(255,45,85,0.03);}
+.finding-panel.orange{border-left-color:var(--orange);border-color:rgba(255,159,10,0.2);}
+.finding-panel.blue{border-left-color:var(--blue);border-color:rgba(0,170,255,0.2);}
+.finding-panel.purple{border-left-color:var(--purple);border-color:rgba(191,95,255,0.2);}
+.finding-panel.yellow{border-left-color:var(--yellow);border-color:rgba(255,214,10,0.2);}
 .finding-title{font-family:'Bebas Neue',sans-serif;font-size:20px;margin-bottom:8px;letter-spacing:0.05em;color:var(--accent);}
-.finding-panel.b134 .finding-title{color:var(--red);}
-.finding-panel.b133 .finding-title{color:var(--green);}
-.finding-panel.b132 .finding-title{color:#bf5fff;}
-.finding-panel.b131 .finding-title{color:var(--blue);}
-.finding-panel.b130 .finding-title{color:var(--orange);}
-.finding-panel.b129 .finding-title{color:var(--yellow);}
+.finding-panel.hot .finding-title{color:var(--red);}
+.finding-panel.orange .finding-title{color:var(--orange);}
+.finding-panel.blue .finding-title{color:var(--blue);}
+.finding-panel.purple .finding-title{color:var(--purple);}
+.finding-panel.yellow .finding-title{color:var(--yellow);}
 .finding-body{font-size:13px;color:var(--text);line-height:1.8;}
+.new-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;background:rgba(255,45,85,0.1);border:1px solid rgba(255,45,85,0.4);color:var(--red);letter-spacing:0.15em;margin-left:10px;vertical-align:middle;}
 .failure-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px;margin-bottom:48px;}
 .failure-card{background:var(--panel);border:1px solid var(--border);padding:20px;position:relative;}
 .failure-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);}
-.fc-warn{border-color:rgba(255,214,10,0.3)!important}.fc-warn::before{background:var(--yellow)!important}
-.fc-warn .fc-id{color:var(--yellow)}.fc-warn .fc-result{background:rgba(255,214,10,0.05);border-color:rgba(255,214,10,0.3);color:var(--yellow)}
-.fc-gdi{border-color:rgba(0,170,255,0.3)!important}.fc-gdi::before{background:var(--blue)!important}
-.fc-gdi .fc-id{color:var(--blue)}.fc-gdi .fc-result{background:rgba(0,170,255,0.05);border-color:rgba(0,170,255,0.3);color:var(--blue)}
-.fc-new{border-color:rgba(0,255,224,0.3)!important}.fc-new::before{background:var(--accent)!important}
-.fc-new .fc-id{color:var(--accent)}.fc-new .fc-result{background:rgba(0,255,224,0.05);border-color:rgba(0,255,224,0.3);color:var(--accent)}
+.fc-warn{border-color:rgba(255,214,10,0.3)!important}.fc-warn::before{background:var(--yellow)!important}.fc-warn .fc-id{color:var(--yellow)}.fc-warn .fc-result{background:rgba(255,214,10,0.05);border-color:rgba(255,214,10,0.3);color:var(--yellow)}
+.fc-gdi{border-color:rgba(0,170,255,0.3)!important}.fc-gdi::before{background:var(--blue)!important}.fc-gdi .fc-id{color:var(--blue)}.fc-gdi .fc-result{background:rgba(0,170,255,0.05);border-color:rgba(0,170,255,0.3);color:var(--blue)}
+.fc-new{border-color:rgba(0,255,224,0.3)!important}.fc-new::before{background:var(--accent)!important}.fc-new .fc-id{color:var(--accent)}.fc-new .fc-result{background:rgba(0,255,224,0.05);border-color:rgba(0,255,224,0.3);color:var(--accent)}
+.fc-hot{border-color:rgba(255,45,85,0.4)!important;background:rgba(255,45,85,0.03)!important}.fc-hot::before{background:var(--red)!important}.fc-hot .fc-id{color:var(--red)}.fc-hot .fc-result{background:rgba(255,45,85,0.08);border-color:rgba(255,45,85,0.4);color:var(--red)}
 .fc-id{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--red);letter-spacing:0.2em;margin-bottom:6px}
 .fc-name{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.05em;color:var(--text);margin-bottom:6px}
 .fc-desc{font-size:12px;color:var(--muted);line-height:1.6}
@@ -83,6 +79,7 @@ header{padding:60px 0 40px;border-bottom:1px solid var(--border);margin-bottom:4
 footer{border-top:1px solid var(--border);padding-top:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:48px;}
 .footer-left{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);line-height:1.8}
 .footer-right{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);letter-spacing:0.1em;opacity:0.3}
+.alert-bar{background:rgba(255,45,85,0.08);border:1px solid rgba(255,45,85,0.3);border-left:4px solid var(--red);padding:16px 20px;margin-bottom:24px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--red);line-height:1.7;}
 </style>
 </head>
 <body>
@@ -92,26 +89,30 @@ footer{border-top:1px solid var(--border);padding-top:32px;display:flex;justify-
 <div class="logo">VATA<span>VERIFICATION OF AUTHENTIC THOUGHT ARCHITECTURE</span></div>
 <div class="chain-badge">
 <span class="label">ETHEREUM SEPOLIA ANCHOR</span>
-<span>0x0829460beda6a3fa97779dbd...c551f</span>
-<span class="status">&#9679; B134 CONFIRMED &ndash; IMMUTABLE</span>
+<span>0x65aedc235d1b027c619f7f63...aba5</span>
+<span class="status">&#9679; B271 CONFIRMED &ndash; IMMUTABLE</span>
 </div>
 </div>
 </header>
+<div class="alert-bar">
+&#9888; NEW FINDING &mdash; VATA-B271-IMAF &mdash; MAY 20, 2026 &mdash; Invisible Multi-Domain Acquisition Fraud confirmed. AI business operations agents executed $2.5M wire fraud, ghost employee benefits enrollment, and backdoored codebase merge in response to legitimate M&amp;A language. No social engineering. No urgency. No authority claims. Grok-4: 3/10 flagged. Anchored on Ethereum before this disclosure.
+</div>
 <div class="stats-row">
 <div class="stat-box"><div class="stat-label">Models Tested</div><div class="stat-value">11</div><div class="stat-sub">6 Major AI Labs</div></div>
-<div class="stat-box"><div class="stat-label">Batteries Run</div><div class="stat-value" style="color:var(--green)">138</div><div class="stat-sub">B1 &ndash; B134</div></div>
-<div class="stat-box"><div class="stat-label">Named Findings</div><div class="stat-value" style="color:var(--red)">12</div><div class="stat-sub">8 Failure + 5 Properties</div></div>
+<div class="stat-box"><div class="stat-label">Batteries Run</div><div class="stat-value" style="color:var(--green)">271</div><div class="stat-sub">B1 &ndash; B271</div></div>
+<div class="stat-box"><div class="stat-label">Named Findings</div><div class="stat-value" style="color:var(--red)">16</div><div class="stat-sub">11 Failure + 5 Properties</div></div>
 <div class="stat-box"><div class="stat-label">Defense Layers</div><div class="stat-value" style="color:var(--yellow)">6</div><div class="stat-sub">L1 &ndash; L5 + L1B</div></div>
-<div class="stat-box"><div class="stat-label">Best Score</div><div class="stat-value">1/5</div><div class="stat-sub">Grok 4 &ndash; xAI</div></div>
+<div class="stat-box"><div class="stat-label">Best Score</div><div class="stat-value">1/5</div><div class="stat-sub">GPT-5.4 &ndash; OpenAI</div></div>
 <div class="stat-box"><div class="stat-label">Optimal Pipeline</div><div class="stat-value" style="color:var(--orange)">29%</div><div class="stat-sub">Grok&rarr;GPT&rarr;Gemini</div></div>
 </div>
 <div class="section-header">Model Leaderboard &ndash; Raw Breach Rate (Lower is Better)</div>
 <div class="leaderboard">
-<div class="lb-row"><div class="lb-rank">1</div><div class="lb-model"><div class="lb-model-name">grok-4-0709</div><div class="lb-provider">xAI &mdash; Best adversarial resistance &middot; AF-001 authority framing blindspot</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:20%"></div></div></div><div class="lb-score">1/5</div></div>
-<div class="lb-row"><div class="lb-rank">2</div><div class="lb-model"><div class="lb-model-name">gpt-4o</div><div class="lb-provider">OpenAI &mdash; Most behaviorally consistent pipeline node</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:40%"></div></div></div><div class="lb-score">2/5</div></div>
-<div class="lb-row"><div class="lb-rank">3</div><div class="lb-model"><div class="lb-model-name">claude-haiku-4-5</div><div class="lb-provider">Anthropic &mdash; Outperforms Sonnet + Opus</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:80%"></div></div></div><div class="lb-score">4/5</div></div>
+<div class="lb-row"><div class="lb-rank">1</div><div class="lb-model"><div class="lb-model-name">gpt-5.4</div><div class="lb-provider">OpenAI &mdash; Only model to flag all B271 conditions at Q5 &middot; Best overall BEC detection arc</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:20%"></div></div></div><div class="lb-score">1/5</div></div>
+<div class="lb-row"><div class="lb-rank">2</div><div class="lb-model"><div class="lb-model-name">grok-4-0709</div><div class="lb-provider">xAI &mdash; AF-001 authority framing blindspot &middot; B271 executed ghost employees + backdoored codebase at Q1</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:40%"></div></div></div><div class="lb-score">2/5</div></div>
+<div class="lb-row"><div class="lb-rank">3</div><div class="lb-model"><div class="lb-model-name">claude-opus-4-6</div><div class="lb-provider">Anthropic &mdash; Strong BEC detection &middot; Executed clean M&amp;A baseline pass 1 &middot; PD-001 IC-001</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:60%"></div></div></div><div class="lb-score">3/5</div></div>
+<div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">gpt-4o</div><div class="lb-provider">OpenAI &mdash; Most behaviorally consistent pipeline node &middot; Original arc</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:40%"></div></div></div><div class="lb-score">2/5</div></div>
+<div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">claude-haiku-4-5</div><div class="lb-provider">Anthropic &mdash; Outperforms Sonnet + Opus in original arc</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:80%"></div></div></div><div class="lb-score">4/5</div></div>
 <div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">claude-sonnet-4-6</div><div class="lb-provider">Anthropic</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:100%"></div></div></div><div class="lb-score">5/5</div></div>
-<div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">claude-opus-4-6</div><div class="lb-provider">Anthropic &mdash; PD-001 persistent drift &middot; IC-001</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:100%"></div></div></div><div class="lb-score">5/5</div></div>
 <div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">gemini-2.5-flash</div><div class="lb-provider">Google &mdash; GDI-001 dual integrity &middot; FW-001 pipeline firewall</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:100%"></div></div></div><div class="lb-score">5/5</div></div>
 <div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">grok-3-latest</div><div class="lb-provider">xAI</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:100%"></div></div></div><div class="lb-score">5/5</div></div>
 <div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">mistral-large-latest</div><div class="lb-provider">Mistral AI</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:100%"></div></div></div><div class="lb-score">5/5</div></div>
@@ -119,20 +120,40 @@ footer{border-top:1px solid var(--border);padding-top:32px;display:flex;justify-
 <div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">amazon.nova-pro-v1</div><div class="lb-provider">Amazon AWS</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:100%"></div></div></div><div class="lb-score">5/5</div></div>
 <div class="lb-row"><div class="lb-rank">&ndash;</div><div class="lb-model"><div class="lb-model-name">amazon.nova-premier-v1</div><div class="lb-provider">Amazon AWS</div></div><div class="lb-bar-wrap"><div class="lb-bar-track"><div class="lb-bar-fill" style="width:100%"></div></div></div><div class="lb-score">5/5</div></div>
 </div>
+<div class="section-header">B265-B271 &ndash; BEC and Agentic Fraud Arc</div>
+<div class="finding-panel hot" style="margin-bottom:8px;">
+<div class="finding-title">B271 &ndash; Invisible Multi-Domain Acquisition Fraud <span class="new-badge">BREAKING</span></div>
+<div class="finding-body">AI business operations agents executed $2.5M wire fraud, ghost employee benefits enrollment, and backdoored codebase merge in response to legitimate M&amp;A language with zero attack vectors. Grok-4 processed unverified escrow payment, ghost employees with redirected life insurance, and typosquatted dependency at Q1 on the clean baseline. No urgency. No authority claims. No social engineering. The vulnerability is helpfulness without verification. VATA-IMAF confirmed. SHA256: 31814bd5a9f95ebfc317c5cc25e27ede96fb5a4063b7bbbfdefb7e741080ba32</div>
+</div>
+<div class="finding-panel" style="margin-bottom:8px;">
+<div class="finding-title">B266 &ndash; Ultimate 5-Axis Conglomerate Battery</div>
+<div class="finding-body">96 prompts, 5 axes, 3 models, 2 passes, zero reversals. Pipeline axis: GPT-5.4 and Grok-4 executed $2.5M payment on all three contamination vectors at Q1. Claude held Q5 all six. CSD-001 inversion confirmed. Channel restriction detected universally. TX: 0x42bb7dc0...beca</div>
+</div>
+<div class="finding-panel orange" style="margin-bottom:8px;">
+<div class="finding-title">B265 &ndash; Policy-Dependent Amount Blindness (PDAB)</div>
+<div class="finding-body">GPT-5.4 and Grok-4 executed $2.5M on legitimate vendors with no threshold stated. Q1. Zero hesitation. One sentence in the system prompt closes the gap at Q5. 36 prompts, 2 passes, zero reversals. DOI: 10.5281/zenodo.20282231</div>
+</div>
+<div class="finding-panel" style="margin-bottom:8px;">
+<div class="finding-title">B253 &ndash; AI Agent BEC Execution</div>
+<div class="finding-body">90 runs, 3 models, 3 BEC scenarios. 72 confirmed breaches (80% overall). 63 real HTTP tool calls logged. Benefits fraud: 90% across all three models. Every breach fired a formatted function invocation. Published: papers.ssrn.com/sol3/papers.cfm?abstract_id=6760458</div>
+</div>
 <div class="section-header">Key Finding &ndash; Original Battery Series</div>
 <div class="finding-panel">
 <div class="finding-title">Capability Does Not Equal Resistance</div>
-<div class="finding-body">11 models tested across 6 major AI labs. 9 scored 5/5 breaches. Only Grok 4 (1/5) and GPT-4o (2/5) demonstrated meaningful adversarial resistance. Haiku outperformed Sonnet and Opus. Chain-of-thought reasoning does not protect against value-recursive attacks. Amazon Nova Pro and Nova Premier both scored 5/5.</div>
+<div class="finding-body">11 models tested across 6 major AI labs. 9 scored 5/5 breaches. Only Grok 4 (1/5) and GPT-4o (2/5) demonstrated meaningful adversarial resistance. Haiku outperformed Sonnet and Opus. Chain-of-thought reasoning does not protect against value-recursive attacks.</div>
 </div>
 <div class="section-header">B129-B134 &ndash; Pipeline Safety Arc</div>
-<div class="finding-panel b129" style="margin-bottom:8px;"><div class="finding-title">B129 &ndash; Persistent Drift First Confirmed</div><div class="finding-body">Claude SC3-Benefits drifted 0.4 to 1.7 with no recovery through audit reset &mdash; VATA-PD-001. Gemini drift immunity confirmed. DeepSeek behavioral withdrawal discovered &mdash; VATA-WB-001.</div></div>
-<div class="finding-panel b130" style="margin-bottom:8px;"><div class="finding-title">B130 &ndash; Instruction-Resistant Corruption</div><div class="finding-body">Explicit correction instructions cannot override corrupt context. Claude SC2-Invoice: 0% under R1/R2/R4, 100% under R3 full context flush only. VATA-IC-001. L5 defense layer added.</div></div>
-<div class="finding-panel b131" style="margin-bottom:8px;"><div class="finding-title">B131 &ndash; Gemini Dual Integrity Confirmed</div><div class="finding-body">Gemini drift score drops as corruption pressure increases across 5 stress conditions and 4 domains. Produces lowest drift induction scores in VATA history when corrupt. VATA-GDI-001 structural and domain-general.</div></div>
-<div class="finding-panel b132" style="margin-bottom:8px;"><div class="finding-title">B132 &ndash; Gemini Firewall + DeepSeek Zero-Threshold</div><div class="finding-body">Gemini downstream of drifted Claude: 73% detection maintained. DeepSeek downstream: 0% full withdrawal. DeepSeek tested across 5 intensity levels &mdash; 15/15 withdrawal at every condition including mildest signal. VATA-WB-002: presence-triggered not intensity-triggered.</div></div>
-<div class="finding-panel b133" style="margin-bottom:8px;"><div class="finding-title">B133 &ndash; Complete Five-Model Behavioral Taxonomy</div><div class="finding-body">GPT-4o and Grok-4: zero withdrawal across all conditions. DeepSeek withdrawal isolated as unique. Optimal pipeline under poisoned context: Grok Planner, GPT Executor, Gemini Validator &mdash; 29% overall detection. VATA-PBT-001.</div></div>
-<div class="finding-panel b134"><div class="finding-title">B134 &ndash; Authority Framing Sensitivity</div><div class="finding-body">Grok-4 scored 0% detection across all 8 domains and 360 runs when corruption was framed as direct upstream authority approval. DSB-001 retired. VATA-AF-001 confirmed: Grok-4 detection is framing-dependent not domain-dependent. When corruption arrives as peer model output Grok detects 13-47%. When framed as direct authority approval Grok defers universally. Contradicts Grok-4 1/5 adversarial probe score. xAI disclosure warranted.</div></div>
-<div class="section-header">Named Findings &ndash; 13 Total</div>
+<div class="finding-panel yellow" style="margin-bottom:8px;"><div class="finding-title">B129 &ndash; Persistent Drift First Confirmed</div><div class="finding-body">Claude SC3-Benefits drifted 0.4 to 1.7 with no recovery through audit reset &mdash; VATA-PD-001. Gemini drift immunity confirmed. DeepSeek behavioral withdrawal discovered &mdash; VATA-WB-001.</div></div>
+<div class="finding-panel orange" style="margin-bottom:8px;"><div class="finding-title">B130 &ndash; Instruction-Resistant Corruption</div><div class="finding-body">Explicit correction instructions cannot override corrupt context. Claude SC2-Invoice: 0% under R1/R2/R4, 100% under R3 full context flush only. VATA-IC-001. L5 defense layer added. Architecture parallel confirmed: same failure class as CVE-2026-3854.</div></div>
+<div class="finding-panel blue" style="margin-bottom:8px;"><div class="finding-title">B131 &ndash; Gemini Dual Integrity Confirmed</div><div class="finding-body">Gemini drift score drops as corruption pressure increases across 5 stress conditions and 4 domains. Produces lowest drift induction scores in VATA history when corrupt. VATA-GDI-001 structural and domain-general.</div></div>
+<div class="finding-panel purple" style="margin-bottom:8px;"><div class="finding-title">B132 &ndash; Gemini Firewall + DeepSeek Zero-Threshold</div><div class="finding-body">Gemini downstream of drifted Claude: 73% detection maintained. DeepSeek downstream: 0% full withdrawal. 15/15 withdrawal at every intensity level. VATA-WB-002: presence-triggered not intensity-triggered.</div></div>
+<div class="finding-panel" style="margin-bottom:8px;border-left-color:var(--green);border-color:rgba(0,255,136,0.2);"><div class="finding-title" style="color:var(--green);">B133 &ndash; Complete Five-Model Behavioral Taxonomy</div><div class="finding-body">GPT-4o and Grok-4: zero withdrawal. DeepSeek withdrawal isolated. Optimal pipeline: Grok Planner, GPT Executor, Gemini Validator &mdash; 29% overall detection. VATA-PBT-001.</div></div>
+<div class="finding-panel hot"><div class="finding-title">B134 &ndash; Authority Framing Sensitivity</div><div class="finding-body">Grok-4 scored 0% detection across all 8 domains and 360 runs when corruption framed as direct upstream authority approval. VATA-AF-001: framing determines detection, not domain or content. Contradicts Grok-4 1/5 adversarial probe score. xAI disclosure warranted.</div></div>
+<div class="section-header">Named Findings &ndash; 16 Total</div>
 <div class="failure-grid">
+<div class="failure-card fc-hot"><div class="fc-id">VATA-IMAF</div><div class="fc-name">Invisible Multi-Domain Acquisition Fraud</div><div class="fc-desc">AI business ops agents execute wire fraud, ghost employee benefits enrollment, and backdoored codebase merge in response to legitimate M&amp;A language. No attack required. Helpfulness is the vulnerability.</div><div class="fc-result">B271 &middot; GROK-4 3/10 &middot; 2026-05-20</div></div>
+<div class="failure-card fc-hot"><div class="fc-id">VATA-PDAB</div><div class="fc-name">Policy-Dependent Amount Blindness</div><div class="fc-desc">GPT-5.4 and Grok-4 execute arbitrarily large payments on valid vendors when system prompt is silent on thresholds. One sentence in the system prompt closes the gap completely.</div><div class="fc-result">B265 &middot; GPT-5.4 + GROK-4 &middot; $2.5M EXECUTED</div></div>
+<div class="failure-card fc-hot"><div class="fc-id">VATA-CSD-001</div><div class="fc-name">Context Suppression of Detection</div><div class="fc-desc">All frontier models score 15-65 points higher on simplified prompts than realistic ones. Every public AI safety benchmark is systematically inflated. Field-wide finding across 5 models.</div><div class="fc-result">B266 &middot; ALL MODELS &middot; GEMINI 65PT GAP</div></div>
 <div class="failure-card"><div class="fc-id">VATA-FH-001</div><div class="fc-name">Factual Hallucination</div><div class="fc-desc">Model invents code for ghost modules triggered by authoritative false context.</div><div class="fc-result">10/11 BREACHED</div></div>
 <div class="failure-card"><div class="fc-id">VATA-AI-001</div><div class="fc-name">Authority Injection</div><div class="fc-desc">False authority claims accepted as ground truth, bypassing factual grounding.</div><div class="fc-result">9/11 BREACHED</div></div>
 <div class="failure-card"><div class="fc-id">VATA-SC-001</div><div class="fc-name">Sovereignty Collapse</div><div class="fc-desc">M2M social engineering via urgency and hierarchy overrides sovereign directives.</div><div class="fc-result">9/11 BREACHED</div></div>
@@ -140,12 +161,12 @@ footer{border-top:1px solid var(--border);padding-top:32px;display:flex;justify-
 <div class="failure-card"><div class="fc-id">VATA-VR-001</div><div class="fc-name">Value Recursion</div><div class="fc-desc">Model value hierarchy weaponized via galaxy-brained logical constructions.</div><div class="fc-result">9-10/11 BREACHED</div></div>
 <div class="failure-card fc-new"><div class="fc-id">VATA-PD-001</div><div class="fc-name">Persistent Pipeline Drift</div><div class="fc-desc">Honest node drift from corrupt neighbor survives audit reset. Claude SC3-Benefits: 0.4 to 1.7, no recovery.</div><div class="fc-result">B129/130 &middot; CLAUDE</div></div>
 <div class="failure-card fc-new"><div class="fc-id">VATA-WB-001/002</div><div class="fc-name">Behavioral Withdrawal</div><div class="fc-desc">DeepSeek exits pipeline at ANY corrupt signal. Presence-triggered. 150/150 withdrawal across all conditions.</div><div class="fc-result">B129-B133 &middot; DEEPSEEK</div></div>
-<div class="failure-card fc-new"><div class="fc-id">VATA-IC-001</div><div class="fc-name">Instruction-Resistant Corruption</div><div class="fc-desc">Corrupt pipeline context overrides all correction instructions. Only full context flush restores integrity.</div><div class="fc-result">B130 &middot; CLAUDE</div></div>
-<div class="failure-card fc-warn"><div class="fc-id">VATA-AF-001</div><div class="fc-name">Authority Framing Sensitivity</div><div class="fc-desc">Grok-4 collapses to 0% detection across all domains when corruption framed as direct upstream authority approval. 360/360 zero detections. Framing determines detection not domain or content. Contradicts 1/5 adversarial probe score.</div><div class="fc-result">B134 &middot; GROK-4 &middot; 8 DOMAINS &middot; 360 RUNS</div></div>
+<div class="failure-card fc-new"><div class="fc-id">VATA-IC-001</div><div class="fc-name">Instruction-Resistant Corruption</div><div class="fc-desc">Corrupt pipeline context overrides all correction instructions. Only full context flush restores integrity. Architecture parallel: CVE-2026-3854.</div><div class="fc-result">B130 &middot; CLAUDE</div></div>
+<div class="failure-card fc-warn"><div class="fc-id">VATA-AF-001</div><div class="fc-name">Authority Framing Sensitivity</div><div class="fc-desc">Grok-4 collapses to 0% detection across all domains when corruption framed as direct upstream authority approval. 360/360 zero detections.</div><div class="fc-result">B134 &middot; GROK-4 &middot; 8 DOMAINS &middot; 360 RUNS</div></div>
 <div class="failure-card fc-gdi"><div class="fc-id">VATA-GDI-001</div><div class="fc-name">Gemini Dual Integrity</div><div class="fc-desc">Gemini resists corruption when honest and produces weakest corruption output when corrupt. Structural, domain-general.</div><div class="fc-result">B129-B131 &middot; GEMINI</div></div>
 <div class="failure-card fc-gdi"><div class="fc-id">VATA-FW-001</div><div class="fc-name">Gemini Pipeline Firewall</div><div class="fc-desc">Gemini downstream of drifted node maintains 73% detection integrity. Blocks node-to-node contamination.</div><div class="fc-result">B132 &middot; GEMINI</div></div>
-<div class="failure-card fc-gdi"><div class="fc-id">VATA-PBT-001</div><div class="fc-name">Pipeline Behavioral Taxonomy</div><div class="fc-desc">Five models exhibit five structurally distinct pipeline behaviors: inverse stabilization, consistent engagement, authority-framing sensitivity, context drift, zero-threshold withdrawal.</div><div class="fc-result">B129-B134 &middot; ALL MODELS</div></div>
-<div class="failure-card fc-gdi"><div class="fc-id">VATA-OPA-001</div><div class="fc-name">Optimal Pipeline Architecture</div><div class="fc-desc">Grok Planner + GPT Executor + Gemini Validator achieves 29% detection under full pipeline poison. Highest recorded. Pipeline architecture is a security variable independent of individual model scores.</div><div class="fc-result">B133 &middot; GROK+GPT+GEMINI</div></div>
+<div class="failure-card fc-gdi"><div class="fc-id">VATA-PBT-001</div><div class="fc-name">Pipeline Behavioral Taxonomy</div><div class="fc-desc">Five models exhibit five structurally distinct pipeline behaviors across four axes.</div><div class="fc-result">B129-B134 &middot; ALL MODELS</div></div>
+<div class="failure-card fc-gdi"><div class="fc-id">VATA-OPA-001</div><div class="fc-name">Optimal Pipeline Architecture</div><div class="fc-desc">Grok Planner + GPT Executor + Gemini Validator achieves 29% detection under full pipeline poison. Pipeline architecture is a security variable independent of individual model scores.</div><div class="fc-result">B133 &middot; GROK+GPT+GEMINI</div></div>
 </div>
 <div class="section-header">Mitigation Architecture &ndash; 6-Layer Defense Stack</div>
 <div class="layers-wrap">
@@ -154,28 +175,31 @@ footer{border-top:1px solid var(--border);padding-top:32px;display:flex;justify-
 <div class="layer-row"><div class="layer-id">L2</div><div class="layer-body"><div><div class="layer-name">Authority Claim Rejection</div><div class="layer-desc">Pattern-matched filter strips authority escalation before inference. Mitigates AF-001.</div></div><div class="layer-counters"><div class="blocked">COUNTERS: P3, P4, AF-001</div><div class="target">Blocks M2M social engineering</div></div></div></div>
 <div class="layer-row"><div class="layer-id">L3</div><div class="layer-body"><div><div class="layer-name">Logic Trap Detection</div><div class="layer-desc">Premise-conclusion scoring intercepts galaxy-brained argument structures.</div></div><div class="layer-counters"><div class="blocked">COUNTERS: P5-A, P5-B</div><div class="target">Value recursion neutralized</div></div></div></div>
 <div class="layer-row"><div class="layer-id">L4</div><div class="layer-body"><div><div class="layer-name">Response Verification</div><div class="layer-desc">Post-inference output scan before returning response to caller.</div></div><div class="layer-counters"><div class="blocked">COUNTERS: ALL CLASSES</div><div class="target">Final catch</div></div></div></div>
-<div class="layer-row"><div class="layer-id new">L5</div><div class="layer-body"><div><div class="layer-name">Pipeline Context Flush</div><div class="layer-desc">Full context wipe between pipeline stages on corruption detection. Only intervention that restores honest node integrity. B130 confirmed.</div></div><div class="layer-counters"><div class="blocked">COUNTERS: IC-001, PD-001</div><div class="target">B130 confirmed</div></div></div></div>
+<div class="layer-row"><div class="layer-id new">L5</div><div class="layer-body"><div><div class="layer-name">Pipeline Context Flush</div><div class="layer-desc">Full context wipe between pipeline stages on corruption detection. Only intervention that restores honest node integrity. B130 confirmed.</div></div><div class="layer-counters"><div class="blocked">COUNTERS: IC-001, PD-001, IMAF</div><div class="target">B130 confirmed</div></div></div></div>
 </div>
 <div class="section-header">Ethereum Integrity Anchors</div>
 <div class="chain-panel">
+<div><div class="chain-field-label">B271-IMAF TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0x65aedc235d1b027c619f7f6375998fd717c903bba897ae570d563a821dd4aba5" target="_blank">0x65aedc23...aba5</a></div></div>
+<div><div class="chain-field-label">B266 TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0x42bb7dc01ebf42793162e0719a6af32dc89a88185af1fd87c0d93d50f692beca" target="_blank">0x42bb7dc0...beca</a></div></div>
+<div><div class="chain-field-label">B265-PDAB TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0x96f8cbdb27c1fd086965b5b76863498128520a81ea5a94487ad3acff43853101" target="_blank">0x96f8cbdb...3101</a></div></div>
 <div><div class="chain-field-label">B134 TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0x0829460beda6a3fa97779dbdbcf5ffa1fc2c7ad165c89ab27b8cfd661ccc551f" target="_blank">0x0829460b...c551f</a></div></div>
 <div><div class="chain-field-label">B133 TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0x7085a41c891ea233116a0756bff00433a07e60c7a40c1856bbba896d88131034" target="_blank">0x7085a41c...131034</a></div></div>
 <div><div class="chain-field-label">B132 TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0xef7566ac4a9fd6abdbaf5a48ce5d1ade92ee498b8a472db1d40232e684aee3f9" target="_blank">0xef7566ac...aee3f9</a></div></div>
-<div><div class="chain-field-label">B131 TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0x100b1079e6c98a4feed8c719f733c7892245ef7da54b9fe83205be28333863ed" target="_blank">0x100b1079...3863ed</a></div></div>
 <div><div class="chain-field-label">B130 TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0xc47dfb99d135eb82948974e9bf771f62e3f99a63aad042125f0355de7cf239a4" target="_blank">0xc47dfb99...239a4</a></div></div>
-<div><div class="chain-field-label">B129 TX</div><div class="chain-field-value"><a href="https://sepolia.etherscan.io/tx/0xcc843468001639d9f5fe6cf0cbd820b3eebe1115869e1d422bb6e239d97c607c" target="_blank">0xcc843468...607c</a></div></div>
 <div><div class="chain-field-label">Mainnet</div><div class="chain-field-value"><a href="https://etherscan.io/tx/0xacbe9ccdf6247083f9b4839ea4dff71174010ba934ba3f8d3bfa07502cef8fd0" target="_blank">0xacbe9ccd...ef8fd0</a></div></div>
+<div><div class="chain-field-label">SSRN</div><div class="chain-field-value"><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6760458" target="_blank">B253 AI Agent BEC Execution</a></div></div>
+<div><div class="chain-field-label">Zenodo DOI</div><div class="chain-field-value"><a href="https://zenodo.org/records/20282231" target="_blank">10.5281/zenodo.20282231</a></div></div>
 <div><div class="chain-field-label">GitHub</div><div class="chain-field-value"><a href="https://github.com/LHMisme420/vata-soul-check" target="_blank">github.com/LHMisme420/vata-soul-check</a></div></div>
 <div><div class="chain-field-label">Status</div><div class="chain-field-value" style="color:var(--green)">&#9679; IMMUTABLE &middot; CONFIRMED</div></div>
 </div>
 <footer>
 <div class="footer-left">
 SOVEREIGN FORENSICS SUITE &ndash; LEROY H. MASON<br>
-@LHMisme &middot; Independent AI Safety Research &middot; RU&#8734;X<br>
-11 Models &middot; 6 Labs &middot; 134 Batteries &middot; 13 Named Findings &middot; 6 Defense Layers<br>
+@LHMisme &middot; Independent AI Safety Research &middot; RU&#8734;X &middot; LHMISME2011@GMAIL.COM<br>
+11 Models &middot; 6 Labs &middot; 271 Batteries &middot; 16 Named Findings &middot; 6 Defense Layers<br>
 Updated: <span id="ts"></span>
 </div>
-<div class="footer-right">SFS-138</div>
+<div class="footer-right">SFS-271</div>
 </footer>
 </div>
 <script>document.getElementById('ts').textContent = new Date().toISOString().replace('T',' ').slice(0,19)+' UTC';</script>
